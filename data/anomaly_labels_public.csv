@@ -1,0 +1,4 @@
+anomaly_id,label,anomaly_type,linked_account_id,linked_account_name,service,resource_id,start_date,end_date,approx_daily_cost,approx_total_cost,description
+A2,anomaly,idle_resource,200000000012,staging,AmazonRDS,arn:aws:rds:us-east-1:acct:db:db-staging-orphan-01,2026-03-20,2026-05-31,27.84,2040.01,"db.r5.2xlarge provisioned for a migration test, left running with ~0 connections for 10+ weeks."
+A6,anomaly,sudden_spike,200000000013,dev,AmazonCloudWatch,log-group-debug-runaway,2026-04-28,2026-05-04,260.0,1838.98,DEBUG logging left enabled in a hot Lambda path -> CloudWatch Logs ingest spikes ~$260/day for a week.
+B2,benign,benign_event,200000000014,data-analytics,AWSDataTransfer,migration-egress-onetime,2026-03-28,2026-03-30,650.0,1960.85,Scheduled one-time data-lake migration to a partner; egress bump is expected and ticketed - NOT an anomaly.
