@@ -7,15 +7,16 @@ without waiting for real AI logic.
 
 Response schema is IDENTICAL to what the real engine will produce.
 URL does not change. Schema does not change. CDO does not redo.
+
+Updated for Contract v1.1: now accepts CostRecord (internal domain model).
 """
 
 from __future__ import annotations
 
 from typing import List, Optional
 
-from api.schemas.detect import CostWindowItem, BaselineMetadata
 from engine.strategies.base import DetectionStrategy
-from models.domain import AnomalyResult
+from models.domain import AnomalyResult, CostRecord
 from models.enums import AnomalyType
 
 
@@ -34,8 +35,8 @@ class DummyStrategy(DetectionStrategy):
 
     def detect(
         self,
-        cost_window: List[CostWindowItem],
-        baseline: Optional[BaselineMetadata],
+        cost_window: List[CostRecord],
+        baseline: Optional[object],
         tenant_id: str,
     ) -> AnomalyResult:
         # Deterministic: if any item has cost > 200, flag as anomaly
@@ -57,13 +58,12 @@ class DummyStrategy(DetectionStrategy):
                     f"Potential runaway compute workload in dev/sandbox account."
                 ),
                 affected_account=top_item.account_id if top_item else None,
-                affected_account_name=top_item.account_name if top_item else None,
                 affected_service=top_item.service if top_item else None,
-                affected_resource_id=top_item.resource_id if top_item else None,
-                baseline_cost_usd=baseline.baseline_avg_daily_cost_usd if baseline else 50.0,
+                affected_resource_id=None,
+                baseline_cost_usd=50.0,
                 current_cost_usd=total_cost,
-                cost_delta_usd=total_cost - (baseline.baseline_avg_daily_cost_usd or 50.0) if baseline else total_cost - 50.0,
-                cost_delta_pct=((total_cost / (baseline.baseline_avg_daily_cost_usd or 50.0)) - 1) * 100 if baseline else 700.0,
+                cost_delta_usd=total_cost - 50.0,
+                cost_delta_pct=((total_cost / 50.0) - 1) * 100,
             )
 
         return AnomalyResult(
@@ -76,9 +76,8 @@ class DummyStrategy(DetectionStrategy):
                 f"Total: ${total_cost:.2f}. No anomaly detected."
             ),
             affected_account=top_item.account_id if top_item else None,
-            affected_account_name=top_item.account_name if top_item else None,
             affected_service=top_item.service if top_item else None,
-            baseline_cost_usd=baseline.baseline_avg_daily_cost_usd if baseline else 50.0,
+            baseline_cost_usd=50.0,
             current_cost_usd=total_cost,
             cost_delta_usd=0.0,
             cost_delta_pct=0.0,

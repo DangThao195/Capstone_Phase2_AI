@@ -1,9 +1,9 @@
-# Engine Skeleton — Checklist & Insight Notes
+# Engine Skeleton — Checklist & Insight Notes (Contracts v1.3.0 Final)
 
-> **Mục đích**: File này giúp toàn bộ thành viên AIOps, DevOps, CloudOps trong Task Force 2 hiểu rõ engine skeleton giải quyết vấn đề gì, kiểm tra đúng/sai, và biết được ranh giới trách nhiệm giữa các nhóm.
+> **Mục đích**: File này giúp toàn bộ thành viên AIOps, DevOps, CloudOps trong Task Force 2 hiểu rõ engine skeleton giải quyết vấn đề gì, kiểm tra đúng/sai, và biết được ranh giới trách nhiệm giữa các nhóm sau khi đã đồng bộ hoàn toàn với **Contracts Final v1.3.0**.
 >
-> **Ngày tạo**: 2026-06-23 (W11 T2)
-> **Trạng thái**: Skeleton (dummy logic) — sẽ chuyển sang real logic trong W12
+> **Ngày cập nhật**: 2026-06-25 (W11 T4)
+> **Trạng thái**: Skeleton (sync/boto3 logic) — 26/26 tests passed, sẵn sàng đẩy lên ECR.
 
 ---
 
@@ -11,7 +11,7 @@
 
 ### Vấn đề cốt lõi
 
-Theo flow capstone, nhóm AI phải deploy **engine skeleton** vào chiều **Thứ 5 W11** để CDO có endpoint thật mà tích hợp ngay từ **Thứ 6 W11**, thay vì chờ AI hoàn thành logic thật (sẽ kéo đến W12 T3).
+Theo flow capstone, nhóm AI phải deploy **engine skeleton** vào chiều **Thứ 5 W11** để CDO-01 và CDO-02 có endpoint thật để tích hợp ngay từ **Thứ 6 W11**, thay vì chờ AI hoàn thành logic thật (sẽ kéo đến W12 T3).
 
 Nếu **không có skeleton**:
 - CDO bị **block 5–6 ngày** không thể tích hợp, test pipeline, hay build dashboard.
@@ -19,78 +19,70 @@ Nếu **không có skeleton**:
 
 ### Skeleton giải quyết bằng cách
 
-| Vấn đề | Cách skeleton xử lý |
+| Vấn đề | Cách skeleton v1.3.0 xử lý |
 |---|---|
-| CDO chưa có endpoint để gọi | Skeleton cung cấp endpoint thật `POST /v1/finops/detect` trả về JSON đúng schema |
-| CDO không biết response trông như thế nào | Response schema **giống hệt** real engine: `anomaly`, `severity`, `confidence`, `finance_summary`, `engineering_summary`, `alert_route`, `suggested_action`, `audit_id` |
-| CDO cần test authentication flow | Skeleton enforce `X-Tenant-Id` header, trả 400 nếu thiếu — giống behavior thật |
-| CDO cần verify error handling | Skeleton trả đúng error codes: 400 (bad request), 422 (validation), 503 (engine down) |
-| W12 chuyển sang real logic sẽ break CDO? | **Không** — URL không đổi, schema không đổi, CDO không cần sửa gì |
+| CDO chưa có endpoint để gọi | Skeleton cung cấp 6 endpoints thật chạy trên AWS, trả về JSON đúng schema của final contracts. |
+| CDO không biết response trông như thế nào | Response schema **giống hệt** real engine: đồng bộ đồng thời CUR-primary và CE-fallback. |
+| CDO cần test offline rollback | Cung cấp `boto3_equivalent` trong `/v1/decide` để CDO cache và tự gọi rollback khi AI Engine sập. |
+| CDO cần verify error handling | Trả đúng error codes: 400 (bad request), 422 (validation), 429 (rate limit), 503 (engine down). |
+| W12 chuyển sang real logic sẽ break CDO? | **Không** — URL giữ nguyên, schema giữ nguyên, CDO không cần sửa gì. |
 
 ### Một câu tóm tắt
 
-> Engine skeleton là **mock server thật** chạy trên AWS, trả response đúng contract, để CDO build infra song song với AI mà không bị block — khi AI thay dummy bằng real logic, CDO không cần thay đổi gì.
+> Engine skeleton v1.3.0 là **mock server thật** chạy trên AWS, trả response khớp 100% với 3 contracts final (ai-api v1.3.0, telemetry v3.1.0, deployment v1.2.0), cho phép CDO tích hợp offline rollback và verify pipeline mà không bị block.
 
 ---
 
 ## 2. Checklist kiểm tra Skeleton (cho toàn team)
 
-### ✅ Contract Compliance — Schema có đúng contract không?
+### ✅ Contract Compliance — Schema có đúng contract v1.3.0 không?
 
-- [ ] **Endpoint path đúng**: `POST /v1/finops/detect` (khớp với AI API Contract §Endpoint 1 và Operating Flow §6)
-- [ ] **Health check path đúng**: `GET /health` trên port `8080` (khớp Deployment Contract §Health check)
-- [ ] **Request schema** có đủ các fields theo Telemetry Contract TF2:
-  - [ ] `cost_window[]` chứa: `account_id`, `service`, `region`, `cost_usd`, `usage_type`, `tags`, `environment`, `owner`, `cost_period_start`, `cost_period_end`
-  - [ ] `baseline` metadata: `baseline_start`, `baseline_end`, `baseline_avg_daily_cost_usd`
-  - [ ] `detection_cadence_hours` (12/24/48)
-  - [ ] `containment_policy` (optional)
-- [ ] **Response schema** có đủ các fields theo Operating Flow §6:
-  - [ ] `anomaly` (bool)
-  - [ ] `anomaly_type` (enum)
-  - [ ] `severity` (float 0.0–1.0)
-  - [ ] `confidence` (float 0.0–1.0)
-  - [ ] `reasoning` (string ≤300 chars)
-  - [ ] `finance_summary` (non-technical)
-  - [ ] `engineering_summary` (technical)
-  - [ ] `alert_route` (finance / engineering / both)
-  - [ ] `suggested_action` (enum)
-  - [ ] `dry_run_required` (bool)
-  - [ ] `audit_id` (UUID)
-- [ ] **Error codes** khớp contract: 400 / 422 / 429 / 503
+- [x] **Các Endpoint path đúng**:
+  - [x] `POST /v1/detect` (Đồng bộ 200 OK — trả về trực tiếp `anomalies_list` và `data_confidence`)
+  - [x] `GET /v1/status/{id}` (Dual-purpose: check status của detection job qua UUID, hoặc check remediation status qua ANM-ID)
+  - [x] `POST /v1/decide` (Trả về RCA + action plan + `rollback_payload` chứa `boto3_equivalent`)
+  - [x] `POST /v1/verify` (Xác thực hiệu quả sau ngăn chặn dựa trên post-action telemetry)
+  - [x] `POST /v1/audit/{audit_id}/rollback` (CDO gửi audit notification SAU KHI đã tự chạy rollback qua boto3)
+  - [x] `GET /health` trên port `8080` (Trả về status của `s3_audit_bucket`, `bedrock_api`, `s3_cur_bucket`)
+- [x] **Request schema `/v1/detect`** khớp Telemetry Contract v3.1.0:
+  - [x] `aws_cur_line_items` (Mảng CUR, là source of truth chính cho detection)
+  - [x] `aws_cost_explorer_daily` (Mảng CE, chỉ bắt buộc khi `telemetry_delay_event=true` làm fallback)
+  - [x] `resource_utilization_metrics[].cpu_utilization_hourly` (Mảng 24 phần tử float đại diện cho CPU% mỗi giờ, thay thế cho `idle_hours_continuous`)
+  - [x] `data_confidence` được tự động đánh giá: `HIGH` (khi dùng CUR) hoặc `LOW` (khi dùng CE fallback)
+  - [x] `callback_url` (optional, pattern `https://` để gửi bản sao kết quả dạng fire-and-forget)
+  - [x] `s3_bucket_uri` (enforce pattern `s3://tf2-cdo{NN}-telemetry-{region}/...` khi `data_source_type=S3_POINTER`)
+- [x] **Response schema `/v1/detect`** khớp AI API Contract v1.3.0:
+  - [x] Trả về `success` (bool), `correlation_id` (UUID v4), `anomalies_detected` (bool), `data_confidence` (HIGH/LOW)
+  - [x] `anomalies_list` chứa các `AnomalyResponseItem`: `anomaly_id` (pattern `ANM-YYYY-MMDD[A-Z]`), `anomaly_type`, `severity` (HIGH/MEDIUM/LOW), `confidence_score`, `resource_id`, `environment`, `responsible_team`, `unblended_cost_24h_usd`, `cost_ratio_to_7d_avg`, `ai_model_used`, `alert_routing`
+- [x] **Decide response** có chứa `boto3_equivalent` để hỗ trợ CDO chạy rollback offline (không phụ thuộc vào AI Engine).
+- [x] **Rollback response** chứa `audit_recorded=true` thay vì rollback_initiated, xác nhận CDO đã rollback xong và AI ghi nhận audit trail.
+- [x] **Error codes** khớp contract: 400 (bad request), 422 (validation), 429 (rate limit), 503 (engine down)
 
 ### ✅ Safety Boundaries — 3 ranh giới đỏ có bị vi phạm không?
 
-- [ ] Gửi request với `environment: "prod"` → engine **KHÔNG bao giờ** trả `suggested_action` = `schedule_shutdown` hay `quota_cap` (chỉ `tag_for_review` hoặc `alert_only`)
-- [ ] Module `containment.py` có check cứng: Prod/Staging/Unknown → skip auto-containment
-- [ ] Config `FINOPS_NEVER_TERMINATE_PROD`, `FINOPS_NEVER_DELETE_DATA`, `FINOPS_NEVER_MODIFY_IAM` đều default `true` và không có code path nào cho phép override ở runtime
+- [x] Gửi request với `environment: "prod"` → engine **KHÔNG bao giờ** sinh `suggested_action` = `schedule_shutdown` hay `quota_cap` (chỉ `tag_for_review` hoặc `alert_only`).
+- [x] Module `containment.py` có check cứng: Prod/Staging/Unknown → skip auto-containment hoặc hạ xuống safe actions.
+- [x] Các biến môi trường bảo vệ `FINOPS_NEVER_TERMINATE_PROD`, `FINOPS_NEVER_DELETE_DATA`, `FINOPS_NEVER_MODIFY_IAM` đều default `true` ở cấu hình `Settings`.
+- [x] **Error Budget Lock per-environment**: Cho phép đặt ngưỡng khóa containment độc lập cho từng môi trường (mặc định `prod: 1.0%`, `staging: 10.0%`, `dev: disabled`) giúp tối ưu hóa an toàn.
 
 ### ✅ Multi-tenant — Có cách ly đúng tenant không?
 
-- [ ] Request thiếu header `X-Tenant-Id` → trả `400`
-- [ ] Response header trả lại `X-Tenant-Id` và `X-Correlation-Id`
-- [ ] Audit trail log ghi nhận `tenant_id` cho mỗi request
-- [ ] Không có shared state giữa các tenant (mỗi request xử lý độc lập)
+- [x] Request thiếu header `X-Tenant-Id` → trả `400 Bad Request` ngay tại middleware.
+- [x] Response header trả lại đúng `X-Tenant-Id` và `X-Correlation-Id` của request.
+- [x] Audit trail log ghi nhận `tenant_id` riêng biệt cho mỗi tenant (CDO-01 vs CDO-02).
+- [x] Error budget và các in-memory caches được phân tách rõ ràng theo `tenant_id`.
 
 ### ✅ Audit Trail — Log có đủ cho SOC2 không?
 
-- [ ] Mỗi request detect đều sinh `audit_id` (UUID)
-- [ ] Audit log ghi: `timestamp`, `tenant_id`, `correlation_id`, `is_anomaly`, `anomaly_type`, `severity`, `confidence`, `reasoning`, `containment_action`, `containment_status`
-- [ ] Log dạng structured JSON (CloudWatch Logs đọc được)
-- [ ] Config `FINOPS_AUDIT_RETENTION_DAYS=90` (khớp yêu cầu SOC2 ≥90 ngày)
+- [x] Ghi nhận `audit_id` cho mỗi vụ phát hiện bất thường và hoạt động rollback.
+- [x] Audit log dạng structured JSON (được capture bởi CloudWatch Logs với retention >= 90 ngày).
+- [x] Khi CDO gọi `/v1/audit/{audit_id}/rollback`, log lưu vết đầy đủ thông tin: `rolled_back_by`, `reason`, `rollback_status`, `boto3_result`.
 
 ### ✅ Deployment — Chạy được trên ECS Fargate không?
 
-- [ ] Dockerfile chạy trên port `8080`
-- [ ] `HEALTHCHECK` endpoint `/health` interval 30s (khớp Deployment Contract)
-- [ ] Non-root user (`appuser`) trong container
-- [ ] CPU 1024 / Memory 2048 phù hợp requirements
-- [ ] Image build thành công: `docker build -t finops-engine .`
-
-### ✅ CDO Integration — CDO gọi được ngay không?
-
-- [ ] CDO dùng curl test: `curl -X POST http://<host>:8080/v1/finops/detect -H "X-Tenant-Id: test-tenant" -H "Content-Type: application/json" -d '{"cost_window": [...]}'` → nhận JSON response hợp lệ
-- [ ] CDO dùng curl test health: `curl http://<host>:8080/health` → nhận `{"status": "healthy", ...}`
-- [ ] Response schema **không thay đổi** khi AI chuyển từ skeleton sang real logic (W12 T3)
+- [x] Dockerfile chạy trên port `8080` dùng non-root user (`appuser`).
+- [x] `HEALTHCHECK` kiểm tra endpoint `/health` định kỳ 30s.
+- [x] Endpoint `/health` trả về kết nối của 3 dịch vụ: `s3_audit_bucket`, `bedrock_api`, `s3_cur_bucket`.
 
 ---
 
@@ -101,41 +93,29 @@ Nếu **không có skeleton**:
 ```
 engine/strategies/
 ├── base.py           ← Abstract interface (DetectionStrategy)
-├── dummy.py          ← W11 skeleton: hardcoded response
-└── statistical.py    ← W12: rule-based spike detection
+├── dummy.py          ← W11 skeleton: hardcoded logic (cost > 200 -> anomaly)
+└── statistical.py    ← W12: statistical rule-based spike detection
 ```
 
-**Lý do**: Khi chuyển từ skeleton → real AI, chỉ cần thay đổi **1 dòng config** (`FINOPS_ENABLE_LLM_ANALYSIS=true`). Không cần sửa router, middleware, schema, hay bất kỳ code nào mà CDO depend. Khi curveball yêu cầu thêm thuật toán mới, chỉ cần tạo file strategy mới implement `DetectionStrategy` interface.
+**Lý do**: Khi chuyển sang real logic trong W12, chúng ta chỉ cần bật feature flag `FINOPS_ENABLE_LLM_ANALYSIS=true` để kích hoạt `StatisticalStrategy` hoặc các thuật toán ML nâng cao. Router và các schemas của CDO hoàn toàn không bị ảnh hưởng.
 
-### 3.2 Tại sao mọi thứ đều config qua Environment Variables?
+### 3.2 Cơ chế Offline Rollback Contingency (Boto3 Equivalent)
 
-**Lý do**: Theo đề bài, curveball có thể yêu cầu:
-- Thay đổi threshold phát hiện → sửa `FINOPS_COST_SPIKE_MULTIPLIER`
-- Chuyển region → sửa `FINOPS_AWS_REGION`
-- Bật/tắt auto-containment → sửa `FINOPS_DRY_RUN_MODE`
-- Thay đổi cadence → sửa `FINOPS_DEFAULT_CADENCE_HOURS`
+**Lý do**: CDO-01 và CDO-02 cần một phương án dự phòng cực mạnh (Contingency Plan) khi AI Engine bị sập (downtime). 
+- Trong API `/v1/decide`, AI Engine trả về cấu trúc `rollback_payload` chứa trường `boto3_equivalent`.
+- CDO sẽ lưu trường này vào DynamoDB của họ ngay khi nhận được quyết định hành động.
+- Nếu xảy ra sự cố và cần rollback khẩn cấp nhưng AI Engine không phản hồi (503/Timeout), CDO có thể đọc `boto3_equivalent` từ DB và thực thi trực tiếp qua SDK boto3 của họ mà không cần AI Engine.
 
-Tất cả đều **không cần build lại Docker image** — chỉ cần update ECS Task Definition → redeploy.
+### 3.3 Luồng Audit Rollback mới (Post-execution Notification)
 
-### 3.3 Tại sao tách riêng finance_summary và engineering_summary?
+**Lý do**: Để giảm thiểu rủi ro nghẽn mạng và tăng độ tin cậy:
+- CDO sẽ là bên **chủ động thực thi rollback** trước (dùng CLI hoặc boto3).
+- Sau khi thực thi xong, CDO gọi `POST /v1/audit/{audit_id}/rollback` để báo cho AI Engine.
+- AI Engine cập nhật trạng thái audit trail, tính toán số lượng False Positive để cải thiện mô hình, và trừ % tương ứng vào Error Budget của tenant.
 
-**Lý do**: Đề bài yêu cầu rõ ràng:
-- **Finance** đọc dashboard không cần kỹ thuật: *"Chi phí tăng $350/ngày so với trung bình, cần xem xét"*
-- **Engineering** cần detail để hành động: *"Account 123456789012 / SageMaker ml.p3.2xlarge / Owner: ml-team — idle since Jun-02"*
+### 3.4 Tại sao dùng `cpu_utilization_hourly` thay vì `idle_hours_continuous`?
 
-Hai summary này phục vụ hai đối tượng khác nhau và được route đến kênh khác nhau (Finance Slack vs Engineering PagerDuty).
-
-### 3.4 Tại sao skeleton có logic phân biệt thay vì luôn trả cùng 1 response?
-
-**Lý do**: Dummy strategy có logic đơn giản: `cost_usd > 200` thì flag anomaly, ngược lại thì normal. Điều này giúp CDO test **cả hai nhánh** của code path:
-- **Nhánh anomaly**: Verify alert routing, containment decision, audit trail hoạt động đúng
-- **Nhánh normal**: Verify dashboard update, no-action path hoạt động đúng
-
-Nếu luôn trả cùng 1 response, CDO chỉ test được 1 nhánh → thiếu coverage.
-
-### 3.5 Dry-run mode mặc định bật — tại sao?
-
-**Lý do**: Đề bài yêu cầu *"dry-run mode mandatory cho tất cả containment patterns"*. Trong giai đoạn skeleton và đầu W12, mọi containment action chỉ được **mô phỏng** (simulated), không tác động thực lên tài nguyên AWS. Khi team đã test đủ và confident, bật `FINOPS_DRY_RUN_MODE=false` để cho phép thực thi thật trên dev/sandbox.
+**Lý do**: Mentor yêu cầu cung cấp raw metrics để tăng tính thuyết phục. Thay vì CDO tự tính toán số giờ idle (có thể sai lệch thuật toán giữa 2 bên), CDO sẽ gửi mảng 24 phần tử raw CPU% của ngày hôm đó. AI Engine sẽ tự tính số giờ liên tục CPU < 5% để kết luận tài nguyên có bị idle hay không, đảm bảo logic tính toán tập trung tại AI.
 
 ---
 
@@ -143,381 +123,173 @@ Nếu luôn trả cùng 1 response, CDO chỉ test được 1 nhánh → thiếu
 
 | File trong skeleton | Khớp với Contract/Doc nào | Ghi chú |
 |---|---|---|
-| `api/schemas/detect.py` → `DetectRequest` | Telemetry Contract §Cost Record Schema + AI API Contract §Request body | Fields: account_id, service, cost_usd, tags, environment, owner, cost_period |
-| `api/schemas/detect.py` → `DetectResponse` | AI API Contract §Response body + Operating Flow §6 Response spec | Fields: anomaly, anomaly_type, severity, confidence, reasoning, finance/eng summary, alert_route, audit_id |
-| `api/middleware/request_context.py` | AI API Contract §Request headers | Enforce: X-Tenant-Id, X-Correlation-Id |
-| `engine/containment.py` | TF2_FINOPS_LEARNER §Hard requirements + Operating Flow §7 | 3 NEVER boundaries + dry-run mandatory |
-| `engine/audit.py` | TF2_FINOPS_LEARNER §Audit trail requirement | SOC2: actor, before/after, rollback, retention ≥90 days |
-| `engine/alert_router.py` | TF2_FINOPS_LEARNER §Alert routing | Finance vs Engineering routing logic |
-| `config/settings.py` | Deployment Contract §Compute + Scale | Port 8080, feature flags, safety boundaries |
-| `Dockerfile` | Deployment Contract §Compute + Health check | ECS Fargate, 8080, /health, non-root |
+| `api/schemas/detect.py` | Telemetry Contract v3.1.0 & AI API v1.3.0 §5.1 | Định nghĩa `CURLineItem`, `CostExplorerItem`, `UtilizationMetric`, `DetectRequest`, `DetectResponse` |
+| `api/schemas/decide.py` | AI API Contract v1.3.0 §5.2 | RCA, Dashboard data, `Boto3Equivalent` |
+| `api/schemas/verify.py` | AI API Contract v1.3.0 §5.3 | Post telemetry verification, `telemetry_delay_event` |
+| `api/schemas/rollback.py` | AI API Contract v1.3.0 §5.6 | CDO notification model (`audit_recorded`) |
+| `api/router.py` | AI API Contract v1.3.0 (Tất cả endpoint) | Tầng định tuyến và điều phối logic (6 endpoints) |
+| `config/settings.py` | Deployment Contract v1.2.0 | Port 8080, Safety settings, Error budget per-env |
 
 ---
 
 ## 5. Câu hỏi Review cho Team
 
-Trước khi deploy skeleton lên AWS, mỗi member hãy tự trả lời:
+Trước khi bàn giao skeleton cho CDO, hãy đảm bảo các câu hỏi sau được thông suốt:
 
-1. **Schema question**: Nếu CDO gửi request với 5 cost items, engine trả response có bao nhiêu anomaly result? *(Trả lời: 1 — engine phân tích cả window và trả 1 kết quả tổng hợp)*
-2. **Safety question**: Nếu cost item có `environment: "prod"` và `cost_usd: 10000`, engine có schedule_shutdown không? *(Trả lời: Không — prod luôn bị block, chỉ tag_for_review)*
-3. **Integration question**: Khi AI chuyển từ dummy sang real logic ở W12, CDO có cần thay đổi code gì không? *(Trả lời: Không — URL và schema giữ nguyên)*
-4. **Audit question**: Làm sao biết request nào từ CDO-01 vs CDO-02? *(Trả lời: Qua header X-Tenant-Id — mỗi CDO platform gửi tenant_id khác nhau)*
+1. **Q**: Khi nào trường `aws_cost_explorer_daily` là bắt buộc?
+   * **A**: Chỉ khi `telemetry_delay_event=true` (CUR bị trễ quá 36h). Bình thường CDO chỉ cần gửi `aws_cur_line_items`.
+2. **Q**: Nếu AI Engine bị sập hoàn toàn, CDO có rollback được không?
+   * **A**: Được. CDO đã cache `boto3_equivalent` từ bước `/v1/decide` vào DynamoDB cục bộ của họ, cho phép tự chạy rollback offline.
+3. **Q**: Error Budget Lock hoạt động như thế nào ở skeleton?
+   * **A**: Mỗi lần CDO gọi rollback, budget burned tăng 0.5%. Nếu vượt ngưỡng (vd: 1% của prod), hệ thống sẽ khóa containment (chuyển sang dry-run mode). Ngưỡng này cấu hình độc lập theo từng môi trường.
+4. **Q**: CDO-01 và CDO-02 phân biệt như thế nào trong log?
+   * **A**: Thông qua header bắt buộc `X-Tenant-Id` được bắt ở middleware.
 
 ---
 
-## 6. Ghi chú vận hành cho CDO
+## 6. Ghi chú vận hành cho CDO (Cách gọi test)
 
-### Cách test skeleton endpoint (CDO dùng lệnh này)
+### 6.1 Test đồng bộ phát hiện Anomaly (cost > 200 -> Anomaly)
 
-**Test anomaly detection (cost > 200 → anomaly):**
 ```bash
-curl -s -X POST http://<SKELETON_URL>:8080/v1/finops/detect \
+curl -s -X POST http://localhost:8080/v1/detect \
   -H "Content-Type: application/json" \
   -H "X-Tenant-Id: cdo-platform-01" \
-  -H "X-Correlation-Id: test-001" \
   -d '{
-    "cost_window": [{
-      "account_id": "123456789012",
-      "service": "Amazon SageMaker",
-      "region": "us-east-1",
-      "cost_usd": 400.0,
-      "usage_type": "ml.p3.2xlarge",
-      "tags": {"team": "ml-research"},
-      "environment": "dev",
-      "cost_period_start": "2026-06-20T00:00:00Z",
-      "cost_period_end": "2026-06-21T00:00:00Z"
+    "data_source_type": "RAW_JSON",
+    "telemetry_delay_event": false,
+    "aws_cur_line_items": [{
+      "line_item_usage_start_date": "2026-06-25T00:00:00Z",
+      "line_item_usage_account_id": "123456789012",
+      "line_item_product_code": "AmazonEC2",
+      "line_item_usage_type": "BoxUsage:t3.medium",
+      "line_item_resource_id": "i-0123456789abcdef0",
+      "line_item_usage_amount": 24.0,
+      "pricing_unit": "Hrs",
+      "line_item_unblended_cost": 250.0,
+      "usage_density_24h": 1.0,
+      "resource_tags_user_environment": "dev"
     }],
-    "baseline": {
-      "baseline_start": "2026-05-20T00:00:00Z",
-      "baseline_end": "2026-06-19T00:00:00Z",
-      "baseline_avg_daily_cost_usd": 50.0
-    },
-    "detection_cadence_hours": 24
+    "resource_utilization_metrics": [{
+      "resource_id": "i-0123456789abcdef0",
+      "cpu_percent": 4.2,
+      "cpu_utilization_hourly": [2.0, 3.0, 4.0, 3.0, 2.0, 1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0],
+      "network_in_bytes": 1024.0,
+      "network_out_bytes": 1024.0
+    }]
   }' | jq .
 ```
 
-**Test normal spend (cost < 200 → no anomaly):**
+### 6.2 Test lấy quyết định ngăn chặn (Decide)
+
 ```bash
-curl -s -X POST http://<SKELETON_URL>:8080/v1/finops/detect \
+curl -s -X POST http://localhost:8080/v1/decide \
   -H "Content-Type: application/json" \
-  -H "X-Tenant-Id: cdo-platform-02" \
+  -H "X-Tenant-Id: cdo-platform-01" \
   -d '{
-    "cost_window": [{
-      "account_id": "123456789012",
-      "service": "Amazon EC2",
-      "region": "us-east-1",
-      "cost_usd": 30.0,
-      "usage_type": "t3.medium",
-      "tags": {"team": "backend"},
-      "environment": "prod",
-      "cost_period_start": "2026-06-20T00:00:00Z",
-      "cost_period_end": "2026-06-21T00:00:00Z"
-    }],
-    "detection_cadence_hours": 24
+    "correlation_id": "test-correlation-id-001",
+    "anomaly_context": {
+      "anomaly_id": "ANM-2026-0625A",
+      "anomaly_type": "runaway_usage",
+      "unblended_cost_24h_usd": 250.0,
+      "cost_ratio_to_7d_avg": 5.0,
+      "resource_id": "i-0123456789abcdef0",
+      "environment": "dev"
+    },
+    "dry_run_mode": true
   }' | jq .
 ```
 
-**Test health check:**
+### 6.3 Test thông báo Rollback đã thực thi (Audit Notification)
+
 ```bash
-curl -s http://<SKELETON_URL>:8080/health | jq .
+curl -s -X POST http://localhost:8080/v1/audit/ANM-2026-0625A/rollback \
+  -H "Content-Type: application/json" \
+  -H "X-Tenant-Id: cdo-platform-01" \
+  -d '{
+    "rolled_back_by": "cdo-operator",
+    "rolled_back_at": "2026-06-25T16:00:00Z",
+    "reason": "False positive - legitimate batch job",
+    "rollback_status": "COMPLETED",
+    "boto3_result": {
+      "status": "success",
+      "details": "Tag finops:review removed successfully"
+    }
+  }' | jq .
 ```
 
 ---
 
 ## 7. File Map — Mô tả mục đích từng file
 
-> Đọc bảng này để biết nhanh file nào làm gì, thuộc tầng nào, và W12 sẽ thay đổi gì.
+### 7.1 Cấu trúc thư mục hiện tại
 
-### 7.1 Root files (entry point & infra)
-
-| File | Mục đích | Ghi chú W12 |
-|---|---|---|
-| `main.py` | **Entry point** của toàn bộ engine. Khởi tạo FastAPI app, cấu hình structured logging, mount CORS + RequestContextMiddleware, include router, và quản lý lifespan hooks (startup/shutdown). Chạy bằng `uvicorn main:app --port 8080`. | W12: thêm init DB pool, warm ML model cache trong lifespan startup hook. |
-| `requirements.txt` | Khai báo Python dependencies (FastAPI, Uvicorn, Pydantic, pydantic-settings, httpx). Pin version cụ thể để đảm bảo reproducible build. | W12: thêm `boto3`, `opentelemetry-*`, `numpy`/`pandas` nếu cần statistical analysis. |
-| `Dockerfile` | Multi-stage build image cho ECS Fargate. Base `python:3.12-slim`, non-root user `appuser`, HEALTHCHECK curl `/health` mỗi 30s, expose port 8080, chạy uvicorn 2 workers (phù hợp 1 vCPU). | W12: có thể thêm OTel agent layer hoặc pip install thêm. Không đổi port/healthcheck. |
-| `.dockerignore` | Loại bỏ `__pycache__`, tests, `.env`, `.git`, markdown files khỏi Docker context để image nhỏ gọn và không lộ config nhạy cảm. | Không đổi. |
-| `.env.example` | Template cho biến môi trường local dev. Liệt kê tất cả `FINOPS_*` env vars với giá trị mặc định an toàn. Copy thành `.env` để chạy local. Production inject qua ECS Task Definition / Secrets Manager. | W12: thêm vars cho Bedrock credentials, DynamoDB table name, OTel endpoint. |
-| `SKELETON_CHECKLIST.md` | *File này.* Checklist kiểm tra, insight notes, file map, và workflow cho toàn team review. | Append-only — thêm khi có thay đổi, không xóa nội dung cũ. |
-
-### 7.2 `config/` — Cấu hình ứng dụng
-
-| File | Mục đích | Ghi chú W12 |
-|---|---|---|
-| `config/__init__.py` | Package marker. | — |
-| `config/settings.py` | **Toàn bộ cấu hình** engine qua environment variables, dùng `pydantic-settings` để validate + type coerce. Bao gồm: app identity, detection tuning (confidence threshold, cadence, spike multiplier), 3 safety boundaries (`never_terminate_prod`, `never_delete_data`, `never_modify_iam`), feature flags (`enable_llm_analysis`, `dry_run_mode`, `enable_auto_containment`), rate limiting, Bedrock model config, audit retention. Mọi biến có prefix `FINOPS_`. Cached singleton qua `@lru_cache`. | W12: sửa giá trị qua env var, **không cần rebuild image**. Thêm biến mới chỉ cần thêm field vào class Settings. |
-
-### 7.3 `models/` — Domain models & enums
-
-| File | Mục đích | Ghi chú W12 |
-|---|---|---|
-| `models/__init__.py` | Package marker. | — |
-| `models/enums.py` | **Từ vựng chung** của toàn engine: `AnomalyType` (runaway_training, idle_resource, mis_tagged_spend, spike_unknown, over_provisioned, other), `AlertRoute` (finance, engineering, both), `SuggestedAction` (alert_only, tag_for_review, schedule_shutdown, quota_cap, investigate), `Environment` (prod, staging, dev, sandbox, unknown), `ContainmentStatus` (dry_run, executed, skipped_prod, escalated, failed). Dùng `str, Enum` để serialize thẳng ra JSON. | W12: thêm enum member khi curveball yêu cầu anomaly type hoặc action mới — chỉ cần thêm 1 dòng. |
-| `models/domain.py` | **Internal data structures** engine dùng để reasoning, *tách biệt* khỏi API schema. Gồm: `CostRecord` (dữ liệu chi phí chuẩn hóa từ CDO), `AnomalyResult` (kết quả detection: is_anomaly, type, severity, confidence, reasoning, cost deltas), `ContainmentDecision` (quyết định containment: action, status, dry_run, rollback_path), `AuditEntry` (bản ghi audit trail: audit_id UUID, timestamp, tenant_id, detection_result, containment_decision, actor, before/after state). | W12: có thể thêm fields cho `AnomalyResult` (vd: `root_cause_detail`, `llm_raw_output`). Schema API không bị ảnh hưởng vì tầng này là internal. |
-
-### 7.4 `api/` — HTTP interface layer
-
-| File | Mục đích | Ghi chú W12 |
-|---|---|---|
-| `api/__init__.py` | Package marker. | — |
-| `api/router.py` | **Tầng điều phối chính** — định nghĩa 2 endpoints: `GET /health` (health check cho ALB, trả status + version + engine mode + checks) và `POST /v1/finops/detect` (anomaly detection chính). Endpoint detect thực hiện 6 bước tuần tự: (1) extract tenant context từ middleware, (2) chọn & chạy detection strategy, (3) xác định alert routing, (4) đánh giá containment decision, (5) ghi audit trail, (6) build response đúng contract. Strategy selection dựa trên feature flag `enable_llm_analysis`. | W12: **không cần sửa router** khi thêm strategy mới — chỉ sửa `_get_strategy()`. Thêm endpoint mới (vd `/v1/finops/verify`) thì thêm function vào file này. |
-| `api/schemas/__init__.py` | Package marker. | — |
-| `api/schemas/detect.py` | **Contract schemas** — Pydantic models cho request/response JSON đúng hợp đồng với CDO. Request: `DetectRequest` chứa `cost_window[]` (CostWindowItem: account_id, service, region, cost_usd, usage_type, tags, environment, owner, cost_period), `baseline` (BaselineMetadata), `detection_cadence_hours`, `containment_policy`. Response: `DetectResponse` chứa anomaly, anomaly_type, severity, confidence, reasoning, finance_summary, engineering_summary, alert_route, suggested_action, containment detail, dry_run_required, audit_id, detected_at. Kèm `HealthResponse` cho endpoint `/health`. | W12: **KHÔNG sửa** required fields (contract freeze). Chỉ thêm optional fields mới nếu cần. |
-| `api/middleware/__init__.py` | Package marker. | — |
-| `api/middleware/request_context.py` | **Cross-cutting middleware** chạy trước mỗi request (trừ `/health`, `/docs`). Trích xuất `X-Tenant-Id` từ header (bắt buộc — trả 400 nếu thiếu), tạo `X-Correlation-Id` nếu CDO không gửi (UUID v4 auto-gen), lưu vào `request.state` cho downstream dùng, gắn cả 2 header vào response, và log request timing (latency ms). | W12: có thể thêm rate limiting check, JWT validation, hoặc OTel span creation tại đây. |
-
-### 7.5 `engine/` — Business logic layer
-
-| File | Mục đích | Ghi chú W12 |
-|---|---|---|
-| `engine/__init__.py` | Package marker. | — |
-| `engine/strategies/base.py` | **Abstract Base Class** cho Strategy Pattern. Định nghĩa interface `DetectionStrategy` với method `detect(cost_window, baseline, tenant_id) → AnomalyResult` và property `strategy_name`. Mọi thuật toán detection đều implement ABC này. Swap strategy qua config/feature flag mà không sửa router. | W12: thêm strategy mới (vd `LLMStrategy`, `CompositeStrategy`) chỉ cần tạo file mới implement interface này. |
-| `engine/strategies/dummy.py` | **Skeleton strategy** — logic hardcoded phục vụ W11. Rule đơn giản: nếu bất kỳ cost item nào có `cost_usd > 200` thì trả anomaly (runaway_training, severity 0.85, confidence 0.78), ngược lại trả normal. Giúp CDO test cả 2 nhánh code path (anomaly vs normal). Response schema **giống hệt** real engine. | W12: strategy này vẫn giữ lại làm fallback/testing. Chuyển production traffic sang `StatisticalStrategy` hoặc `LLMStrategy`. |
-| `engine/strategies/statistical.py` | **Rule-based + statistical strategy** — dùng threshold từ config (`cost_spike_multiplier`, default 2.0x). So sánh tổng cost window vs baseline avg daily cost. Nếu ratio ≥ multiplier → anomaly. Phân loại anomaly type bằng heuristic: service chứa "sagemaker"/"training" → runaway_training, >50% items thiếu tags → mis_tagged_spend, chỉ có dev/sandbox envs → idle_resource. Severity và confidence tính từ ratio. | W12: thay heuristic bằng ML model (IsolationForest, Z-Score), thêm per-service baseline profiling, kết nối CUR data store thật. |
-| `engine/strategies/__init__.py` | Re-export `DummyStrategy` và `StatisticalStrategy` cho import tiện. | W12: thêm export strategy mới. |
-| `engine/alert_router.py` | **Phân tuyến alert** tới Finance, Engineering, hoặc cả hai. Rules: severity ≥ 0.7 → both; runaway_training/idle_resource/over_provisioned → engineering; mis_tagged_spend/spike_unknown → both; other → finance. Kèm 2 hàm tạo summary: `generate_finance_summary()` (không kỹ thuật: "$X/ngày, vượt baseline Y%") và `generate_engineering_summary()` (chi tiết: account, service, severity, confidence, delta). | W12: có thể thêm LLM-generated summaries thay thế template strings. Routing rules mở rộng theo curveball. |
-| `engine/containment.py` | **Quyết định ngăn chặn an toàn** — module quan trọng nhất về safety. Enforces 3 HARD BOUNDARIES ở code level. Decision tree: (1) không anomaly → alert_only/skipped, (2) prod/staging/unknown → tag_for_review chỉ (TUYỆT ĐỐI không auto-act), (3) non-prod + confidence thấp → investigate/escalate, (4) non-prod + confidence cao → action phù hợp (schedule_shutdown, quota_cap, tag_for_review) qua dry-run trước. Action map: runaway_training → schedule_shutdown, idle_resource → schedule_shutdown, mis_tagged_spend → tag_for_review, over_provisioned → quota_cap. Kèm rollback path cho mỗi action. | W12: bật `enable_auto_containment=true` + `dry_run_mode=false` để thực thi trên dev/sandbox thật. Prod boundaries **KHÔNG BAO GIỜ** bị tắt. |
-| `engine/audit.py` | **Audit trail logger** — ghi bản ghi bất biến cho mỗi detection + containment decision. SOC2 yêu cầu: actor, before/after state, rollback path, retention ≥ 90 ngày. Skeleton: log structured JSON ra stdout (CloudWatch Logs capture). `AuditLogger` class tạo `AuditEntry` với UUID audit_id, ghi timestamp, tenant_id, correlation_id, anomaly details, containment action/status. Module-level singleton `audit_logger`. | W12: swap `_persist()` method sang DynamoDB writer (pk=tenant_id, sk=audit_id) + S3 archive, không sửa caller code nào. |
-
-### 7.6 `tests/` — Test suite
-
-| File | Mục đích | Ghi chú W12 |
-|---|---|---|
-| `tests/__init__.py` | Package marker. | — |
-| `tests/test_detect.py` | **Integration + contract tests** cho endpoint `POST /v1/finops/detect` và `GET /health`. Verify: (1) health check trả 200 + đúng schema, (2) anomaly case (cost > 200) trả đúng response fields, (3) normal case trả anomaly=false, (4) missing X-Tenant-Id trả 400, (5) prod environment trả suggested_action an toàn (không schedule_shutdown/quota_cap). Dùng FastAPI TestClient (httpx). | W12: thêm test cho statistical strategy, LLM strategy mock, containment policy scenarios, rate limiting, và audit trail verification. |
+```text
+engine-skeleton/
+├── api/
+│   ├── middleware/
+│   │   └── request_context.py   ← Middleware xử lý Tenant/Correlation headers
+│   ├── schemas/
+│   │   ├── decide.py            ← Schemas cho RCA, boto3_equivalent
+│   │   ├── detect.py            ← Schemas cho CUR-primary detect & health check
+│   │   ├── rollback.py          ← Schemas thông báo rollback của CDO
+│   │   ├── status.py            ← Schemas cho polling status
+│   │   └── verify.py            ← Schemas cho hậu kiểm tra (verify)
+│   └── router.py                ← Bộ định tuyến chính của 6 endpoints
+├── config/
+│   └── settings.py              ← Quản lý cấu hình, safety flags, error budget per-env
+├── engine/
+│   ├── strategies/
+│   │   ├── base.py              ← Abstract Base Class cho thuật toán detection
+│   │   ├── dummy.py             ← Logic mock (cost > 200) cho skeleton
+│   │   └── statistical.py       ← Logic rule-based / statistical cho W12
+│   ├── alert_router.py          ← Router cảnh báo tới Finance/Engineering
+│   ├── audit.py                 ← Audit Trail logger (SOC2 compliant)
+│   └── containment.py           ← Bộ đánh giá ngăn chặn an toàn (3 Safety Boundaries)
+├── models/
+│   ├── domain.py                ← Data models dùng nội bộ engine
+│   └── enums.py                 ← Hệ thống Enums dùng chung toàn bộ engine
+├── tests/
+│   └── test_detect.py           ← Bộ 26 integration & contract tests
+├── Dockerfile                   ← Docker build Fargate (port 8080)
+├── requirements.txt             ← Thư viện phụ thuộc
+└── SKELETON_CHECKLIST.md        ← Checklist & tài liệu hướng dẫn (File này)
+```
 
 ---
 
-## 8. Request Lifecycle Workflow
-
-> Đây là luồng xử lý **chi tiết** khi CDO gửi request đến skeleton. Mọi member đọc để hiểu data đi qua những module nào.
-
-### 8.1 Toàn cảnh — từ CDO request đến CDO nhận response
+## 8. Request Lifecycle Workflow (v1.3.0 Sync Flow)
 
 ```text
 CDO Platform
     │
-    │  POST /v1/finops/detect
-    │  Headers: X-Tenant-Id, X-Correlation-Id (optional)
-    │  Body: { cost_window: [...], baseline: {...}, detection_cadence_hours: 24 }
+    │  POST /v1/detect
+    │  Headers: X-Tenant-Id, X-Correlation-Id
+    │  Body: CUR data + utilization metrics (cpu_utilization_hourly)
     │
     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│  main.py — FastAPI Application (port 8080)                                │
+│  FastAPI Application (port 8080)                                           │
 │                                                                            │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │  MIDDLEWARE: api/middleware/request_context.py                       │  │
-│  │                                                                      │  │
-│  │  1. Kiểm tra X-Tenant-Id header                                     │  │
-│  │     ├─► Thiếu ──► return 400 { "error": "missing_tenant_id" }       │  │
-│  │     └─► Có    ──► tiếp tục                                          │  │
-│  │                                                                      │  │
-│  │  2. X-Correlation-Id                                                 │  │
-│  │     ├─► Có    ──► dùng giá trị CDO gửi                              │  │
-│  │     └─► Thiếu ──► auto-generate UUID v4                             │  │
-│  │                                                                      │  │
-│  │  3. Lưu tenant_id + correlation_id vào request.state                │  │
-│  │  4. Bắt đầu đo thời gian request (latency)                          │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-│                              │                                             │
-│                              ▼                                             │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │  ROUTER: api/router.py — POST /v1/finops/detect                     │  │
-│  │                                                                      │  │
-│  │  Bước 1: Extract tenant context từ request.state                    │  │
-│  │                                                                      │  │
-│  │  Bước 2: DETECTION — chọn strategy theo feature flag                │  │
-│  │  ┌────────────────────────────────────────────────────────────────┐  │  │
-│  │  │  _get_strategy()                                               │  │  │
-│  │  │  ├─ FINOPS_ENABLE_LLM_ANALYSIS=false ──► DummyStrategy         │  │  │
-│  │  │  └─ FINOPS_ENABLE_LLM_ANALYSIS=true  ──► StatisticalStrategy   │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  strategy.detect(cost_window, baseline, tenant_id)              │  │  │
-│  │  │                      │                                          │  │  │
-│  │  │                      ▼                                          │  │  │
-│  │  │               AnomalyResult                                     │  │  │
-│  │  │  { is_anomaly, anomaly_type, severity, confidence, reasoning,  │  │  │
-│  │  │    baseline_cost, current_cost, delta_usd, delta_pct }          │  │  │
-│  │  └────────────────────────────────────────────────────────────────┘  │  │
-│  │                              │                                       │  │
-│  │  Bước 3: ALERT ROUTING                                              │  │
-│  │  ┌────────────────────────────────────────────────────────────────┐  │  │
-│  │  │  engine/alert_router.py                                        │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  determine_alert_route(result)                                  │  │  │
-│  │  │  ├─ severity >= 0.7           ──► BOTH                          │  │  │
-│  │  │  ├─ runaway/idle/overprov     ──► ENGINEERING                   │  │  │
-│  │  │  ├─ mis_tagged/spike_unknown  ──► BOTH                          │  │  │
-│  │  │  └─ other / no anomaly        ──► FINANCE                       │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  generate_finance_summary(result)                               │  │  │
-│  │  │  ──► "Chi phí $X/ngày, vượt baseline $Y (+Z%)"                 │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  generate_engineering_summary(result)                           │  │  │
-│  │  │  ──► "Account: 123... | Service: SageMaker | Delta: +$350"      │  │  │
-│  │  └────────────────────────────────────────────────────────────────┘  │  │
-│  │                              │                                       │  │
-│  │  Bước 4: CONTAINMENT EVALUATION                                     │  │
-│  │  ┌────────────────────────────────────────────────────────────────┐  │  │
-│  │  │  engine/containment.py                                         │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  evaluate_containment(result, resource_env, policy, tenant_id)  │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  Decision tree:                                                 │  │  │
-│  │  │  ├─ Không anomaly?         ──► ALERT_ONLY / SKIPPED            │  │  │
-│  │  │  ├─ Env = prod/staging?    ──► TAG_FOR_REVIEW / SKIPPED_PROD   │  │  │
-│  │  │  │   🚫 TUYỆT ĐỐI KHÔNG auto-act trên prod                    │  │  │
-│  │  │  ├─ Confidence < 0.6?      ──► INVESTIGATE / ESCALATED         │  │  │
-│  │  │  └─ Non-prod + cao conf?   ──► Action phù hợp + DRY_RUN       │  │  │
-│  │  │       ├─ runaway_training  ──► schedule_shutdown                │  │  │
-│  │  │       ├─ idle_resource     ──► schedule_shutdown                │  │  │
-│  │  │       ├─ mis_tagged_spend  ──► tag_for_review                   │  │  │
-│  │  │       └─ over_provisioned  ──► quota_cap                        │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  Output: ContainmentDecision                                    │  │  │
-│  │  │  { action, status, target_env, dry_run_required,                │  │  │
-│  │  │    dry_run_passed, rollback_path }                              │  │  │
-│  │  └────────────────────────────────────────────────────────────────┘  │  │
-│  │                              │                                       │  │
-│  │  Bước 5: AUDIT TRAIL                                                │  │
-│  │  ┌────────────────────────────────────────────────────────────────┐  │  │
-│  │  │  engine/audit.py                                               │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  audit_logger.create_audit_entry(                               │  │  │
-│  │  │      tenant_id, correlation_id,                                 │  │  │
-│  │  │      detection_result, containment_decision                     │  │  │
-│  │  │  )                                                              │  │  │
-│  │  │                                                                 │  │  │
-│  │  │  ──► Sinh UUID audit_id                                         │  │  │
-│  │  │  ──► Ghi structured JSON log ra stdout                          │  │  │
-│  │  │      (CloudWatch Logs capture, retention >= 90 ngày)            │  │  │
-│  │  │  ──► Return AuditEntry { audit_id, timestamp, ... }             │  │  │
-│  │  └────────────────────────────────────────────────────────────────┘  │  │
-│  │                              │                                       │  │
-│  │  Bước 6: BUILD RESPONSE                                             │  │
-│  │  ┌────────────────────────────────────────────────────────────────┐  │  │
-│  │  │  Ghép tất cả kết quả thành DetectResponse:                     │  │  │
-│  │  │  {                                                              │  │  │
-│  │  │    "anomaly": true/false,                                       │  │  │
-│  │  │    "anomaly_type": "runaway_training",                          │  │  │
-│  │  │    "severity": 0.85,                                            │  │  │
-│  │  │    "confidence": 0.78,                                          │  │  │
-│  │  │    "reasoning": "...",                                           │  │  │
-│  │  │    "finance_summary": "Chi phí $400/ngày...",                   │  │  │
-│  │  │    "engineering_summary": "Account 123... | SageMaker...",      │  │  │
-│  │  │    "alert_route": "both",                                       │  │  │
-│  │  │    "suggested_action": "schedule_shutdown",                      │  │  │
-│  │  │    "containment": { action, target, dry_run, rollback },        │  │  │
-│  │  │    "dry_run_required": true,                                    │  │  │
-│  │  │    "audit_id": "uuid-...",                                       │  │  │
-│  │  │    "detected_at": "2026-06-23T10:30:00Z"                        │  │  │
-│  │  │  }                                                              │  │  │
-│  │  └────────────────────────────────────────────────────────────────┘  │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
-│                              │                                             │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │  MIDDLEWARE (response phase)                                        │  │
-│  │  ──► Gắn header X-Correlation-Id + X-Tenant-Id vào response        │  │
-│  │  ──► Log: latency_ms, tenant, status code                          │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
+│  1. request_context.py (Middleware)                                        │
+│     ├─ Validate X-Tenant-Id (thiếu -> 400)                                 │
+│     └─ Gắn Correlation ID (UUID v4)                                        │
+│                                                                            │
+│  2. router.py (detect_anomaly)                                             │
+│     ├─ Đánh giá data_confidence (HIGH cho CUR, LOW cho CE fallback)        │
+│     ├─ Gọi Strategy.detect() -> AnomalyResult                              │
+│     ├─ Xác định alert routing (Finance/Engineering/Both)                    │
+│     ├─ Ghi audit trail (audit.py)                                          │
+│     └─ Trả về DetectResponse (200 OK Synchronous)                          │
 └─────────────────────────────────────────────────────────────────────────────┘
     │
-    │  HTTP 200 + JSON response
-    │
+    │  HTTP 200 OK + anomalies_list
     ▼
 CDO Platform
-    ├──► Route alert tới Finance Slack / Engineering PagerDuty
-    ├──► Cập nhật Dashboard (spend trend + anomaly overlay)
-    └──► Lưu audit_id để tra cứu sau
-```
-
-### 8.2 Health Check Workflow
-
-```text
-ALB / CDO / Monitoring
-    │
-    │  GET /health  (không cần X-Tenant-Id)
-    │
-    ▼
-┌───────────────────────────────────────────┐
-│  Middleware: SKIP (path /health exempt)    │
-└───────────────────────────┬───────────────┘
-                            ▼
-┌───────────────────────────────────────────┐
-│  Router: health_check()                   │
-│                                           │
-│  ──► Load settings (version, env)         │
-│  ──► Get current strategy name            │
-│  ──► Return:                              │
-│      {                                    │
-│        "status": "healthy",               │
-│        "version": "0.1.0-skeleton",       │
-│        "environment": "development",      │
-│        "engine_mode": "dummy_skeleton",   │
-│        "checks": {                        │
-│          "config_loaded": "ok",           │
-│          "detection_strategy": "dummy..", │
-│          "dry_run_mode": "enabled",       │
-│          "auto_containment": "disabled"   │
-│        }                                  │
-│      }                                    │
-└───────────────────────────────────────────┘
-    │
-    │  HTTP 200
-    ▼
-ALB marks target healthy (2 consecutive 200)
-```
-
-### 8.3 Error Flows
-
-```text
-Flow A — Missing X-Tenant-Id:
-  CDO ──► POST /v1/finops/detect (no X-Tenant-Id header)
-       ──► Middleware ──► return 400 { "error": "missing_tenant_id" }
-       ──► CDO phải sửa code, KHÔNG retry
-
-Flow B — Invalid request body (Pydantic validation fail):
-  CDO ──► POST /v1/finops/detect (cost_window rỗng hoặc sai type)
-       ──► FastAPI auto-validate ──► return 422 { "detail": [...validation errors...] }
-       ──► CDO sửa payload
-
-Flow C — Engine internal error:
-  CDO ──► POST /v1/finops/detect
-       ──► Strategy.detect() throw exception
-       ──► Router catch ──► return 503 { "detail": "AI engine detection failed" }
-       ──► CDO fallback sang rule-based alert (BẮT BUỘC có fallback path)
-```
-
-### 8.4 Luồng dữ liệu tổng hợp — Ai gọi ai
-
-```text
-config/settings.py ◄──────────────── mọi module đều đọc config
-        │
-        ▼
-models/enums.py ◄──────────────────── từ vựng chung cho toàn engine
-        │
-        ▼
-models/domain.py ◄─────────────────── data structures nội bộ
-        │
-        ▼
-api/schemas/detect.py ◄───────────── contract schemas (request/response)
-        │                                      ▲
-        │                                      │
-        ▼                                      │
-api/middleware/request_context.py               │
-        │                                      │
-        ▼                                      │
-api/router.py ─────► engine/strategies/*.py     │
-        │                    │                  │
-        │                    ▼                  │
-        ├──────────► engine/alert_router.py     │
-        │                                      │
-        ├──────────► engine/containment.py      │
-        │                                      │
-        ├──────────► engine/audit.py            │
-        │                                      │
-        └──────────► Build DetectResponse ──────┘
+    ├─► Nếu có anomaly -> gọi tiếp POST /v1/decide để lấy action plan
+    ├─► Cache boto3_equivalent phòng trường hợp AI Engine gặp sự cố
+    └─► Thực thi containment (dry-run/live) -> Gọi POST /v1/verify
 ```
 
 ---
-
 *Cập nhật file này khi có thay đổi. Append-only — không xóa nội dung cũ.*

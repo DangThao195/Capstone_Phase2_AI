@@ -10,7 +10,8 @@ Anomaly types detected:
   - untagged_spend:  Missing tag 'team' → cannot allocate
   - sudden_spike:    Cost jump from misconfig (high ratio, short window)
   - gradual_drift:   Slow cost increase over weeks
-  - over_provisioned: Instance too large vs usage
+
+Updated for Contract v1.1: now accepts CostRecord (internal domain model).
 
 W12 TODO:
   - Replace heuristics with ML model (IsolationForest, Z-Score)
@@ -22,9 +23,8 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from api.schemas.detect import CostWindowItem, BaselineMetadata
 from engine.strategies.base import DetectionStrategy
-from models.domain import AnomalyResult
+from models.domain import AnomalyResult, CostRecord
 from models.enums import AnomalyType
 from config.settings import get_settings
 
@@ -42,18 +42,16 @@ class StatisticalStrategy(DetectionStrategy):
 
     def detect(
         self,
-        cost_window: List[CostWindowItem],
-        baseline: Optional[BaselineMetadata],
+        cost_window: List[CostRecord],
+        baseline: Optional[object],
         tenant_id: str,
     ) -> AnomalyResult:
         settings = get_settings()
 
         total_cost = sum(item.cost_usd for item in cost_window)
-        baseline_avg = (
-            baseline.baseline_avg_daily_cost_usd
-            if baseline and baseline.baseline_avg_daily_cost_usd
-            else 0.0
-        )
+        baseline_avg = 0.0
+        if baseline and hasattr(baseline, "baseline_avg_daily_cost_usd"):
+            baseline_avg = baseline.baseline_avg_daily_cost_usd or 0.0
 
         # Extract representative item for enrichment
         top_item = max(cost_window, key=lambda x: x.cost_usd) if cost_window else None
@@ -67,7 +65,6 @@ class StatisticalStrategy(DetectionStrategy):
                 confidence=0.3,
                 reasoning="Insufficient baseline data for comparison. Manual review recommended.",
                 affected_account=top_item.account_id if top_item else None,
-                affected_account_name=top_item.account_name if top_item else None,
                 affected_service=top_item.service if top_item else None,
                 current_cost_usd=total_cost,
                 baseline_cost_usd=0.0,
@@ -100,9 +97,7 @@ class StatisticalStrategy(DetectionStrategy):
                     f"({ratio:.1f}x). Threshold: {settings.cost_spike_multiplier}x."
                 )[:300],
                 affected_account=top_item.account_id if top_item else None,
-                affected_account_name=top_item.account_name if top_item else None,
                 affected_service=top_item.service if top_item else None,
-                affected_resource_id=top_item.resource_id if top_item else None,
                 baseline_cost_usd=baseline_avg,
                 current_cost_usd=total_cost,
                 cost_delta_usd=round(total_cost - baseline_avg, 2),
@@ -116,7 +111,6 @@ class StatisticalStrategy(DetectionStrategy):
             confidence=0.9,
             reasoning=f"Cost ${total_cost:.2f} within normal range vs baseline ${baseline_avg:.2f}/day ({ratio:.1f}x).",
             affected_account=top_item.account_id if top_item else None,
-            affected_account_name=top_item.account_name if top_item else None,
             affected_service=top_item.service if top_item else None,
             baseline_cost_usd=baseline_avg,
             current_cost_usd=total_cost,
@@ -124,7 +118,7 @@ class StatisticalStrategy(DetectionStrategy):
             cost_delta_pct=round((ratio - 1) * 100, 1),
         )
 
-    def _check_untagged(self, cost_window: List[CostWindowItem], settings) -> Optional[AnomalyResult]:
+    def _check_untagged(self, cost_window: List[CostRecord], settings) -> Optional[AnomalyResult]:
         """
         Check for untagged_spend: items missing 'team' tag with significant cost.
         Based on TF2 data pattern: resource_tags_user_team is empty.
@@ -150,9 +144,7 @@ class StatisticalStrategy(DetectionStrategy):
                     f"Total untagged cost: ${total_untagged_cost:.2f}."
                 )[:300],
                 affected_account=top_untagged.account_id,
-                affected_account_name=top_untagged.account_name,
                 affected_service=top_untagged.service,
-                affected_resource_id=top_untagged.resource_id,
                 current_cost_usd=total_untagged_cost,
                 baseline_cost_usd=0.0,
                 cost_delta_usd=total_untagged_cost,
@@ -160,7 +152,7 @@ class StatisticalStrategy(DetectionStrategy):
             )
         return None
 
-    def _classify_spike(self, cost_window: List[CostWindowItem], ratio: float) -> AnomalyType:
+    def _classify_spike(self, cost_window: List[CostRecord], ratio: float) -> AnomalyType:
         """
         Classify spike anomaly type using heuristics aligned with TF2 data.
         Order matters: check most specific patterns first.
@@ -176,23 +168,12 @@ class StatisticalStrategy(DetectionStrategy):
         if expensive_compute:
             return AnomalyType.RUNAWAY_USAGE
 
-        # --- idle_resource: provisioned with very low usage_amount ---
-        items_with_usage = [item for item in cost_window if item.usage_amount is not None]
-        if items_with_usage:
-            idle_items = [
-                item for item in items_with_usage
-                if item.usage_amount <= (get_settings().idle_usage_threshold)
-                and item.cost_usd > 20
-            ]
-            if len(idle_items) > len(items_with_usage) * 0.3:
-                return AnomalyType.IDLE_RESOURCE
-
         # --- sudden_spike: high ratio but likely short-lived ---
         if ratio >= 3.0:
             return AnomalyType.SUDDEN_SPIKE
 
         # --- Check for potential idle by environment (dev/sandbox only) ---
-        envs = {item.environment.lower() for item in cost_window}
+        envs = {item.environment.value.lower() for item in cost_window}
         if envs.issubset({"dev", "sandbox", "test", "unknown"}):
             return AnomalyType.IDLE_RESOURCE
 

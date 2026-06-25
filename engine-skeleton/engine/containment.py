@@ -13,9 +13,8 @@ Auto-containment only on dev/sandbox environments.
 from __future__ import annotations
 
 import logging
-from typing import List
+from typing import List, Optional
 
-from api.schemas.detect import ContainmentPolicy
 from config.settings import get_settings
 from models.domain import AnomalyResult, ContainmentDecision
 from models.enums import (
@@ -37,7 +36,6 @@ _ACTION_MAP = {
     AnomalyType.UNTAGGED_SPEND: SuggestedAction.TAG_FOR_REVIEW,
     AnomalyType.SUDDEN_SPIKE: SuggestedAction.INVESTIGATE,
     AnomalyType.GRADUAL_DRIFT: SuggestedAction.INVESTIGATE,
-    AnomalyType.OVER_PROVISIONED: SuggestedAction.QUOTA_CAP,
     AnomalyType.OTHER: SuggestedAction.ALERT_ONLY,
 }
 
@@ -45,7 +43,7 @@ _ACTION_MAP = {
 def evaluate_containment(
     result: AnomalyResult,
     resource_env: str,
-    policy: ContainmentPolicy | None = None,
+    policy: Optional[dict] = None,
     tenant_id: str = "",
 ) -> ContainmentDecision:
     """
@@ -103,7 +101,7 @@ def evaluate_containment(
     recommended_action = _ACTION_MAP.get(result.anomaly_type, SuggestedAction.ALERT_ONLY)
 
     # Check containment policy from caller
-    if policy and not policy.allow_auto_containment:
+    if policy and not policy.get("allow_auto_containment", False):
         return ContainmentDecision(
             action=recommended_action,
             status=ContainmentStatus.DRY_RUN,

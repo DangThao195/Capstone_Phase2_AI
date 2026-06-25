@@ -1,0 +1,336 @@
+{
+  "info": {
+    "_postman_id": "7485cf8a-cbfc-4826-a35b-6a80adfdb613",
+    "name": "AIOps AI Engine Smoke Test (v1.3.0)",
+    "description": "Smoke test collection for TF2 AI Engine v1.3.0. Tests health, synchronous CUR-primary detection, decides containment, post-action verification, and rollback notification. Includes automated variables propagation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response structure is correct\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(\"healthy\");",
+              "    pm.expect(jsonData.services).to.have.property(\"s3_audit_bucket\");",
+              "    pm.expect(jsonData.services).to.have.property(\"bedrock_api\");",
+              "    pm.expect(jsonData.services).to.have.property(\"s3_cur_bucket\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. POST Sync Anomaly Detection",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Extract correlation_id and anomaly_id\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.correlation_id).to.not.be.null;",
+              "    ",
+              "    // Save correlation_id for downstream requests",
+              "    pm.collectionVariables.set(\"correlationId\", jsonData.correlation_id);",
+              "    console.log(\"Saved correlationId: \" + jsonData.correlation_id);",
+              "    ",
+              "    if (jsonData.anomalies_detected && jsonData.anomalies_list.length > 0) {",
+              "        var anomalyId = jsonData.anomalies_list[0].anomaly_id;",
+              "        pm.collectionVariables.set(\"anomalyId\", anomalyId);",
+              "        console.log(\"Saved anomalyId: \" + anomalyId);",
+              "    } else {",
+              "        pm.collectionVariables.set(\"anomalyId\", \"ANM-2026-0625O\"); // fallback dummy",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "{{tenantId}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data_source_type\": \"RAW_JSON\",\n  \"is_ad_hoc\": false,\n  \"telemetry_delay_event\": false,\n  \"aws_cur_line_items\": [\n    {\n      \"line_item_usage_start_date\": \"2026-06-25T00:00:00Z\",\n      \"line_item_usage_end_date\": \"2026-06-25T23:59:59Z\",\n      \"line_item_usage_account_id\": \"123456789012\",\n      \"line_item_usage_account_name\": \"cdo-prod-account\",\n      \"line_item_product_code\": \"AmazonSageMaker\",\n      \"line_item_usage_type\": \"ml.p3.2xlarge\",\n      \"line_item_operation\": \"Training\",\n      \"line_item_resource_id\": \"arn:aws:sagemaker:us-east-1:123456789012:notebook-instance/tf2-training-notebook\",\n      \"line_item_usage_amount\": 24.0,\n      \"pricing_unit\": \"Hrs\",\n      \"line_item_unblended_cost\": 250.0,\n      \"usage_density_24h\": 1.0,\n      \"resource_tags_user_environment\": \"dev\",\n      \"resource_tags_user_team\": \"ml-research\",\n      \"resource_tags_user_owner\": \"naruto\",\n      \"resource_tags_user_cost_center\": \"cc-102\"\n    }\n  ],\n  \"resource_utilization_metrics\": [\n    {\n      \"resource_id\": \"arn:aws:sagemaker:us-east-1:123456789012:notebook-instance/tf2-training-notebook\",\n      \"cpu_percent\": 98.5,\n      \"cpu_utilization_hourly\": [99.0, 98.0, 98.5, 99.0, 97.0, 98.0, 99.0, 98.5, 99.0, 97.0, 98.0, 99.0, 98.5, 99.0, 97.0, 98.0, 99.0, 98.5, 99.0, 97.0, 98.0, 99.0, 98.5, 99.0],\n      \"network_in_bytes\": 500000.0,\n      \"network_out_bytes\": 1000000.0\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/detect",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "detect"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. GET Poll Detection Status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Job status is COMPLETED\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.status).to.eql(\"COMPLETED\");",
+              "    pm.expect(jsonData.correlation_id).to.eql(pm.collectionVariables.get(\"correlationId\"));",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "{{tenantId}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/status/{{correlationId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "status",
+            "{{correlationId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. POST Decide Containment Plan",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Action plan contains Boto3 equivalent\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.rollback_payload).to.have.property(\"boto3_equivalent\");",
+              "    pm.expect(jsonData.rollback_payload.boto3_equivalent.service).to.eql(\"ec2\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "{{tenantId}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correlation_id\": \"{{correlationId}}\",\n  \"idempotency_key\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"anomaly_context\": {\n    \"anomaly_id\": \"{{anomalyId}}\",\n    \"anomaly_type\": \"runaway_usage\",\n    \"unblended_cost_24h_usd\": 250.0,\n    \"cost_ratio_to_7d_avg\": 5.0,\n    \"resource_id\": \"arn:aws:sagemaker:us-east-1:123456789012:notebook-instance/tf2-training-notebook\",\n    \"environment\": \"dev\",\n    \"responsible_team\": \"ml-research\",\n    \"cost_center_code\": \"cc-102\"\n  },\n  \"dry_run_mode\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/decide",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "decide"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. POST Verify Containment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Verification next_action is returned\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.next_action).to.eql(\"DONE\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "{{tenantId}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correlation_id\": \"{{correlationId}}\",\n  \"idempotency_key\": \"8fdcb5d2-f673-4ea2-8090-cc78bf302d9a\",\n  \"dry_run_mode\": true,\n  \"action_executed\": {\n    \"action\": \"auto-shutdown\",\n    \"target\": \"arn:aws:sagemaker:us-east-1:123456789012:notebook-instance/tf2-training-notebook\",\n    \"status\": \"COMPLETED\",\n    \"execution_time_seconds\": 12\n  },\n  \"post_telemetry_window\": {\n    \"data_source_type\": \"RAW_JSON\",\n    \"telemetry_delay_event\": false,\n    \"aws_cur_line_items\": [\n      {\n        \"line_item_usage_start_date\": \"2026-06-25T12:00:00Z\",\n        \"line_item_usage_account_id\": \"123456789012\",\n        \"line_item_product_code\": \"AmazonSageMaker\",\n        \"line_item_usage_type\": \"ml.p3.2xlarge\",\n        \"line_item_resource_id\": \"arn:aws:sagemaker:us-east-1:123456789012:notebook-instance/tf2-training-notebook\",\n        \"line_item_usage_amount\": 0.0,\n        \"pricing_unit\": \"Hrs\",\n        \"line_item_unblended_cost\": 0.0,\n        \"usage_density_24h\": 0.0,\n        \"resource_tags_user_environment\": \"dev\"\n      }\n    ]\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/verify",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "verify"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. POST Rollback Notification",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Audit recorded successfully\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.audit_recorded).to.be.true;",
+              "    pm.expect(jsonData.false_positive_count_updated).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "{{tenantId}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"False positive override\",\n  \"rolled_back_by\": \"cdo-operator@company.com\",\n  \"rollback_executed_at\": \"2026-06-25T16:00:00Z\",\n  \"rollback_status\": \"SUCCESS\",\n  \"boto3_result\": {\n    \"status\": \"success\",\n    \"details\": \"Rollback executed locally via boto3\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/audit/{{anomalyId}}/rollback",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "audit",
+            "{{anomalyId}}",
+            "rollback"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8085",
+      "type": "string"
+    },
+    {
+      "key": "tenantId",
+      "value": "cdo-platform-01",
+      "type": "string"
+    },
+    {
+      "key": "correlationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "anomalyId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

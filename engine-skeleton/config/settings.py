@@ -70,8 +70,8 @@ class Settings(BaseSettings):
     never_delete_data: bool = Field(default=True, description="Hard boundary")
     never_modify_iam: bool = Field(default=True, description="Hard boundary")
     allowed_containment_envs: List[str] = Field(
-        default=["dev", "sandbox", "test"],
-        description="Environments where auto-containment is permitted",
+        default=["dev", "sandbox", "ml-research", "staging", "data-analytics"],
+        description="Environments where auto-containment is permitted (Contract §7)",
     )
 
     # --- Audit ---
@@ -81,13 +81,35 @@ class Settings(BaseSettings):
     max_tenants: int = Field(default=10, description="Max concurrent tenants")
 
     # --- Rate limiting ---
-    rate_limit_per_tenant_rpm: int = Field(default=60, description="Requests per minute per tenant")
+    rate_limit_per_tenant_rpm: int = Field(default=100, description="Requests per minute per tenant (Contract §3)")
     rate_limit_global_rpm: int = Field(default=300, description="Global requests per minute")
 
     # --- External services (placeholders for W12 real integration) ---
     bedrock_model_id: str = Field(
-        default="anthropic.claude-haiku-4-5-20251001",
-        description="Bedrock model ID for LLM-assisted analysis",
+        default="amazon.nova-pro-v1:0",
+        description="Bedrock model ID for LLM-assisted analysis (Contract: Nova Pro)",
+    )
+
+    # --- Contract v1.3.0 parameters ---
+    error_budget_lock_threshold_pct: float = Field(
+        default=1.0,
+        description="Rollback rate threshold for PROD (Contract §3.3 — CDO-P3)",
+    )
+    error_budget_lock_staging_pct: float = Field(
+        default=10.0,
+        description="Rollback rate threshold for STAGING (Contract §3.3 — CDO-P3)",
+    )
+    error_budget_lock_dev_pct: float = Field(
+        default=100.0,
+        description="Dev/Sandbox: never lock (Contract §3.3 — CDO-P3). 100% = effectively disabled.",
+    )
+    clock_skew_max_seconds: int = Field(
+        default=300,
+        description="Max allowed request clock skew (Contract §3.1 — 5 min for SigV4)",
+    )
+    data_timestamp_max_hours: int = Field(
+        default=36,
+        description="Max allowed CUR data age in hours (Contract §3.1 — CUR natural delay 8-24h)",
     )
     bedrock_region: str = Field(default="ap-southeast-1")
     aws_region: str = Field(default="ap-southeast-1")

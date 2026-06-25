@@ -1,209 +1,232 @@
 """
-API request / response schemas for POST /v1/finops/detect
-==========================================================
-These are the *contract* schemas — they define what CDO sends and what CDO receives.
-Internal domain models live separately in models/domain.py.
+API schemas for POST /v1/detect — Synchronous anomaly detection.
+=================================================================
+Contract ref: ai-api-contract.md v1.3.0 §5.1
 
-Schema is designed so that:
-  - Adding optional fields is non-breaking (curveball safe)
-  - Removing or renaming required fields is a breaking change (needs v2 path)
+CDO sends telemetry data (CUR primary + optional CE fallback + optional CloudWatch).
+AI Engine returns 200 OK with full DetectResponse (anomalies_list + data_confidence).
+
+Schema fields match 1:1 with telemetry-contract.md v3.1.0 §6, §7, §8.
 """
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date as date_type, datetime
 from typing import Dict, List, Optional
-from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from models.enums import AnomalyType, AlertRoute, SuggestedAction
-
 
 # ---------------------------------------------------------------------------
-# Request schemas
+# Request — Cost Explorer daily signal (telemetry-contract §6)
+# Conditional: only required when telemetry_delay_event = true
 # ---------------------------------------------------------------------------
 
-class CostWindowItem(BaseModel):
-    """Single cost data point within the analysis window.
-    Fields aligned with CUR 2.0 schema (tf2-data/cur_line_items.csv).
+class CostExplorerItem(BaseModel):
+    """Single CE record = 1 service × 1 day × 1 region.
+    Matches telemetry-contract v3.1.0 §6.1 JSON Schema exactly.
+    v1.2.0: Demoted from required to conditional (CDO-P5).
     """
-    # --- Required fields (CDO must always send) ---
-    account_id: str                                     # line_item_usage_account_id
-    service: str                                        # line_item_product_code (e.g. "AmazonEC2")
-    region: str = "us-east-1"                           # product_region_code
-    cost_usd: float = Field(ge=0.0)                     # line_item_unblended_cost
-    usage_type: str = ""                                # line_item_usage_type
-    tags: Dict[str, str] = Field(default_factory=dict)  # resource_tags_user_*
-    environment: str = "unknown"                        # resource_tags_user_environment
-    owner: Optional[str] = None                         # resource_tags_user_owner
-    cost_period_start: datetime                         # line_item_usage_start_date
-    cost_period_end: datetime                           # line_item_usage_end_date
-    idempotency_key: Optional[str] = None
-
-    # --- CUR 2.0 enrichment fields (optional, backward-compatible) ---
-    account_name: Optional[str] = None                  # line_item_usage_account_name
-    product_code: Optional[str] = None                  # line_item_product_code (canonical)
-    operation: Optional[str] = None                     # line_item_operation
-    resource_id: Optional[str] = None                   # line_item_resource_id (ARN)
-    instance_type: Optional[str] = None                 # product_instance_type
-    usage_amount: Optional[float] = None                # line_item_usage_amount
-    pricing_unit: Optional[str] = None                  # pricing_unit (Hrs, GB...)
-    unblended_rate: Optional[float] = None              # line_item_unblended_rate
-    is_estimated: bool = False                          # Cost Explorer is_estimated flag
-    cost_center: Optional[str] = None                   # resource_tags_user_cost_center
+    date: date_type = Field(description="Date of the cost record (YYYY-MM-DD)")
+    linked_account_id: str = Field(pattern=r"^[0-9]{12}$")
+    linked_account_name: Optional[str] = None
+    service_code: str = Field(description="CUR short code: AmazonEC2, AmazonRDS")
+    service: str = Field(description="CE display name: 'Amazon Elastic Compute Cloud - Compute'")
+    region: str = Field(description="e.g. us-east-1, ap-southeast-1")
+    unblended_cost: float = Field(ge=0.0, description="Daily cost in USD")
+    cost_ratio_to_7d_avg: float = Field(ge=0.0, description="unblended_cost / rolling_7d_avg")
+    day_of_week: int = Field(ge=0, le=6, description="0=Mon, 6=Sun")
+    is_weekend: bool
+    is_estimated: bool = Field(
+        default=False,
+        description="true for last 2 days (CUR not finalized). AI Engine lowers confidence.",
+    )
 
 
-class BaselineMetadata(BaseModel):
-    """Metadata describing the baseline comparison window."""
-    baseline_start: datetime
-    baseline_end: datetime
-    baseline_avg_daily_cost_usd: Optional[float] = None
-    baseline_total_cost_usd: Optional[float] = None
+# ---------------------------------------------------------------------------
+# Request — CUR line items signal (telemetry-contract §7)
+# Source of truth for detection — primary data source
+# ---------------------------------------------------------------------------
+
+class CURLineItem(BaseModel):
+    """Single CUR record = 1 resource × 1 day.
+    Source of truth for detection. Matches telemetry-contract v3.1.0 §7.1 JSON Schema.
+    """
+    bill_billing_period_start_date: Optional[datetime] = None
+    line_item_usage_start_date: datetime
+    line_item_usage_end_date: Optional[datetime] = None
+    line_item_usage_account_id: str = Field(pattern=r"^[0-9]{12}$")
+    line_item_usage_account_name: Optional[str] = None
+    line_item_product_code: Optional[str] = None
+    line_item_usage_type: str = Field(description="e.g. BoxUsage:p3.2xlarge")
+    line_item_operation: Optional[str] = None
+    line_item_resource_id: str = Field(description="ARN or instance ID")
+    line_item_usage_amount: float = Field(ge=0.0)
+    pricing_unit: str = Field(description="Hrs, GB, Requests")
+    line_item_unblended_rate: Optional[float] = Field(default=None, ge=0.0)
+    line_item_unblended_cost: float = Field(ge=0.0, description="Source of truth for detection")
+    usage_density_24h: float = Field(
+        ge=0.0, le=1.0,
+        description="Continuous run density. 1.0 = running 24/24.",
+    )
+    resource_tags_user_environment: str = Field(
+        description="prod | staging | dev | sandbox | ml-research | data-analytics",
+    )
+    resource_tags_user_team: Optional[str] = None
+    resource_tags_user_owner: Optional[str] = None
+    resource_tags_user_cost_center: Optional[str] = None
 
 
-class ContainmentPolicy(BaseModel):
-    """Optional caller-supplied containment preferences."""
-    allow_auto_containment: bool = False
-    allowed_environments: List[str] = Field(default_factory=lambda: ["dev", "sandbox"])
-    max_cost_impact_usd: Optional[float] = None
+# ---------------------------------------------------------------------------
+# Request — CloudWatch utilization metrics (telemetry-contract §8)
+# v3.1.0: CDO sends cpu_utilization_hourly raw, AI Engine computes idle_hours
+# ---------------------------------------------------------------------------
 
+class UtilizationMetric(BaseModel):
+    """CloudWatch metrics aggregated per resource per 24h.
+    Matches telemetry-contract v3.1.0 §8.1 JSON Schema.
+    v3.1.0 change: idle_hours_continuous removed — AI Engine computes from cpu_utilization_hourly.
+    """
+    resource_id: str = Field(description="Must match line_item_resource_id in CUR")
+    cpu_percent: float = Field(ge=0.0, le=100.0, description="CPUUtilization avg 24h")
+    cpu_utilization_hourly: List[float] = Field(
+        min_length=24, max_length=24,
+        description=(
+            "Array of 24 elements — CPU% average per hour UTC "
+            "(index 0 = 00:00, index 23 = 23:00). "
+            "AI Engine computes idle_hours_continuous from this array."
+        ),
+    )
+    memory_mib: Optional[float] = Field(default=None, ge=0.0)
+    network_in_bytes: float = Field(ge=0.0, description="NetworkIn total 24h")
+    network_out_bytes: float = Field(ge=0.0, description="NetworkOut total 24h")
+    disk_io_ops: Optional[float] = Field(default=None, ge=0.0)
+    database_connections: Optional[int] = Field(default=None, ge=0)
+    gpu_utilization: Optional[float] = Field(default=None, ge=0.0, le=100.0)
+
+
+# ---------------------------------------------------------------------------
+# Detect Request — v1.3.0
+# ---------------------------------------------------------------------------
 
 class DetectRequest(BaseModel):
+    """POST /v1/detect request body.
+    Contract ref: ai-api-contract.md v1.3.0 §5.1.
+    v1.2.0: aws_cost_explorer_daily demoted to conditional (CDO-P5).
+    v1.3.0: callback_url added, s3_bucket_uri pattern updated.
     """
-    POST /v1/finops/detect request body.
-    Aligned with TF2 AI API Contract + Telemetry Contract fields.
-    """
-    cost_window: List[CostWindowItem] = Field(
-        ...,
-        min_length=1,
-        description="Cost data points for the analysis window",
+    data_source_type: str = Field(
+        description="RAW_JSON or S3_POINTER",
+        pattern=r"^(RAW_JSON|S3_POINTER)$",
     )
-    baseline: Optional[BaselineMetadata] = Field(
+    is_ad_hoc: bool = Field(
+        default=False,
+        description="true = emergency scan, bypass idempotency",
+    )
+    telemetry_delay_event: bool = Field(
+        default=False,
+        description="true = CUR not finalized (delay > 36h), CE fallback mode",
+    )
+    callback_url: Optional[str] = Field(
         default=None,
-        description="Baseline window metadata for comparison",
+        pattern=r"^https://",
+        description=(
+            "[v1.3.0] Optional. If provided, AI Engine POSTs a copy of DetectResponse "
+            "to this URL after processing (fire-and-forget). CDO still receives sync response."
+        ),
     )
-    detection_cadence_hours: int = Field(
-        default=24,
-        ge=1,
-        le=168,
-        description="Detection cadence in hours (12/24/48)",
+    aws_cost_explorer_daily: Optional[List[CostExplorerItem]] = Field(
+        default=None,
+        description=(
+            "CE API data — conditional: required ONLY when telemetry_delay_event=true. "
+            "When CUR pipeline is ready, CDO does NOT need to pull CE API."
+        ),
     )
-    containment_policy: Optional[ContainmentPolicy] = None
-
-    model_config = {"json_schema_extra": {
-        "example": {
-            "cost_window": [
-                {
-                    "account_id": "200000000015",
-                    "service": "AmazonEC2",
-                    "region": "us-east-1",
-                    "cost_usd": 73.44,
-                    "usage_type": "BoxUsage:p3.2xlarge",
-                    "tags": {"team": "ml-research", "environment": "dev"},
-                    "environment": "dev",
-                    "owner": "ml-team@company.com",
-                    "cost_period_start": "2026-05-15T00:00:00Z",
-                    "cost_period_end": "2026-05-16T00:00:00Z",
-                    "account_name": "ml-research",
-                    "product_code": "AmazonEC2",
-                    "operation": "RunInstances",
-                    "resource_id": "i-gpu-training-forgotten-01",
-                    "instance_type": "p3.2xlarge",
-                    "usage_amount": 24.0,
-                    "pricing_unit": "Hrs",
-                    "unblended_rate": 3.06,
-                    "is_estimated": False,
-                    "cost_center": "CC-1005",
-                }
-            ],
-            "baseline": {
-                "baseline_start": "2026-03-01T00:00:00Z",
-                "baseline_end": "2026-04-30T00:00:00Z",
-                "baseline_avg_daily_cost_usd": 50.0,
-                "baseline_total_cost_usd": 3050.0,
-            },
-            "detection_cadence_hours": 24,
-        }
-    }}
+    aws_cur_line_items: Optional[List[CURLineItem]] = Field(
+        default=None,
+        description="CUR resource-level data — required when RAW_JSON and telemetry_delay_event=false",
+    )
+    s3_bucket_uri: Optional[str] = Field(
+        default=None,
+        pattern=r"^s3://tf2-cdo[0-9]{2}-telemetry-[a-z0-9\-]+/.+\.json\.gz$",
+        description=(
+            "[v1.3.0] S3 URI for compressed CUR — required when S3_POINTER. "
+            "Pattern enforces naming convention: tf2-cdo{NN}-telemetry-{region}"
+        ),
+    )
+    resource_utilization_metrics: Optional[List[UtilizationMetric]] = Field(
+        default=None,
+        description="CloudWatch metrics — optional, improves confidence. v3.1.0: includes cpu_utilization_hourly",
+    )
 
 
 # ---------------------------------------------------------------------------
-# Response schemas
+# Anomaly item in response (ai-api-contract §5.1 Response)
 # ---------------------------------------------------------------------------
 
-class ContainmentDetail(BaseModel):
-    """Details about the containment decision."""
-    action: SuggestedAction
-    target_resource: Optional[str] = None
-    target_environment: str = "unknown"
-    dry_run_required: bool = True
-    dry_run_passed: Optional[bool] = None
-    rollback_path: Optional[str] = None
+class AlertRouting(BaseModel):
+    """Alert routing flags per anomaly."""
+    finance: bool
+    engineering: bool
 
+
+class AnomalyResponseItem(BaseModel):
+    """Single anomaly in DetectResponse.anomalies_list.
+    Contract ref: ai-api-contract.md v1.3.0 §5.1 Response Schema.
+    """
+    anomaly_id: str = Field(description="Format: ANM-YYYY-MMDD[A-Z]", pattern=r"^ANM-[0-9]{4}-[0-9]{4}[A-Z]$")
+    anomaly_type: str = Field(description="runaway_usage | idle_resource | untagged_spend | sudden_spike | gradual_drift")
+    severity: str = Field(description="HIGH | MEDIUM | LOW")
+    confidence_score: float = Field(ge=0.0, le=1.0)
+    resource_id: str
+    environment: str
+    responsible_team: Optional[str] = None
+    unblended_cost_24h_usd: float = Field(ge=0.0)
+    cost_ratio_to_7d_avg: float = Field(ge=0.0)
+    ai_model_used: str
+    alert_routing: AlertRouting
+
+
+# ---------------------------------------------------------------------------
+# Detect Response — 200 OK (synchronous, v1.3.0)
+# ---------------------------------------------------------------------------
 
 class DetectResponse(BaseModel):
+    """POST /v1/detect response body (200 OK — synchronous).
+    Contract ref: ai-api-contract.md v1.3.0 §5.1 Response.
+    v1.2.0 change: switched from 202 async to 200 sync with full anomalies_list.
     """
-    POST /v1/finops/detect response body.
-    Aligned with TF2 operating flow §6 response spec.
-    """
-    anomaly: bool
-    anomaly_type: AnomalyType = AnomalyType.OTHER
-    severity: float = Field(ge=0.0, le=1.0)
-    confidence: float = Field(ge=0.0, le=1.0)
-    reasoning: str = Field(max_length=300)
-    finance_summary: str = Field(
-        description="Finance-friendly explanation (no technical jargon)",
+    success: bool
+    correlation_id: str = Field(description="UUID v4 — trace ID for detect → decide → verify chain")
+    anomalies_detected: bool = Field(description="true if cost anomalies were found")
+    data_confidence: str = Field(
+        description="HIGH (CUR complete) or LOW (CE fallback / telemetry_delay_event=true)",
+        pattern=r"^(HIGH|LOW)$",
     )
-    engineering_summary: str = Field(
-        description="Engineering-focused details (service, owner, action)",
+    anomalies_list: List[AnomalyResponseItem] = Field(
+        description="List of detected anomalies. Empty array if anomalies_detected=false",
     )
-    alert_route: AlertRoute
-    suggested_action: SuggestedAction
-    containment: Optional[ContainmentDetail] = None
-    dry_run_required: bool = True
-    audit_id: UUID
-    detected_at: datetime
-    affected_resource_id: Optional[str] = Field(
+    error_message: Optional[str] = Field(
         default=None,
-        description="Resource ID/ARN that triggered the anomaly (for CDO drill-down)",
+        description="Error detail when success=false",
     )
 
-    model_config = {"json_schema_extra": {
-        "example": {
-            "anomaly": True,
-            "anomaly_type": "runaway_usage",
-            "severity": 0.85,
-            "confidence": 0.78,
-            "reasoning": "EC2 p3.2xlarge in dev account 200000000015 (ml-research) running 24/7, cost $73.44/day vs baseline $50/day — 147% spike.",
-            "finance_summary": "Dev GPU compute overspend: $23.44/day above expected in ml-research account. Recommend immediate review.",
-            "engineering_summary": "Account: 200000000015 (ml-research) | Service: AmazonEC2 | Resource: i-gpu-training-forgotten-01 | Type: p3.2xlarge | Delta: +$23.44/day",
-            "alert_route": "both",
-            "suggested_action": "schedule_shutdown",
-            "containment": {
-                "action": "schedule_shutdown",
-                "target_resource": "i-gpu-training-forgotten-01",
-                "target_environment": "dev",
-                "dry_run_required": True,
-                "dry_run_passed": None,
-                "rollback_path": "Re-launch resource via AWS Console or IaC re-apply",
-            },
-            "dry_run_required": True,
-            "audit_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-            "detected_at": "2026-06-23T10:30:00Z",
-            "affected_resource_id": "i-gpu-training-forgotten-01",
-        }
-    }}
-
 
 # ---------------------------------------------------------------------------
-# Health check
+# Health check — v1.3.0 (ai-api-contract §5.4)
 # ---------------------------------------------------------------------------
+
+class HealthServices(BaseModel):
+    """Dependency status for health check.
+    Contract ref: ai-api-contract.md v1.3.0 §5.4.
+    """
+    s3_audit_bucket: str = "connected"
+    bedrock_api: str = "accessible"
+    s3_cur_bucket: str = "reachable"
+
 
 class HealthResponse(BaseModel):
-    """GET /health response."""
+    """GET /health response. Contract ref: ai-api-contract.md v1.3.0 §5.4."""
     status: str = "healthy"
-    version: str
-    environment: str
-    engine_mode: str = "skeleton"
-    checks: Dict[str, str] = Field(default_factory=dict)
+    timestamp: datetime
+    services: HealthServices = Field(default_factory=HealthServices)

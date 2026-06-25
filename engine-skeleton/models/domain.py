@@ -1,17 +1,26 @@
 """
 Domain models (internal representation, not API schema).
 These are the core data structures the engine reasons about.
+
+Updated for Contract v1.1 — added JobRecord for async detection tracking.
 """
 
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from models.enums import AnomalyType, AlertRoute, SuggestedAction, ContainmentStatus, Environment
+from models.enums import (
+    AnomalyType,
+    AlertRoute,
+    ContainmentStatus,
+    DetectionStatus,
+    Environment,
+    SuggestedAction,
+)
 
 
 class CostRecord(BaseModel):
@@ -69,3 +78,26 @@ class AuditEntry(BaseModel):
     actor: str = "ai-engine"
     before_state: Optional[Dict] = None
     after_state: Optional[Dict] = None
+
+
+# ---------------------------------------------------------------------------
+# Async job tracking (Contract v1.1)
+# ---------------------------------------------------------------------------
+
+class JobRecord(BaseModel):
+    """
+    Tracks an async detection job from POST /v1/detect → GET /v1/status/{id}.
+
+    Skeleton: stored in-memory dict.
+    W12: swap to DynamoDB (pk=tenant_id, sk=correlation_id).
+    """
+    correlation_id: str
+    tenant_id: str
+    status: DetectionStatus = DetectionStatus.PROCESSING
+    created_at: datetime
+    completed_at: Optional[datetime] = None
+    # Detection results (populated when COMPLETED)
+    anomalies_detected: bool = False
+    anomalies_list: List[Dict[str, Any]] = Field(default_factory=list)
+    # Error info (populated when FAILED)
+    error_message: Optional[str] = None
