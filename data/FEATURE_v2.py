@@ -252,12 +252,8 @@ def transform_features(df_input, stats):
         fallback = float(global_med.get(col, 0))
         if col in res_med.columns:
             per_res = res_med[col]
-            df[col] = df.apply(
-                lambda r, c=col, pr=per_res, fb=fallback: (
-                    pr.get(r['line_item_resource_id'], fb) if pd.isna(r[c]) else r[c]
-                ),
-                axis=1,
-            )
+            mapped_val = df['line_item_resource_id'].map(per_res).fillna(fallback)
+            df[col] = df[col].fillna(mapped_val)
         else:
             df[col] = df[col].fillna(fallback)
 

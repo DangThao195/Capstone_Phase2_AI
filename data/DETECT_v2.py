@@ -219,4 +219,22 @@ if __name__ == '__main__':
     best_threshold, threshold_df  = optimize_threshold(cv_val_results)
     test_pred, test_prob, eval_df = evaluate_model(model, X_test, y_test, best_threshold)
 
-    print('\nDetection pipeline v2 complete.')
+    # Save serving assets for API engine integration
+    import os
+    import pickle
+    serving_dir = os.path.join(DATA_DIR, "serving_models")
+    os.makedirs(serving_dir, exist_ok=True)
+
+    model.save_model(os.path.join(serving_dir, "xgboost_anomaly_detector.json"))
+    
+    with open(os.path.join(serving_dir, "optimal_threshold.txt"), "w") as f:
+        f.write(str(best_threshold))
+        
+    with open(os.path.join(serving_dir, "features_list.txt"), "w") as f:
+        f.write(",".join(features))
+        
+    with open(os.path.join(serving_dir, "train_stats.pkl"), "wb") as f:
+        pickle.dump(train_stats, f)
+
+    print(f'\nDetection pipeline v2 complete. Serving assets saved to {serving_dir}')
+

@@ -1,1 +1,1 @@
-cost_z_28d,cost_change_14d,age_days,cost_per_usage,usage_density,is_weekend,team_missing,owner_missing,peer_ratio
+line_item_unblended_cost,rolling_7d_avg,rolling_7d_std,cost_ratio_to_7d_avg,cost_diff,robust_z,is_weekend,cost_per_unit_usage,cpu_mean,cpu_std,cpu_min,cpu_variance_24h,memory_mib,network_in_bytes,network_out_bytes,disk_io_ops,peer_ratio,absolute_cost_spike,ddb_flag
