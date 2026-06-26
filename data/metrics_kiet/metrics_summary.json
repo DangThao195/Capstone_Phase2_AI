@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-06-25T11:29:57.438514+00:00",
+  "schema_versions": {
+    "ai_api_contract": "v1.4.0",
+    "telemetry_contract": "v3.2.0",
+    "deployment_contract": "v1.3.0"
+  },
+  "dataset": {
+    "cur_line_items": 24533,
+    "ce_daily_rows": 2770,
+    "date_range": [
+      "2026-03-01",
+      "2026-05-31"
+    ],
+    "accounts": 6,
+    "resources": 276
+  },
+  "generated_files": [
+    "daily_cost_with_traffic.csv",
+    "feature_store_daily.csv",
+    "aws_cost_explorer_daily_30d.csv",
+    "sample_detect_request_2026-05-31_prod-core.json",
+    "metrics_summary.json"
+  ],
+  "feature_engineering": {
+    "cost_per_request_formula": "daily_cost / max(traffic_volume, 1)",
+    "usage_density_24h_formula": "line_item_usage_amount / 24 (when pricing_unit=Hrs)",
+    "traffic_source": "Synthetic (correlated with CE daily cost)"
+  }
+}

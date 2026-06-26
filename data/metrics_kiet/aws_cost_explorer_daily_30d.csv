@@ -1,0 +1,904 @@
+date,linked_account_id,linked_account_name,service,service_code,region,unblended_cost,is_estimated
+2026-05-02,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,468.26,False
+2026-05-02,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,27.49,False
+2026-05-02,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,312.07,False
+2026-05-02,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,505.05,False
+2026-05-02,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,19.77,False
+2026-05-02,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,74.85,False
+2026-05-02,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,263.21,False
+2026-05-02,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,448.13,False
+2026-05-02,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,14.78,False
+2026-05-02,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,215.43,False
+2026-05-02,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,361.53,False
+2026-05-02,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,469.37,False
+2026-05-02,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,26.9,False
+2026-05-02,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,226.11,False
+2026-05-02,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.28,False
+2026-05-02,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,117.28,False
+2026-05-02,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,53.26,False
+2026-05-02,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,12.28,False
+2026-05-02,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,79.76,False
+2026-05-02,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,131.02,False
+2026-05-02,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,251.1,False
+2026-05-02,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,74.76,False
+2026-05-02,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,54.54,False
+2026-05-02,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,70.29,False
+2026-05-02,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,541.23,False
+2026-05-02,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,96.36,False
+2026-05-02,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,116.15,False
+2026-05-02,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,520.7,False
+2026-05-02,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,91.05,False
+2026-05-02,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,187.16,False
+2026-05-02,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,36.97,False
+2026-05-03,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,484.53,False
+2026-05-03,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,27.87,False
+2026-05-03,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,312.88,False
+2026-05-03,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,503.44,False
+2026-05-03,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,19.66,False
+2026-05-03,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,76.86,False
+2026-05-03,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,264.56,False
+2026-05-03,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,425.27,False
+2026-05-03,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,15.13,False
+2026-05-03,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,203.06,False
+2026-05-03,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,354.79,False
+2026-05-03,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,479.82,False
+2026-05-03,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,26.96,False
+2026-05-03,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,236.79,False
+2026-05-03,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.3,False
+2026-05-03,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,115.77,False
+2026-05-03,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,53.2,False
+2026-05-03,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,12.74,False
+2026-05-03,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,78.5,False
+2026-05-03,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,131.73,False
+2026-05-03,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,260.74,False
+2026-05-03,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,75.04,False
+2026-05-03,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,54.56,False
+2026-05-03,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,73.82,False
+2026-05-03,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,559.62,False
+2026-05-03,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,96.35,False
+2026-05-03,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,115.82,False
+2026-05-03,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,522.26,False
+2026-05-03,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,91.74,False
+2026-05-03,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,176.64,False
+2026-05-03,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,36.64,False
+2026-05-04,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,582.41,False
+2026-05-04,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.36,False
+2026-05-04,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,380.08,False
+2026-05-04,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,609.3,False
+2026-05-04,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.44,False
+2026-05-04,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,91.85,False
+2026-05-04,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,313.89,False
+2026-05-04,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,547.88,False
+2026-05-04,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.05,False
+2026-05-04,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,262.79,False
+2026-05-04,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,416.34,False
+2026-05-04,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,540.62,False
+2026-05-04,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,32.5,False
+2026-05-04,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,275.06,False
+2026-05-04,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.0,False
+2026-05-04,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,142.2,False
+2026-05-04,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,127.07,False
+2026-05-04,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.8,False
+2026-05-04,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,89.04,False
+2026-05-04,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,157.01,False
+2026-05-04,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,269.24,False
+2026-05-04,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,166.79,False
+2026-05-04,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,65.66,False
+2026-05-04,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,90.95,False
+2026-05-04,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,588.85,False
+2026-05-04,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,116.37,False
+2026-05-04,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,142.56,False
+2026-05-04,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,630.82,False
+2026-05-04,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,218.34,False
+2026-05-04,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,221.24,False
+2026-05-04,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,44.03,False
+2026-05-05,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,552.85,False
+2026-05-05,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,31.82,False
+2026-05-05,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,358.44,False
+2026-05-05,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,589.09,False
+2026-05-05,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.76,False
+2026-05-05,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,87.3,False
+2026-05-05,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,302.36,False
+2026-05-05,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,499.53,False
+2026-05-05,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.55,False
+2026-05-05,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,238.49,False
+2026-05-05,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,407.81,False
+2026-05-05,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,523.3,False
+2026-05-05,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,31.3,False
+2026-05-05,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,266.92,False
+2026-05-05,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.84,False
+2026-05-05,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,135.55,False
+2026-05-05,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,123.99,False
+2026-05-05,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.63,False
+2026-05-05,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,87.56,False
+2026-05-05,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,152.14,False
+2026-05-05,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,161.38,False
+2026-05-05,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,63.31,False
+2026-05-05,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,82.94,False
+2026-05-05,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,585.46,False
+2026-05-05,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,111.38,False
+2026-05-05,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,136.05,False
+2026-05-05,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,595.03,False
+2026-05-05,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,212.1,False
+2026-05-05,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,212.72,False
+2026-05-05,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,42.46,False
+2026-05-06,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,564.4,False
+2026-05-06,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.4,False
+2026-05-06,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,369.61,False
+2026-05-06,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,617.59,False
+2026-05-06,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.27,False
+2026-05-06,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,92.87,False
+2026-05-06,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,316.23,False
+2026-05-06,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,541.27,False
+2026-05-06,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.56,False
+2026-05-06,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,247.49,False
+2026-05-06,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,419.14,False
+2026-05-06,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,549.01,False
+2026-05-06,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,32.7,False
+2026-05-06,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,279.84,False
+2026-05-06,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.0,False
+2026-05-06,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,134.28,False
+2026-05-06,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,619.56,False
+2026-05-06,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.59,False
+2026-05-06,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,92.92,False
+2026-05-06,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,167.88,False
+2026-05-06,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,168.9,False
+2026-05-06,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,66.87,False
+2026-05-06,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,88.5,False
+2026-05-06,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,606.02,False
+2026-05-06,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,117.99,False
+2026-05-06,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,140.3,False
+2026-05-06,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,648.0,False
+2026-05-06,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,220.56,False
+2026-05-06,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,219.05,False
+2026-05-06,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,45.28,False
+2026-05-07,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,531.24,False
+2026-05-07,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,31.45,False
+2026-05-07,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,356.79,False
+2026-05-07,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,576.31,False
+2026-05-07,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.19,False
+2026-05-07,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,85.13,False
+2026-05-07,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,298.6,False
+2026-05-07,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,516.5,False
+2026-05-07,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.84,False
+2026-05-07,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,243.0,False
+2026-05-07,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,416.09,False
+2026-05-07,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,525.48,False
+2026-05-07,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.85,False
+2026-05-07,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,265.5,False
+2026-05-07,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.74,False
+2026-05-07,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,125.19,False
+2026-05-07,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,605.37,False
+2026-05-07,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.83,False
+2026-05-07,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,83.82,False
+2026-05-07,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,155.7,False
+2026-05-07,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,157.86,False
+2026-05-07,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,62.62,False
+2026-05-07,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,84.27,False
+2026-05-07,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,577.02,False
+2026-05-07,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,109.92,False
+2026-05-07,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,131.03,False
+2026-05-07,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,607.98,False
+2026-05-07,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,207.15,False
+2026-05-07,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,216.05,False
+2026-05-07,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,41.52,False
+2026-05-08,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,535.94,False
+2026-05-08,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,31.09,False
+2026-05-08,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,352.96,False
+2026-05-08,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,574.2,False
+2026-05-08,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.99,False
+2026-05-08,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,85.62,False
+2026-05-08,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,300.35,False
+2026-05-08,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,496.55,False
+2026-05-08,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.94,False
+2026-05-08,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,237.23,False
+2026-05-08,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,413.48,False
+2026-05-08,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,517.44,False
+2026-05-08,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.43,False
+2026-05-08,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,259.58,False
+2026-05-08,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.72,False
+2026-05-08,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,133.16,False
+2026-05-08,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,119.6,False
+2026-05-08,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.81,False
+2026-05-08,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,86.21,False
+2026-05-08,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,152.38,False
+2026-05-08,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,157.05,False
+2026-05-08,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,61.28,False
+2026-05-08,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,79.48,False
+2026-05-08,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,585.37,False
+2026-05-08,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,108.57,False
+2026-05-08,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,129.35,False
+2026-05-08,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,571.79,False
+2026-05-08,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,205.27,False
+2026-05-08,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,205.98,False
+2026-05-08,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,42.39,False
+2026-05-09,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,407.89,False
+2026-05-09,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,23.58,False
+2026-05-09,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,263.88,False
+2026-05-09,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,427.41,False
+2026-05-09,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,16.53,False
+2026-05-09,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,62.99,False
+2026-05-09,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,220.94,False
+2026-05-09,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,373.01,False
+2026-05-09,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,12.56,False
+2026-05-09,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,183.08,False
+2026-05-09,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,302.95,False
+2026-05-09,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,415.66,False
+2026-05-09,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,22.73,False
+2026-05-09,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,193.49,False
+2026-05-09,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,2.76,False
+2026-05-09,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,92.41,False
+2026-05-09,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,44.3,False
+2026-05-09,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,10.3,False
+2026-05-09,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,71.37,False
+2026-05-09,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,108.3,False
+2026-05-09,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,64.14,False
+2026-05-09,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,45.99,False
+2026-05-09,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,60.76,False
+2026-05-09,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,500.97,False
+2026-05-09,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,80.88,False
+2026-05-09,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,97.46,False
+2026-05-09,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,457.86,False
+2026-05-09,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,75.76,False
+2026-05-09,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,155.98,False
+2026-05-09,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,30.96,False
+2026-05-10,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,494.94,False
+2026-05-10,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,29.16,False
+2026-05-10,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,315.02,False
+2026-05-10,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,530.82,False
+2026-05-10,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,20.37,False
+2026-05-10,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,77.91,False
+2026-05-10,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,274.75,False
+2026-05-10,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,452.78,False
+2026-05-10,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,15.48,False
+2026-05-10,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,220.72,False
+2026-05-10,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,368.06,False
+2026-05-10,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,496.11,False
+2026-05-10,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.31,False
+2026-05-10,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,240.23,False
+2026-05-10,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.44,False
+2026-05-10,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,121.04,False
+2026-05-10,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,55.7,False
+2026-05-10,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.21,False
+2026-05-10,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,82.81,False
+2026-05-10,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,135.9,False
+2026-05-10,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,78.26,False
+2026-05-10,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,57.18,False
+2026-05-10,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,78.34,False
+2026-05-10,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,568.95,False
+2026-05-10,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,102.31,False
+2026-05-10,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,121.9,False
+2026-05-10,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,540.26,False
+2026-05-10,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,95.45,False
+2026-05-10,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,196.0,False
+2026-05-10,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,38.43,False
+2026-05-11,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,580.95,False
+2026-05-11,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.86,False
+2026-05-11,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,385.43,False
+2026-05-11,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,632.42,False
+2026-05-11,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.61,False
+2026-05-11,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,95.39,False
+2026-05-11,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,331.32,False
+2026-05-11,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,548.43,False
+2026-05-11,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.01,False
+2026-05-11,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,251.84,False
+2026-05-11,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,442.96,False
+2026-05-11,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,559.47,False
+2026-05-11,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.84,False
+2026-05-11,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,285.59,False
+2026-05-11,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.12,False
+2026-05-11,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,141.91,False
+2026-05-11,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,135.54,False
+2026-05-11,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.39,False
+2026-05-11,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,91.42,False
+2026-05-11,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,165.86,False
+2026-05-11,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,172.49,False
+2026-05-11,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,67.99,False
+2026-05-11,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,87.61,False
+2026-05-11,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,609.12,False
+2026-05-11,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,119.72,False
+2026-05-11,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,145.88,False
+2026-05-11,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,660.66,False
+2026-05-11,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,225.58,False
+2026-05-11,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,222.88,False
+2026-05-11,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,45.92,False
+2026-05-12,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,1074.72,False
+2026-05-12,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,32.5,False
+2026-05-12,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,372.96,False
+2026-05-12,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,576.9,False
+2026-05-12,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.55,False
+2026-05-12,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,85.45,False
+2026-05-12,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,305.08,False
+2026-05-12,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,512.18,False
+2026-05-12,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.49,False
+2026-05-12,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,237.02,False
+2026-05-12,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,419.6,False
+2026-05-12,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,521.28,False
+2026-05-12,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,31.09,False
+2026-05-12,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,266.71,False
+2026-05-12,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.81,False
+2026-05-12,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,126.2,False
+2026-05-12,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,121.28,False
+2026-05-12,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.18,False
+2026-05-12,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,86.87,False
+2026-05-12,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,147.64,False
+2026-05-12,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,160.62,False
+2026-05-12,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,64.49,False
+2026-05-12,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,80.14,False
+2026-05-12,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,582.29,False
+2026-05-12,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,111.97,False
+2026-05-12,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,132.61,False
+2026-05-12,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,594.84,False
+2026-05-12,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,207.89,False
+2026-05-12,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,207.22,False
+2026-05-12,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,42.55,False
+2026-05-13,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,1101.87,False
+2026-05-13,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,33.09,False
+2026-05-13,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,351.56,False
+2026-05-13,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,591.53,False
+2026-05-13,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.88,False
+2026-05-13,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,88.0,False
+2026-05-13,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,305.18,False
+2026-05-13,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,515.62,False
+2026-05-13,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.19,False
+2026-05-13,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,241.61,False
+2026-05-13,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,421.89,False
+2026-05-13,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,526.47,False
+2026-05-13,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,31.81,False
+2026-05-13,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,265.41,False
+2026-05-13,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.87,False
+2026-05-13,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,134.45,False
+2026-05-13,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,123.46,False
+2026-05-13,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.23,False
+2026-05-13,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,88.5,False
+2026-05-13,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,156.06,False
+2026-05-13,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,163.7,False
+2026-05-13,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,63.83,False
+2026-05-13,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,86.48,False
+2026-05-13,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,594.42,False
+2026-05-13,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,112.38,False
+2026-05-13,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,135.13,False
+2026-05-13,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,635.61,False
+2026-05-13,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,213.39,False
+2026-05-13,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,222.35,False
+2026-05-13,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.65,False
+2026-05-14,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,1074.56,False
+2026-05-14,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,32.1,False
+2026-05-14,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,367.52,False
+2026-05-14,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,583.93,False
+2026-05-14,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.37,False
+2026-05-14,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,87.83,False
+2026-05-14,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,309.73,False
+2026-05-14,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,517.71,False
+2026-05-14,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.44,False
+2026-05-14,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,252.61,False
+2026-05-14,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,415.27,False
+2026-05-14,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,529.74,False
+2026-05-14,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,31.38,False
+2026-05-14,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,273.73,False
+2026-05-14,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.87,False
+2026-05-14,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,136.4,False
+2026-05-14,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,123.12,False
+2026-05-14,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.0,False
+2026-05-14,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,88.44,False
+2026-05-14,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,160.48,False
+2026-05-14,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,160.84,False
+2026-05-14,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,63.14,False
+2026-05-14,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,84.88,False
+2026-05-14,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,586.37,False
+2026-05-14,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,112.86,False
+2026-05-14,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,132.8,False
+2026-05-14,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,608.46,False
+2026-05-14,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,211.28,False
+2026-05-14,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,207.84,False
+2026-05-14,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.09,False
+2026-05-15,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,1065.7,False
+2026-05-15,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.79,False
+2026-05-15,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,398.57,False
+2026-05-15,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,624.06,False
+2026-05-15,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.83,False
+2026-05-15,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,92.98,False
+2026-05-15,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,324.85,False
+2026-05-15,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,527.68,False
+2026-05-15,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.54,False
+2026-05-15,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,264.58,False
+2026-05-15,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,458.14,False
+2026-05-15,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,552.45,False
+2026-05-15,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.45,False
+2026-05-15,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,283.39,False
+2026-05-15,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.1,False
+2026-05-15,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,146.09,False
+2026-05-15,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,131.89,False
+2026-05-15,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.26,False
+2026-05-15,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,91.29,False
+2026-05-15,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,165.38,False
+2026-05-15,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,171.61,False
+2026-05-15,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,68.47,False
+2026-05-15,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,92.42,False
+2026-05-15,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,590.0,False
+2026-05-15,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,119.09,False
+2026-05-15,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,145.26,False
+2026-05-15,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,632.1,False
+2026-05-15,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,226.22,False
+2026-05-15,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,219.91,False
+2026-05-15,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,45.89,False
+2026-05-16,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,1042.97,False
+2026-05-16,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,29.53,False
+2026-05-16,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,338.73,False
+2026-05-16,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,536.05,False
+2026-05-16,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.15,False
+2026-05-16,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,80.24,False
+2026-05-16,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,276.75,False
+2026-05-16,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,471.47,False
+2026-05-16,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.11,False
+2026-05-16,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,215.11,False
+2026-05-16,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,384.21,False
+2026-05-16,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,503.26,False
+2026-05-16,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.62,False
+2026-05-16,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,241.18,False
+2026-05-16,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.5,False
+2026-05-16,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,120.16,False
+2026-05-16,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,55.52,False
+2026-05-16,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,12.78,False
+2026-05-16,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,84.18,False
+2026-05-16,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,138.31,False
+2026-05-16,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,78.3,False
+2026-05-16,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,57.35,False
+2026-05-16,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,78.58,False
+2026-05-16,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,606.14,False
+2026-05-16,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,101.55,False
+2026-05-16,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,122.92,False
+2026-05-16,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,540.12,False
+2026-05-16,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,97.12,False
+2026-05-16,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,199.1,False
+2026-05-16,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,38.96,False
+2026-05-17,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,498.97,False
+2026-05-17,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,29.13,False
+2026-05-17,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,336.88,False
+2026-05-17,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,525.97,False
+2026-05-17,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,20.39,False
+2026-05-17,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,78.29,False
+2026-05-17,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,274.6,False
+2026-05-17,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,440.63,False
+2026-05-17,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,15.6,False
+2026-05-17,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,219.75,False
+2026-05-17,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,364.36,False
+2026-05-17,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,496.08,False
+2026-05-17,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.12,False
+2026-05-17,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,242.26,False
+2026-05-17,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.44,False
+2026-05-17,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,121.92,False
+2026-05-17,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,55.67,False
+2026-05-17,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.01,False
+2026-05-17,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,82.42,False
+2026-05-17,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,139.96,False
+2026-05-17,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,77.33,False
+2026-05-17,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,56.91,False
+2026-05-17,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,72.65,False
+2026-05-17,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,606.72,False
+2026-05-17,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,99.92,False
+2026-05-17,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,121.93,False
+2026-05-17,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,550.09,False
+2026-05-17,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,95.23,False
+2026-05-17,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,185.98,False
+2026-05-17,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,38.65,False
+2026-05-18,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,608.38,False
+2026-05-18,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.65,False
+2026-05-18,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,379.17,False
+2026-05-18,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,619.97,False
+2026-05-18,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.37,False
+2026-05-18,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,91.95,False
+2026-05-18,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,331.21,False
+2026-05-18,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,541.28,False
+2026-05-18,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.44,False
+2026-05-18,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,259.36,False
+2026-05-18,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,432.45,False
+2026-05-18,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,556.44,False
+2026-05-18,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.49,False
+2026-05-18,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,285.81,False
+2026-05-18,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.09,False
+2026-05-18,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,136.34,False
+2026-05-18,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,132.04,False
+2026-05-18,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.21,False
+2026-05-18,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,90.34,False
+2026-05-18,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,163.34,False
+2026-05-18,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,171.3,False
+2026-05-18,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,68.35,False
+2026-05-18,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,92.9,False
+2026-05-18,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,640.91,False
+2026-05-18,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,119.38,False
+2026-05-18,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,145.57,False
+2026-05-18,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,646.09,False
+2026-05-18,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,225.75,False
+2026-05-18,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,234.82,False
+2026-05-18,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,44.87,False
+2026-05-19,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,595.9,False
+2026-05-19,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,35.07,False
+2026-05-19,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,395.95,False
+2026-05-19,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,628.33,False
+2026-05-19,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.96,False
+2026-05-19,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,95.15,False
+2026-05-19,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,324.65,False
+2026-05-19,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,542.97,False
+2026-05-19,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.98,False
+2026-05-19,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,269.32,False
+2026-05-19,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,438.68,False
+2026-05-19,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,559.29,False
+2026-05-19,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.74,False
+2026-05-19,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,294.04,False
+2026-05-19,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.1,False
+2026-05-19,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,143.81,False
+2026-05-19,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,132.83,False
+2026-05-19,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.94,False
+2026-05-19,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,90.52,False
+2026-05-19,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,167.04,False
+2026-05-19,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,173.79,False
+2026-05-19,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,67.68,False
+2026-05-19,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,91.58,False
+2026-05-19,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,651.75,False
+2026-05-19,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,120.76,False
+2026-05-19,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,142.93,False
+2026-05-19,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,675.68,False
+2026-05-19,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,226.54,False
+2026-05-19,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,229.02,False
+2026-05-19,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,45.82,False
+2026-05-20,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,558.69,False
+2026-05-20,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.16,False
+2026-05-20,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,378.88,False
+2026-05-20,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,617.64,False
+2026-05-20,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.08,False
+2026-05-20,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,91.11,False
+2026-05-20,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,322.78,False
+2026-05-20,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,531.88,False
+2026-05-20,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.25,False
+2026-05-20,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,249.86,False
+2026-05-20,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,422.09,False
+2026-05-20,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,543.06,False
+2026-05-20,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.13,False
+2026-05-20,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,276.67,False
+2026-05-20,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.03,False
+2026-05-20,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,139.7,False
+2026-05-20,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,129.6,False
+2026-05-20,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.09,False
+2026-05-20,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,88.88,False
+2026-05-20,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,156.09,False
+2026-05-20,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,170.25,False
+2026-05-20,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,65.92,False
+2026-05-20,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,90.94,False
+2026-05-20,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,653.97,False
+2026-05-20,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,118.96,False
+2026-05-20,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,140.81,False
+2026-05-20,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,627.26,False
+2026-05-20,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,222.34,False
+2026-05-20,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,230.65,False
+2026-05-20,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,44.99,False
+2026-05-21,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,538.97,False
+2026-05-21,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,31.96,False
+2026-05-21,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,351.62,False
+2026-05-21,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,576.52,False
+2026-05-21,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.16,False
+2026-05-21,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,84.33,False
+2026-05-21,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,292.48,False
+2026-05-21,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,514.0,False
+2026-05-21,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.15,False
+2026-05-21,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,232.74,False
+2026-05-21,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,415.95,False
+2026-05-21,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,517.99,False
+2026-05-21,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.53,False
+2026-05-21,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,265.17,False
+2026-05-21,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.73,False
+2026-05-21,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,128.23,False
+2026-05-21,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,120.94,False
+2026-05-21,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.18,False
+2026-05-21,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,86.17,False
+2026-05-21,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,152.17,False
+2026-05-21,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,157.1,False
+2026-05-21,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,61.02,False
+2026-05-21,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,78.95,False
+2026-05-21,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,609.41,False
+2026-05-21,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,109.07,False
+2026-05-21,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,129.91,False
+2026-05-21,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,609.02,False
+2026-05-21,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,207.2,False
+2026-05-21,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,201.37,False
+2026-05-21,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,41.74,False
+2026-05-22,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,535.39,False
+2026-05-22,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,31.14,False
+2026-05-22,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,339.63,False
+2026-05-22,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,567.02,False
+2026-05-22,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.36,False
+2026-05-22,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,83.2,False
+2026-05-22,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,297.88,False
+2026-05-22,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,511.2,False
+2026-05-22,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.73,False
+2026-05-22,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,230.59,False
+2026-05-22,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,396.91,False
+2026-05-22,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,526.81,False
+2026-05-22,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.22,False
+2026-05-22,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,262.85,False
+2026-05-22,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.69,False
+2026-05-22,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,127.28,False
+2026-05-22,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,119.61,False
+2026-05-22,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.53,False
+2026-05-22,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,88.42,False
+2026-05-22,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,150.58,False
+2026-05-22,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,155.48,False
+2026-05-22,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,61.48,False
+2026-05-22,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,79.28,False
+2026-05-22,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,615.73,False
+2026-05-22,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,108.67,False
+2026-05-22,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,130.63,False
+2026-05-22,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,577.68,False
+2026-05-22,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,205.19,False
+2026-05-22,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,212.37,False
+2026-05-22,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,41.49,False
+2026-05-23,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,440.62,False
+2026-05-23,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,25.31,False
+2026-05-23,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,288.65,False
+2026-05-23,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,455.09,False
+2026-05-23,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,18.2,False
+2026-05-23,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,68.36,False
+2026-05-23,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,241.01,False
+2026-05-23,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,388.17,False
+2026-05-23,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,13.5,False
+2026-05-23,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,195.44,False
+2026-05-23,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,309.78,False
+2026-05-23,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,1331.16,False
+2026-05-23,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,24.27,False
+2026-05-23,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,215.24,False
+2026-05-23,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,2.99,False
+2026-05-23,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,101.23,False
+2026-05-23,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,48.28,False
+2026-05-23,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,11.44,False
+2026-05-23,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,74.81,False
+2026-05-23,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,120.11,False
+2026-05-23,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,67.4,False
+2026-05-23,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,49.7,False
+2026-05-23,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,66.78,False
+2026-05-23,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,553.79,False
+2026-05-23,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,87.84,False
+2026-05-23,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,103.54,False
+2026-05-23,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,460.7,False
+2026-05-23,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,81.27,False
+2026-05-23,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,171.96,False
+2026-05-23,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,33.09,False
+2026-05-24,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,456.81,False
+2026-05-24,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,27.41,False
+2026-05-24,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,313.06,False
+2026-05-24,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,492.78,False
+2026-05-24,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,18.86,False
+2026-05-24,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,72.49,False
+2026-05-24,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,256.04,False
+2026-05-24,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,439.14,False
+2026-05-24,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,14.58,False
+2026-05-24,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,209.69,False
+2026-05-24,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,339.7,False
+2026-05-24,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,1407.27,False
+2026-05-24,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,26.52,False
+2026-05-24,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,227.7,False
+2026-05-24,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.25,False
+2026-05-24,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,114.79,False
+2026-05-24,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,51.92,False
+2026-05-24,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,11.85,False
+2026-05-24,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,79.07,False
+2026-05-24,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,129.88,False
+2026-05-24,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,73.32,False
+2026-05-24,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,54.04,False
+2026-05-24,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,72.85,False
+2026-05-24,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,573.71,False
+2026-05-24,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,94.26,False
+2026-05-24,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,112.41,False
+2026-05-24,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,505.08,False
+2026-05-24,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,88.86,False
+2026-05-24,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,176.52,False
+2026-05-24,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,35.94,False
+2026-05-25,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,633.66,False
+2026-05-25,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,35.99,False
+2026-05-25,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,391.42,False
+2026-05-25,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,659.27,False
+2026-05-25,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,25.01,False
+2026-05-25,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,97.41,False
+2026-05-25,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,345.07,False
+2026-05-25,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,548.38,False
+2026-05-25,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.37,False
+2026-05-25,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,264.62,False
+2026-05-25,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,454.44,False
+2026-05-25,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,1477.52,False
+2026-05-25,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,35.29,False
+2026-05-25,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,299.18,False
+2026-05-25,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.25,False
+2026-05-25,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,144.34,False
+2026-05-25,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,138.32,False
+2026-05-25,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,16.15,False
+2026-05-25,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,94.25,False
+2026-05-25,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,177.46,False
+2026-05-25,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,178.42,False
+2026-05-25,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,72.42,False
+2026-05-25,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,97.07,False
+2026-05-25,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,674.06,False
+2026-05-25,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,125.34,False
+2026-05-25,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,151.12,False
+2026-05-25,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,665.74,False
+2026-05-25,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,237.42,False
+2026-05-25,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,230.58,False
+2026-05-25,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,47.79,False
+2026-05-26,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,587.71,False
+2026-05-26,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.78,False
+2026-05-26,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,386.38,False
+2026-05-26,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,630.85,False
+2026-05-26,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.52,False
+2026-05-26,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,91.67,False
+2026-05-26,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,330.27,False
+2026-05-26,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,528.46,False
+2026-05-26,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.61,False
+2026-05-26,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,254.75,False
+2026-05-26,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,447.22,False
+2026-05-26,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,1479.99,False
+2026-05-26,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.41,False
+2026-05-26,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,286.17,False
+2026-05-26,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.07,False
+2026-05-26,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,143.19,False
+2026-05-26,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,131.3,False
+2026-05-26,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.16,False
+2026-05-26,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,91.03,False
+2026-05-26,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,170.81,False
+2026-05-26,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,172.27,False
+2026-05-26,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,68.59,False
+2026-05-26,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,93.08,False
+2026-05-26,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,654.91,False
+2026-05-26,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,118.49,False
+2026-05-26,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,142.76,False
+2026-05-26,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,631.91,False
+2026-05-26,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,223.38,False
+2026-05-26,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,228.88,False
+2026-05-26,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,45.46,False
+2026-05-27,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,566.57,False
+2026-05-27,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,33.4,False
+2026-05-27,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,388.03,False
+2026-05-27,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,608.58,False
+2026-05-27,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.12,False
+2026-05-27,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,90.54,False
+2026-05-27,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,314.89,False
+2026-05-27,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,550.43,False
+2026-05-27,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.38,False
+2026-05-27,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,243.31,False
+2026-05-27,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,418.23,False
+2026-05-27,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,537.62,False
+2026-05-27,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,32.7,False
+2026-05-27,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,275.61,False
+2026-05-27,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.98,False
+2026-05-27,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,135.28,False
+2026-05-27,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,128.32,False
+2026-05-27,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.86,False
+2026-05-27,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,89.93,False
+2026-05-27,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,160.98,False
+2026-05-27,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,167.79,False
+2026-05-27,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,66.3,False
+2026-05-27,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,86.19,False
+2026-05-27,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,639.67,False
+2026-05-27,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,116.5,False
+2026-05-27,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,137.66,False
+2026-05-27,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,637.75,False
+2026-05-27,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,218.68,False
+2026-05-27,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,214.8,False
+2026-05-27,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,44.76,False
+2026-05-28,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,612.02,False
+2026-05-28,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,36.55,False
+2026-05-28,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,396.44,False
+2026-05-28,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,668.2,False
+2026-05-28,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,25.75,False
+2026-05-28,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,99.17,False
+2026-05-28,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,344.14,False
+2026-05-28,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,594.44,False
+2026-05-28,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.85,False
+2026-05-28,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,279.13,False
+2026-05-28,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,453.3,False
+2026-05-28,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,582.41,False
+2026-05-28,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,35.96,False
+2026-05-28,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,303.56,False
+2026-05-28,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.37,False
+2026-05-28,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,144.8,False
+2026-05-28,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,140.35,False
+2026-05-28,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.93,False
+2026-05-28,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,95.7,False
+2026-05-28,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,180.7,False
+2026-05-28,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,181.5,False
+2026-05-28,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,72.06,False
+2026-05-28,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,97.75,False
+2026-05-28,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,669.84,False
+2026-05-28,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,127.18,False
+2026-05-28,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,153.35,False
+2026-05-28,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,691.07,False
+2026-05-28,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,238.81,False
+2026-05-28,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,245.14,False
+2026-05-28,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,49.18,False
+2026-05-29,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,634.02,False
+2026-05-29,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,36.48,False
+2026-05-29,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,402.73,False
+2026-05-29,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,659.32,False
+2026-05-29,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,26.12,False
+2026-05-29,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,98.87,False
+2026-05-29,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,348.44,False
+2026-05-29,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,556.94,False
+2026-05-29,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.52,False
+2026-05-29,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,281.06,False
+2026-05-29,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,471.28,False
+2026-05-29,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,578.09,False
+2026-05-29,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,35.52,False
+2026-05-29,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,306.04,False
+2026-05-29,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.33,False
+2026-05-29,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,144.21,False
+2026-05-29,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,140.81,False
+2026-05-29,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,16.42,False
+2026-05-29,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,92.42,False
+2026-05-29,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,172.84,False
+2026-05-29,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,179.6,False
+2026-05-29,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,71.8,False
+2026-05-29,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,93.95,False
+2026-05-29,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,676.14,False
+2026-05-29,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,127.85,False
+2026-05-29,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,154.63,False
+2026-05-29,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,689.78,False
+2026-05-29,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,236.81,False
+2026-05-29,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,241.56,False
+2026-05-29,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,48.43,False
+2026-05-30,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,517.73,True
+2026-05-30,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,28.98,True
+2026-05-30,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,334.35,True
+2026-05-30,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,529.25,True
+2026-05-30,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,20.86,True
+2026-05-30,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,78.88,True
+2026-05-30,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,278.85,True
+2026-05-30,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,454.77,True
+2026-05-30,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,15.85,True
+2026-05-30,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,224.82,True
+2026-05-30,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,362.76,True
+2026-05-30,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,497.68,True
+2026-05-30,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.4,True
+2026-05-30,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,239.42,True
+2026-05-30,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.45,True
+2026-05-30,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,122.65,True
+2026-05-30,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,55.59,True
+2026-05-30,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,12.91,True
+2026-05-30,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,80.08,True
+2026-05-30,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,142.09,True
+2026-05-30,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,78.37,True
+2026-05-30,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,56.67,True
+2026-05-30,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,73.78,True
+2026-05-30,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,589.73,True
+2026-05-30,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,101.55,True
+2026-05-30,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,121.52,True
+2026-05-30,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,554.51,True
+2026-05-30,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,96.09,True
+2026-05-30,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,195.68,True
+2026-05-30,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,38.15,True
+2026-05-31,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,507.19,True
+2026-05-31,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,30.34,True
+2026-05-31,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,328.27,True
+2026-05-31,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,547.34,True
+2026-05-31,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.1,True
+2026-05-31,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,81.78,True
+2026-05-31,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,290.55,True
+2026-05-31,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,481.02,True
+2026-05-31,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.27,True
+2026-05-31,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,236.29,True
+2026-05-31,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,389.38,True
+2026-05-31,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,503.29,True
+2026-05-31,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,29.39,True
+2026-05-31,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,246.28,True
+2026-05-31,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.59,True
+2026-05-31,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,120.12,True
+2026-05-31,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,57.52,True
+2026-05-31,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.23,True
+2026-05-31,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,82.53,True
+2026-05-31,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,147.35,True
+2026-05-31,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,80.82,True
+2026-05-31,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,59.51,True
+2026-05-31,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,81.01,True
+2026-05-31,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,592.83,True
+2026-05-31,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,104.73,True
+2026-05-31,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,125.05,True
+2026-05-31,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,566.74,True
+2026-05-31,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,100.03,True
+2026-05-31,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,196.69,True
+2026-05-31,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,40.27,True
