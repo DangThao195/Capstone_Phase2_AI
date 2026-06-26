@@ -16,7 +16,6 @@
 | `anomaly_labels_public.csv` | 2 anomaly thật (A2: idle resource ~73 records, A6: sudden spike ~7 records) + 1 benign (B2). Dataset mất cân bằng → dùng `scale_pos_weight`. |
 
 **Điểm mạnh:** Schema chuẩn CUR 2.0, timestamp liên tục, có nhãn ground-truth.  
-
 ---
 
 ## 2. SHAP Feature Findings
@@ -44,13 +43,13 @@
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.859 |
-| Recall | 0.933 |
-| F1 | 0.894 |
-| FPR | 0.021 |
-| ROC-AUC | 0.991 |
+| Precision | 0.930 |
+| Recall | 1.000 |
+| F1 | 0.964 |
+| FPR | 0.010 |
+| ROC-AUC | 1.000 |
 
-> **Ghi chú đánh giá:** Recall = 0.933 được tính ở record level (mỗi ngày = 1 record). A2 có ~73 records, A6 có ~7 records. Model bắt được phần lớn records trong 2 window → Recall cao. Detection Coverage bên dưới thể hiện tỉ lệ bắt theo từng sự kiện cụ thể.
+> **Ghi chú đánh giá:** Recall = 1.000 được tính ở record level (mỗi ngày = 1 record). A2 có ~73 records, A6 có ~7 records. Model bắt được phần lớn records trong 2 window → Recall cao. Detection Coverage bên dưới thể hiện tỉ lệ bắt theo từng sự kiện cụ thể.
 
 - Optuna (30 trials, TPE sampler) tối ưu 9 hyperparameter.
 - Walk-forward validation (60d train / 7d val / 7d step) — không có look-ahead bias.
@@ -64,11 +63,11 @@
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.078 |
-| Recall | 0.019 |
+| Precision | 0.041 |
+| Recall | 0.025 |
 | F1 | 0.031 |
-| FPR | 0.032 |
-| ROC-AUC | 0.257 |
+| FPR | 0.076 |
+| ROC-AUC | 0.263 |
 
 - Không cần nhãn — áp dụng ngay cho account/service mới.
 - Contamination tối ưu: 3–5%. Tốc độ train nhanh (~0.1–0.5s).
@@ -81,8 +80,8 @@
 
 | Model | Precision | Precision ≥ 80% | FPR | FPR ≤ 10% | Overall |
 |---|---|---|---|---|---|
-| XGBoost (Optuna) | 0.859 | ✅ PASS | 0.021 | ✅ PASS | ✅ PASS |
-| Isolation Forest | 0.078 | ❌ FAIL | 0.032 | ✅ PASS | ❌ FAIL |
+| XGBoost (Optuna) | 0.930 | ✅ PASS | 0.010 | ✅ PASS | ✅ PASS |
+| Isolation Forest | 0.041 | ❌ FAIL | 0.076 | ✅ PASS | ❌ FAIL |
 
 ---
 
@@ -90,7 +89,7 @@
 
 **Model chính: XGBoost (Optuna-tuned)**
 
-XGBoost đạt Precision = 0.859, Recall = 0.933 và F1-score = 0.894, cho thấy mô hình cân bằng tốt giữa khả năng phát hiện anomaly và kiểm soát cảnh báo giả. Kết hợp với SHAP explainability và Walk-Forward Validation, mô hình phù hợp để triển khai làm supervised detector trong hệ thống FinOps Watch.
+XGBoost đạt Precision = 0.930, Recall = 1.000 và F1-score = 0.964, cho thấy mô hình cân bằng tốt giữa khả năng phát hiện anomaly và kiểm soát cảnh báo giả. Kết hợp với SHAP explainability và Walk-Forward Validation, mô hình phù hợp để triển khai làm supervised detector trong hệ thống FinOps Watch.
 
 **Model phụ: Isolation Forest**
 - Chạy song song như unsupervised signal cho account/service chưa có anomaly history.
@@ -112,9 +111,9 @@ XGBoost đạt Precision = 0.859, Recall = 0.933 và F1-score = 0.894, cho thấ
 
 | Event ID | Type | Window | Records | XGBoost | Isolation Forest |
 |---|---|---|---|---|---|
-| A2 | `idle_resource` | Mar 20 – May 31 (~73 days) | ~73 | ✅ Fully detected (292/292) | ⚠️ Weakly detected (6/292 records) |
-| A6 | `sudden_spike` | Apr 28 – May 4 (7 days) | ~7 | ❌ Missed (0/21 records) | ❌ Missed (0/21 records) |
-| B2 | `benign_event` | Mar 28 – Mar 30 (3 days) | ~3 | ✅ TN — correctly suppressed (0/15 flagged) | ⚠️ FP — 1/15 records falsely flagged |
+| A2 | `idle_resource` | Mar 20 – May 31 (~73 days) | ~73 | ✅ Fully detected (292/292) | ⚠️ Weakly detected (8/292 records) |
+| A6 | `sudden_spike` | Apr 28 – May 4 (7 days) | ~7 | ✅ Fully detected (28/28) | ❌ Missed (0/28 records) |
+| B2 | `benign_event` | Mar 28 – Mar 30 (3 days) | ~3 | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 5/18 records falsely flagged |
 
 > **B2 là benign** — model không nên báo. Nếu báo = False Positive, ảnh hưởng FPR.
 >
