@@ -1,581 +1,445 @@
 # Deployment Contract — Task Force 2 (FinOps Watch)
 
-<!-- Owner: Nhóm AI 2
-     Signed by: AI Lead + CDO Leads × 2 (CDO-01, CDO-02) + Security Reviewer
+<!-- Owner: Nhóm AI — TF2 FinOps Watch
+     Signed by: AI Lead + CDO Lead (CDO-01) + CDO Lead (CDO-02) + Reviewer Panel
      Date signed: 2026-06-25 (W11 T5)
-     🔒 FREEZE — no change without formal Change Request
-     Word target: 2000-3000 từ (Contract tier)
-     Cross-ref: ai-api-contract.md · telemetry-contract.md · docs/02_solution_design.md -->
+     Version: v1.3.0 (đồng bộ ai-api-contract.md v1.4.0 + telemetry-contract.md v3.2.0)
+     Changelog từ v1.2.0:
+       [D6] §Secrets — Thêm `DYNAMODB_IDEMPOTENCY_TABLE`, tách idempotency hot path khỏi S3
+       [D7] §Secrets — `S3_TELEMETRY_BUCKET` pattern `company-cdo-{account_id}-telemetry`
+       [D8] §CDO Rollback Cache — S3 path dùng account-scoped bucket
+       [D9] §Appendix C — DynamoDB Idempotency table spec + stale lock recovery
+     Changelog từ v1.1.0:
+       [D1] §6.2 — CDO IAM: thêm Service Quotas cho quota-cap (Appendix B)
+       [D2] §6.3 — Khóa rate_limit_per_tenant: 100 req/min
+       [D3] §7   — SQS finops-watch-rollback: audit completion only (không dispatch rollback)
+       [D4] §10  — CDO Rollback Cache DynamoDB + boto3 offline execution (CDO-P1)
+       [D5] §11  — Error Budget Lock phân tầng theo môi trường (CDO-P3)
+     🔒 FREEZE — Không thay đổi nếu không có Formal Change Request được cả hai bên ký -->
 
 ---
 
-## 1. Mục đích & Nguyên tắc cốt lõi
+## Mục lục
 
-Định nghĩa **AI Engine deploy như thế nào** — compute target, scale, secrets, network, rollback. CDO Platform cần thông tin này để config infra connect được + size capacity đúng.
-
-**Key principle**: Nhóm AI host AI Engine **ONCE** per Task Force. 2 CDO Platform (CDO-01, CDO-02) cùng point endpoint chung, phân biệt multi-tenant theo `tenant_id` / `line_item_usage_account_id`. Không có chuyện mỗi CDO deploy AI Engine riêng (reference: TF2_FINOPS_LEARNER.md §Deliverable).
-
-> **WHY host ONCE**: Giảm chi phí Bedrock token 50% (shared prompt cache). Đơn giản hóa maintenance (1 container image, 1 rollback path). Multi-tenant isolation đã enforce ở application layer (reference: ADR-001).
-
----
-
-## 2. Ownership Boundary Contract
-
-Ranh giới trách nhiệm rõ ràng giữa AI Team và CDO Team. **Bắt buộc** để tránh mơ hồ khi incident (reference: CAPSTONE_EVIDENCE_PACK_FORMAT.md — evidence for process thinking).
-
-```yaml
-ownership:
-  ai_team:                        # Bàn giao container image → CDO deploy
-    - detection_logic             # Thuật toán Isolation Forest + Nova LLM
-    - rca_reasoning               # Root Cause Analysis prompt engineering
-    - recommendation_generation   # Mitigation + rollback command generation
-    - fallback_logic              # Nova Pro → Nova Lite → Rules Engine
-    - contract_management         # Schema versioning, API contract
-    - container_image             # Build + sign + push Docker Image lên ECR
-    - eval_baseline               # Precision/recall/F1 benchmark maintenance
-
-  cdo_team:                       # Sở hữu hạ tầng và quyền thực thi
-    - infra_deployment            # ECS Fargate, ALB, VPC, Subnets
-    - iam_permissions             # IAM Roles, Policies, Permission Boundaries
-    - telemetry_ingestion         # CUR S3 read, CE API call, CloudWatch pull
-    - action_execution            # Thực thi lệnh AWS CLI từ AI recommendation
-    - rollback_orchestration      # Hoàn tác containment action
-    - queue_management            # SQS Primary + DLQ + Rollback queue
-    - network_security            # Security Groups, NACLs, Route 53
-    - dashboard_hosting           # Finance Dashboard + Engineering Console
-```
-
-> **WHY explicit boundary**: Trong incident T+0, mọi người biết ai sửa gì. AI Team sửa logic → push image mới. CDO Team sửa infra → rollback ECS deployment. Không chồng chéo (reference: vc-risk-evidence-pack — high-risk class "deploy/runtime/container" requires clear ownership).
+1. [Mục đích & Phạm vi](#mục-đích)
+2. [Nguyên tắc cốt lõi](#key-principle)
+3. [Đặc tả Compute](#compute)
+4. [Đặc tả Scaling](#scaling)
+5. [Quản lý Secrets & Credentials](#secrets)
+6. [Cấu hình Networking & An ninh mạng](#networking)
+7. [Deployment Topology Diagram](#deployment-topology-diagram)
+8. [Phân định Môi trường triển khai per-CDO](#per-cdo-deployment)
+9. [Chiến lược Rollout: Canary](#rollout-strategy-canary)
+10. [Cơ chế Rollback (Hoàn tác)](#rollback)
+11. [Health Check Specification](#health-check)
+12. [Observability & Tracing](#observability)
+13. [Failure Modes & Phản ứng Sự cố](#failure-modes--response)
+14. [CDO Containment & IAM Boundaries](#cdo-containment--iam-boundaries)
+15. [Rate Limiting](#rate-limiting)
+16. [Message Queues (SQS)](#message-queues-sqs)
+17. [CDO Rollback Cache](#cdo-rollback-cache)
+18. [Error Budget Lock — Phân tầng môi trường](#error-budget-lock)
+19. [Giải đáp các câu hỏi mở (Resolved Questions)](#resolved-questions)
+20. [Appendix B: CDO IAM Policy Mẫu](#appendix-b-cdo-iam-policy-mẫu)
 
 ---
 
-## 3. Artifact Contract — Supply-chain Security
+## Mục đích
 
-Tuân thủ OpenSSF SLSA Level 2. Container Image phải **bất biến** (immutable).
-
-```yaml
-artifact:
-  image_repository: "200000000012.dkr.ecr.ap-southeast-1.amazonaws.com/tf2/finops-ai-engine"
-  image_tag: "v1.0.0"             # Semantic versioning
-  image_digest: "sha256:d95a947d174640bb8e9ef96a099a4e2b02e70e9a59e9a4f216e91f1a4e21a2eb" # CDO deploy bằng digest — KHÔNG dùng mutable tag
-  signed_image: true              # AWS Signer KMS Key verification
-  sbom_attached: true             # Software Bill of Materials (CycloneDX format)
-  build_id: "42"                  # CI pipeline build ID (GitHub Actions run number)
-  build_timestamp: "2026-06-25T10:00:00Z" # Thời điểm build container
-  vulnerability_scan: trivy       # Zero Critical CVE policy
-```
-
-> **WHY deploy bằng digest**: Tag `latest` hoặc `v1.0.0` có thể bị overwrite (mutable). Deploy bằng `sha256:abc123` đảm bảo CDO-01 và CDO-02 chạy **chính xác cùng binary** (reference: vc-risk-evidence-pack — artifact provenance requirement).
+Định nghĩa **AI Engine cần được deploy như thế nào** - bao gồm compute target, scale, secrets, network, và chiến lược rollback. Đây là tài liệu đặc tả kỹ thuật chuẩn hóa để **mỗi nhóm CDO tự động hóa quy trình triển khai AI Engine lên nền tảng của mình** và cấu hình tài nguyên (sizing capacity) chính xác.
 
 ---
 
-## 4. Compute & Scaling Contract
+## Key principle
 
-Thông số CDO dùng để định kích thước ECS Fargate Task.
+**. MỖI CDO trong Task Force tự deploy engine lên platform riêng của mình** (ví dụ: CDO-01 dùng Serverless/ECS Fargate, CDO-02 dùng AWS App Runner / ECS Fargate... - mỗi CDO một góc tiếp cận kỹ thuật khác nhau và compete ở cách host, giám sát và tối ưu vận hành). 
 
-### 4.1 Compute Configuration
+Các thông số kỹ thuật bên dưới là **spec tham chiếu tối thiểu CDO phải đáp ứng** (CDO Fargate/App Runner map sang ECS Task / App Runner instance / Lambda - miễn là năng lực xử lý tương đương). Mỗi CDO sở hữu **endpoint riêng**, mỗi instance được cách ly dữ liệu multi-tenant hoàn toàn dựa trên `tenant_id`.
 
-| Aspect | Configuration | WHY |
+> 💡 **Cơ chế Bootstrap Tạm thời:** Trong ngày T5 W11 đến đầu W12, nhóm AI cung cấp **1 skeleton endpoint dùng chung** để CDO tích hợp trước code path (giao diện mock). W12 mỗi CDO bắt buộc phải deploy instance thật từ artifact của nhóm AI lên platform riêng của mình để đánh giá E2E.
+
+---
+
+## Compute
+
+Triển khai container hóa hoàn toàn dựa trên đặc tả cấu hình tài nguyên:
+
+| Thuộc tính (Aspect) | Cấu hình tham chiếu (Configuration) | Mô tả (Description) |
 |---|---|---|
-| **Target** | ECS Fargate task | Serverless — không quản lý EC2. Chạy trong private subnet. |
-| **Cluster** | `tf-2-aiops-cluster` | Dedicated cluster cho AI workload |
-| **Service name** | `ai-engine` | |
-| **Image source** | ECR repo URI + image digest | Immutable reference (§3) |
-| **CPU per task** | 2048 (2 vCPU) | Bedrock heavy chains + Isolation Forest ML cần 2 core |
-| **Memory per task** | 4096 MB (4 GB) | CUR dataframe ~50MB + model overhead |
-| **Timeout** | 300s (5 phút hard limit) | Async batch — không cần long-running |
-
-### 4.2 Auto-scaling
-
-| Aspect | Value | WHY |
-|---|---|---|
-| **Min tasks** | 2 | High availability — survive single AZ failure |
-| **Max tasks** | 10 | Budget guard — max 10 × $0.10/hr = $1.00/hr burst |
-| **Scale-up trigger 1** | CPU > 70% | Standard ECS metric |
-| **Scale-up trigger 2** | SQS Backlog > 100 messages | Event-driven scaling |
-| **Scale-up cooldown** | 60 giây | Responsive to batch spike |
-| **Scale-down cooldown** | 300 giây | Avoid flapping |
-
-### 4.3 Resource Limits (OOM Protection)
-
-```yaml
-resource_limits:
-  max_memory_hard_limit: 4096Mi
-  max_cpu_hard_limit: 2048m
-  max_concurrency_per_task: 50
-  max_payload_size_mb: 10         # Khớp API Gateway limit
-```
+| **Target Compute** | ECS Fargate Task / App Runner Instance / Lambda | Đảm bảo tính cô lập, không dùng shared VM |
+| **Cluster Name** | `tf-2-aiops-cluster` | Tên cluster định danh theo Task Force (nếu dùng ECS) |
+| **Service Name** | `ai-engine` | Tên dịch vụ đăng ký DNS nội bộ |
+| **Image Source** | `200000000012.dkr.ecr.ap-southeast-1.amazonaws.com/tf2/finops-ai-engine` | URI ECR của container image |
+| **CPU per task** | 1024 (1 vCPU) | Đảm bảo đủ hiệu năng xử lý DataframeCUR thô |
+| **Memory per task** | 2048 MB (2 GB) | Giới hạn bộ nhớ đệm tránh rò rỉ (OOM protection) |
 
 ---
 
-## 5. Networking Contract (Bản đồ cô lập mạng kín)
+## Scaling
 
-AI Engine tuân thủ nguyên lý an ninh mạng **Zero-Trust**. Hệ thống không có cổng Public ra Internet và bị cô lập hoàn toàn sau tường lửa:
+Cấu hình tự động co giãn tải (Auto-scaling) đảm bảo tính sẵn sàng và tối ưu hóa chi phí vận hành:
 
-| Thành phần | Đặc tả cấu hình mạng | Lý do thiết kế (WHY) |
+| Thuộc tính (Aspect) | Giá trị đặc tả (Value) | Ghi chú (Notes) |
 |---|---|---|
-| **Subnet Type** | Private Subnet Only | Ngăn chặn hoàn toàn mọi nguy cơ tiếp cận từ môi trường Internet. |
-| **Load Balancer** | Internal ALB Only | Chỉ cho phép các dịch vụ nội bộ có định danh nằm trong VPC truy cập. |
-| **Ingress Rule** | SG-to-SG Enforcement | Chỉ chấp nhận kết nối duy nhất từ định danh Security Group của CDO Platforms. Cấm Allow by IP/CIDR. |
-| **Egress Rule** | VPC Endpoints (VPCe) Only | Khóa cứng lối ra. Chỉ cho phép định tuyến tới: Bedrock API Endpoint, Secrets Manager VPCe, DynamoDB VPCe, SQS VPCe, và **S3 Gateway Endpoint** (Phục vụ kéo an toàn file log CUR vi mô qua đường mạng nội bộ tốc độ cao). |
-| **Encryption** | TLS 1.3 Enforced | Mã hóa 100% dữ liệu dịch chuyển trên đường truyền mạng nội bộ. |
+| **Min Replicas** | 2 | Luôn duy trì tối thiểu 2 task trên 2 AZs để đảm bảo High Availability |
+| **Max Replicas** | 10 | Giới hạn trên để tránh cháy ngân sách hạ tầng (Budget Guard) |
+| **Scale-up Trigger 1** | Target CPU Utilization $\ge 70\%$ | Dựa trên chỉ số CPU sử dụng trung bình |
+| **Scale-up Trigger 2** | Target Request Count $\ge 100$ per task | Tránh nghẽn hàng đợi xử lý khi CDO gọi batch |
+| **Scale-up Cooldown** | 60 giây | Thời gian chờ giữa các lần tăng số lượng task |
+| **Scale-down Cooldown** | 300 giây | Tránh hiện tượng co giãn liên tục gây bất ổn (Thrashing) |
+| **Cold Start Mitigation** | Provisioned Concurrency = 2 | Chỉ áp dụng nếu CDO chọn deployment target là AWS Lambda |
 
-### Deployment Topology Diagram
+---
+
+## Secrets
+
+Quản lý thông tin nhạy cảm tập trung, cấm hardcode credentials trong container:
+
+| Tên biến (Secret Name) | Nguồn cung cấp (Source) | Mô tả (Description) |
+|---|---|---|
+| `BEDROCK_API_KEY` | AWS Secrets Manager: `tf-2/ai-engine/bedrock` | API Key sơ cua (hoặc Token) nếu gọi qua API Gateway ngoài. Mặc định ưu tiên IAM Role. |
+| `AWS_REGION` | Environment Variable | Thiết lập mặc định: `ap-southeast-1` (Singapore) |
+| `S3_TELEMETRY_BUCKET` | Environment Variable | Pattern: `company-cdo-{account_id}-telemetry` — CUR, features, audit backup |
+| `S3_CDO_NAMESPACE` | Environment Variable | `cdo-01` hoặc `cdo-02` khi nhiều CDO dùng chung account |
+| `DYNAMODB_IDEMPOTENCY_TABLE` | Environment Variable | `finops-idempotency-{env}` — hot path idempotency (TTL 24h) |
+| `DYNAMODB_FEATURE_STORE_TABLE` | Environment Variable | `finops-feature-store-{env}` — rolling stats (thay S3 list/get cho prod) |
+
+> 🔒 **Quy tắc an toàn mạng:** Tuyệt đối không sử dụng IAM User static access key. Toàn bộ hạ tầng của CDO phải gán IAM Task Execution Role có gắn Policy cho phép truy cập Bedrock và Secrets Manager. Secrets Manager rotation policy được thiết lập tự động xoay vòng mỗi 30 ngày.
+
+---
+
+## Networking
+
+AI Engine chạy trong Private Subnet, ngăn chặn tấn công từ internet public:
+
+| Thuộc tính (Aspect) | Cấu hình mạng (Configuration) |
+|---|---|
+| **Subnet Type** | Private Subnets (Isolated/Non-routable to internet) |
+| **Load Balancer** | Internal Application Load Balancer (ALB) only. Cấm Internet-facing ALB. |
+| **Security Group** | `tf-2-ai-engine-sg` |
+| **Ingress Rules** | Chỉ cho phép giao thức HTTPS (port 8080/443) đi từ Security Group của CDO Worker/Platform gọi đến AI Engine |
+| **Egress Rules** | Chỉ cho phép đi ra Internet qua NAT Gateway tới Bedrock Endpoint (`bedrock.ap-southeast-1.amazonaws.com`) và các VPC Gateway Endpoints cho Secrets Manager + S3 |
+| **DNS Resolution** | Sử dụng Route 53 Private Hosted Zone để phân giải tên miền nội bộ |
+
+---
+
+## Deployment topology diagram
+
+Kiến trúc triển khai song song hai platform độc lập của CDO-01 và CDO-02 cùng chia sẻ một Artifact từ nhóm AI:
 
 ```mermaid
 graph TB
-    subgraph "VPC Task Force 2"
-        subgraph "Private Subnet (Multi-AZ)"
-            ALB["Internal ALB<br/>ai-engine.tf-2.internal"]
-            ECS["ECS Fargate Tasks × min 2"]
-            ALB --> ECS
-        end
-        SM["Secrets Manager VPCe"]
-        DDB["DynamoDB VPCe"]
-        SQS_E["SQS VPCe"]
-        S3_E["S3 Gateway Endpoint"]
-        ECS --> SM
-        ECS --> DDB
-        ECS --> SQS_E
-        ECS --> S3_E
+    AIO["Nhóm AI: engine artifact (image) + Deployment Contract"]
+    
+    subgraph CDO_1["CDO-01 Platform (vd Serverless/ECS Fargate)"]
+        E1["AI engine Task Instance (Fargate)"]
+        I1["CDO-1 Infra: Alert pipeline, Dashboard, Observability"]
+        I1 -->|Call Local IP| E1
+        E1 --> SM1["Secrets Manager VPC Endpoint"]
     end
-    Bedrock["AWS Bedrock<br/>(ap-southeast-1)"]
-    ECS --> Bedrock
-
-    subgraph "CDO Platforms × 2"
-        CDO1["CDO-01 Platform"]
-        CDO2["CDO-02 Platform"]
+    
+    subgraph CDO_2["CDO-02 Platform (vd AWS App Runner / ECS Fargate)"]
+        E2["AI engine Task Instance (Fargate / App Runner)"]
+        I2["CDO-2 Infra: Prometheus, Grafana, EventBridge"]
+        I2 -->|Call Service Endpoint| E2
+        E2 --> SM2["Secrets Manager VPC Endpoint"]
     end
-    CDO1 --> ALB
-    CDO2 --> ALB
-  ```
+    
+    AIO -. Cung cấp Container Image .-> E1
+    AIO -. Cung cấp Container Image .-> E2
+    E1 --> Bedrock["AWS Bedrock (Nova Pro)"]
+    E2 --> Bedrock["AWS Bedrock (Nova Pro)"]
+    
+    classDef platform fill:#f5f5f7,stroke:#c8c8cc,stroke-width:1px;
+    class CDO_1,CDO_2 platform;
+```
 
-### Per-CDO Platform Pointer
+---
 
-> AI engine host ONCE; 2 CDO point cùng endpoint.
+## Per-CDO deployment
 
-| CDO Platform | Endpoint URL | Auth |
+Mỗi CDO thiết lập DNS nội bộ riêng để phân phối request tới instance của mình:
+
+| CDO Platform | Tên miền Endpoint nội bộ (VPC) | Phương thức xác thực |
 |---|---|---|
-| CDO-01 | `https://ai-engine.tf-2.internal/` | IAM SigV4 |
-| CDO-02 | (same — shared endpoint) | IAM SigV4 |
+| **CDO-01** (Fargate) | `https://ai-engine.cdo-01.tf-2.internal/` | AWS IAM SigV4 |
+| **CDO-02** (App Runner / ECS Fargate) | `https://ai-engine.cdo-02.tf-2.internal/` | AWS IAM SigV4 |
+| *(Bootstrap)* Skeleton chung | `https://ai-engine-skeleton.tf-2.internal/` (Chỉ dùng từ T5 đến đầu W12) | AWS IAM SigV4 |
 
 ---
 
-## 6. Security Contract — Hard Boundaries
+## Chiến lược Rollout: Canary
 
-### 6.1 Forbidden Actions (NON-NEGOTIABLE)
+Áp dụng khi triển khai phiên bản mới của AI Engine nhằm kiểm soát rủi ro phát sinh lỗi:
 
-**AI Engine KHÔNG BAO GIỜ** (reference: 01_requirements.md §4):
+| Bước (Step) | Tỷ lệ Traffic chuyển tiếp | Thời gian theo dõi (Interval) |
+|---|---|---|
+| 1 | 10% | 5 phút |
+| 2 | 50% | 5 phút |
+| 3 | 100% (Hoàn tất chuyển đổi) | - |
 
-```yaml
-forbidden_actions:
-  - terminate_production_resources  # NEVER terminate prod (prod-core, prod-payments)
-  - delete_data                     # NEVER delete S3 objects, DynamoDB items, RDS instances
-  - modify_iam                      # NEVER modify IAM roles, policies, permission boundaries
-  - create_iam_users                # NEVER create new IAM identities
-  - mutate_security_groups          # NEVER modify network security rules
-  - bypass_cdo_execution            # AI chỉ recommend → CDO execute
-  - access_public_internet          # Container trong private subnet only
-```
-
-### 6.2 Environment Safety Matrix
-
-Khớp với `mitigation_action.strategy` trong ai-api-contract.md §5.2 (reference: 02_solution_design.md §1 Mermaid diagram).
-
-| Environment | Allowed Action | Confidence Threshold | Auto-execute? |
-|---|---|---|---|
-| `prod-core` | tag-for-review + Slack Alert SRE | N/A | ❌ Never |
-| `prod-payments` | tag-for-review + Slack Alert SRE | N/A | ❌ Never |
-| `staging` | time-gated-countdown (4h) → shutdown | N/A | ⏱️ After countdown |
-| `dev` / `sandbox` | auto-shutdown | ≥ 0.80 | ✅ Yes |
-| `ml-research` | auto-shutdown GPU instances | ≥ 0.80 | ✅ Yes |
-| `data-analytics` | quota-cap via Service Quotas API | ≥ 0.85 | ✅ Yes |
-
-### 6.3 Network & IAM Boundary
-
-```yaml
-security_boundary:
-  network: Private_Subnet_Only
-  iam: Least_Privilege
-  public_ingress: forbidden
-  long_lived_secrets: forbidden     # Cấm IAM Access Keys tĩnh
-  encryption_at_rest: aws-kms      # DynamoDB + S3
-  encryption_in_transit: tls-1.3
-  waf_enabled: true
-  rate_limit_per_tenant: 100 req/min
-```
-
-### 6.4 Tenant Isolation (Blast Radius Protection)
-
-```yaml
-tenant_isolation:
-  partition_key: tenant_id         # DynamoDB partition key
-  per_tenant_budget_cap: true
-  per_tenant_error_budget: true
-  per_tenant_lock_state: true      # 1% Error Budget Lock (§10)
-  cross_tenant_data_leak: impossible  # Per-request scoping, no shared context
-```
-
-> **WHY per-request scoping**: AI Engine không persist context across tenants. Mỗi request = 1 tenant's data + fresh LLM context. Ngăn chặn cross-tenant data bleed (reference: 03_ai_engine_spec.md §3 Multi-tenant routing).
+⛔ **Chỉ số kích hoạt Hủy bỏ (Abort Criteria)** (bất kỳ điều kiện trigger → auto rollback ngay):
+- Tỷ lệ lỗi hệ thống (Error rate / 5xx) > 1% trong cửa sổ 5 phút.
+- Độ trễ phản hồi P99 (P99 latency) > 800 ms cho các API chính.
+- Cảnh báo tốc độ cháy ngân sách nhanh bị kích hoạt (Burn-rate fast alert triggered).
+- Phát hiện lỗi liên quan đến mô hình hoặc Bedrock Throttling Rate >= 20%.
 
 ---
 
-## 7. State & Queue Contract
+## Cơ chế Rollback (Hoàn tác)
 
-AI Engine Container hoàn toàn **stateless**. Mọi trạng thái lưu trữ bên ngoài.
+> [!NOTE]
+> **v1.2.0 — Phân tách hai loại rollback:**
+> - **AI Engine deployment rollback** (bảng dưới): hoàn tác phiên bản container khi canary fail.
+> - **CDO containment rollback** (§CDO Rollback Cache): hoàn tác hành động can thiệp tài nguyên AWS — CDO tự thực thi boto3, không phụ thuộc AI Engine availability.
 
-```yaml
-state_stores:
-  idempotency_store:
-    service: dynamodb
-    table: tf-2-ai-idempotency
-    ttl: 24h
-  audit_store:
-    service: dynamodb
-    table: tf-2-ai-audit-ledger
-    ttl: 90d                       # → stream to S3 Archive after TTL
-  anomaly_store:
-    service: dynamodb
-    table: tf-2-ai-anomalies
-  feedback_store:
-    service: dynamodb
-    table: tf-2-ai-feedback-loops
-
-queue_contract:
-  primary: finops-watch-detect
-  dead_letter: finops-watch-detect-dlq
-  rollback: finops-watch-rollback         # SQS Queue để CDO báo cáo trạng thái hoàn tất rollback về cho AI Engine audit
-  retention_days: 14
-  poison_threshold: 3              # Max retry → DLQ
-  visibility_timeout: 300s         # Khớp container timeout
-
-concurrency_limits:
-  max_parallel_jobs_per_tenant: 3
-  max_total_parallel_jobs: 50
-  max_ad_hoc_jobs_per_day: 5       # Quét khẩn cấp (is_ad_hoc = true)
-```
-
----
-
-## 8. Secrets & Rotation Contract
-
-```yaml
-secrets:
-  bedrock_credentials:
-    store: aws-secrets-manager
-    key_path: "tf-2/ai-engine/bedrock"
-    rotation_days: 90
-  required_env_vars:
-    - AWS_REGION
-    - MODEL_PRIMARY
-    - OTEL_EXPORTER_ENDPOINT
-    - MAX_DAILY_TOKEN_BUDGET
-  startup_validation:
-    fail_if_missing_env: true
-    fail_if_missing_dependency: true
-    dependency_check: [dynamodb, sqs]
-    retry_count: 5
-```
-
-> **WHY fail fast**: Nếu container thiếu env var → crash ngay lúc start thay vì chạy 5 phút rồi fail khi cần Bedrock (reference: AWS Well-Architected — Reliability Pillar).
-
----
-
-## 9. Failure Contract
-
-### 9.1 Failure Semantics
-
-| Failure Mode | Detection | Response | Reference |
-|---|---|---|---|
-| `model_timeout` | Bedrock > 45s | Degrade → Nova Lite → Rules Engine | API Contract §7 `ERR_LLM_TIMEOUT` |
-| `schema_invalid` | JSON schema validation fail | Send to DLQ, do not retry | API Contract §7 `ERR_INVALID_SCHEMA` |
-| `telemetry_incomplete` | `completeness_score < 0.8` | Enter DRY-RUN mode | Telemetry Contract §13 |
-| `dependency_down` | DynamoDB/SQS timeout | Retry with exponential backoff | §9.2 |
-| `action_rejected` | CDO returns rollback failure | Log audit only, alert SRE | |
-
-### 9.2 Retry Policy
-
-```yaml
-retry_policy:
-  retryable_errors: [bedrock_timeout, network_timeout, database_lock]
-  max_retries: 3
-  exponential_backoff:
-    base_delay_ms: 1000
-    multiplier: 2.0
-    max_backoff_ms: 30000
-```
-
-### 9.3 Model Fallback Chain
-
-`Nova Pro → Nova Lite → Rules Engine` (reference: 02_solution_design.md §2).
-
-```yaml
-model_fallback:
-  primary: amazon.nova-pro-v1      # Full RCA + NL reasoning
-  secondary: amazon.nova-lite-v1   # Simplified RCA (lower cost, higher latency tolerance)
-  tertiary: rules-engine           # Static threshold evaluator (zero LLM cost)
-  triggers:
-    timeout: 10000ms               # Nova Pro > 10s → fallback
-    cost_breach: true              # Daily token budget exceeded → fallback
-    http_5xx: true                 # Bedrock 5xx → fallback
-    throttle_60pct: true           # Bedrock throttle >60% → circuit break
-```
-
----
-
-## 10. Budget Guardrails — Circuit Breaker
-
-Bảo vệ ngân sách Bedrock **< $50/tháng** (reference: 01_requirements.md §4 Budget constraint).
-
-```yaml
-budget_guardrails:
-  max_daily_tokens: 500000
-  max_daily_cost_usd: 1.67        # $50 / 30 ngày ≈ $1.67/ngày
-  max_monthly_cost_usd: 50.00
-  breaker_escalation:
-    - level_1: fallback_to_nova_lite     # 80% daily budget
-    - level_2: fallback_to_rules_engine  # 100% daily budget
-    - level_3: halt_all_processing       # 120% monthly budget → P1 alert
-```
-
-### 1% Error Budget Lock
-
-- **SLI**: $\frac{\text{Số can thiệp thành công}}{\text{Tổng can thiệp tự động}}$
-- **SLO**: 99.0% (Error Budget = 1%)
-- **Hành vi**: Nếu Undo Rate > 1% trong cửa sổ trượt 30 ngày → Tenant tự động `LOCKED` → mọi containment chuyển về `Dry-run/Alert-only`
-
-> **WHY 1% Lock**: Nếu AI Engine tắt nhầm resource 2 lần / 100 lần → thảm họa trust. Lock tự động bảo vệ production trước khi team diagnose issue (reference: Google SRE Error Budget policy).
-
----
-
-## 11. Deployment Strategy — Canary Rollout
-
-| Step | Traffic | Interval | Abort nếu |
-|---|---|---|---|
-| 1 | 10% | 5 phút | Error rate > 1% |
-| 2 | 50% | 5 phút | P99 latency > 800ms |
-| 3 | 100% | — | Burn-rate fast alert triggered |
-
-**Abort → auto rollback** to previous git SHA via ArgoCD. Target RTO < 60 giây.
-
-### Rollback Contract
-
-```yaml
-rollback:
-  primary_method: ArgoCD rollback to previous git SHA
-  secondary_method: ECS service revert (manual)
-  target_rto: 60s
-  auto_trigger: true               # When canary abort criteria met
-  prod_requires_dual_approval: true # SRE Lead + Team Lead phê duyệt
-```
-
----
-
-## 12. Health Check & Observability Contract
-
-### 12.1 Health Check
-
-| Field | Value |
+Quy định phương thức khôi phục trạng thái cũ nhanh nhất khi xảy ra lỗi nghiêm trọng **triển khai AI Engine**:
+ 
+| Thuộc tính (Aspect) | Giá trị đặc tả (Value) |
 |---|---|
-| **Path** | `/health` (reference: API Contract §5.5) |
-| **Port** | 8080 |
-| **Interval** | 30 giây |
-| **Healthy threshold** | 2 consecutive 200 |
-| **Unhealthy threshold** | 3 consecutive non-200 |
-| **Deep check** | Verify DynamoDB connection + Bedrock accessibility |
-
-### 12.2 Observability Export
-
-```yaml
-observability:
-  traces: aws-xray
-  metrics: cloudwatch-metrics
-  logs:
-    destination: cloudwatch-logs
-    format: json
-    retention_days: 14
-  otel_endpoint: "CDO-specific (env var OTEL_EXPORTER_ENDPOINT)"
-```
-
-### 12.3 Graceful Shutdown
-
-```yaml
-graceful_shutdown:
-  drain_inflight: true            # Hoàn tất job đang chạy
-  checkpoint: true                # Ghi checkpoint vào DynamoDB
-  sigterm_grace: 30s              # Thời gian chờ sau SIGTERM
-```
-
-> **WHY graceful shutdown**: CDO rolling update ECS task → nếu kill đang-chạy → mất kết quả detection → CDO phải re-trigger → lãng phí Bedrock token (reference: AWS Well-Architected — Operational Excellence).
-
----
-
-## 13. Disaster Recovery Contract
-
-```yaml
-disaster_recovery:
-  primary_region: ap-southeast-1   # Singapore
-  secondary_region: ap-southeast-2 # Sydney (design-only, not deployed in capstone)
-  rpo_minutes: 15
-  rto_minutes: 5
-  failover_trigger: "5 consecutive healthcheck failures"
-```
-
-> **WHY design-only DR**: Multi-region active-active out of scope cho capstone (reference: 01_requirements.md §5). DR chỉ documented, không deployed (reference: TF2_FINOPS_LEARNER.md §Out of scope).
+| **Primary method** | AWS CodeDeploy / ECS Service Update automatic rollback (CDO-01 Fargate & CDO-02 App Runner / Fargate) |
+| **Secondary method** | ECS service revert / App Runner previous version redeploy (manual) |
+| **Target RTO** | < 60 giây |
+| **Auto-trigger** | Yes (khi abort criteria met trong canary rollout) |
+ 
+ ---
+ 
+ ## Health check
+ 
+ ALB/App Runner Health Checking Agent gọi định kỳ để xác định trạng thái sống/chết của container:
+ 
+ | Thuộc tính (Field) | Giá trị đặc tả (Value) |
+ |---|---|
+ | **Path** | `/health` (Theo đặc tả tại `ai-api-contract.md` §5.4) |
+ | **Port** | 8080 |
+ | **Interval** | 30 giây |
+ | **Healthy threshold** | 2 consecutive 200 (2 lần liên tiếp trả về HTTP code 200) |
+ | **Unhealthy threshold** | 3 consecutive non-200 (3 lần liên tiếp trả về HTTP code non-200) |
+ 
+ ---
+ 
+ ## Observability
+ 
+ Đảm bảo giám sát tập trung phục vụ vận hành và xử lý sự cố nhanh:
+ 
+ | Thuộc tính (Aspect) | Cấu hình (Configuration) |
+ |---|---|
+ | **OTel endpoint** | Collector URL per CDO platform (cấu hình qua biến môi trường `OTEL_EXPORTER_OTLP_ENDPOINT`) |
+ | **Log destination** | CloudWatch Logs (retention 14 ngày) |
+ | **Metrics** | Prometheus format `/metrics` / CloudWatch (CDO tự chọn phù hợp hạ tầng) |
+ | **Traces** | OpenTelemetry → AWS X-Ray (cho cả CDO-01 và CDO-02) |
+ 
+ ---
+ 
+ ## Failure modes & phản ứng sự cố
+ 
+ | Lỗi phát sinh (Failure) | Cơ chế phát hiện (Detection) | Hành động ứng phó (Response) |
+ |---|---|---|
+ | **Task / Container crash** | ECS Health check / App Runner Health probe | Tự động khởi động lại (Auto-restart task/instance). |
+ | **Lỗi mạng diện rộng (Region outage)** | CloudWatch Route53 Health check / DNS Failover alarm | Định tuyến failover sang Secondary Region (Active-Passive). |
+ | **Bedrock throttling** | HTTP Code 429 (App-level metric) | Tự động kích hoạt **Exponential Backoff với Jitter**, nếu kéo dài >15s → Rule-based Fallback. |
+ | **Rò rỉ bộ nhớ (Memory leak)** | Bộ nhớ container đạt ngưỡng $\ge 90\%$ | Thực hiện khởi động lại luân phiên (Rolling restart). |
+ | **AI Engine unavailable khi cần containment rollback** | `POST /v1/audit/{id}/rollback` timeout | CDO đọc `boto3_equivalent` từ DynamoDB cache (§CDO Rollback Cache) và thực thi trực tiếp — không block outage recovery. |
 
 ---
 
-## 14. Live SLO Contract
+## CDO Containment & IAM Boundaries
 
-Khớp với SLO trong ai-api-contract.md §6.
+CDO Containment Worker thực thi AWS CLI/boto3 từ `DecideResponse.applied_payload` và `rollback_payload`. IAM Permission Boundary **phải** enforce hard boundary khớp ai-api-contract.md §7.
 
-| Metric | Target | How to measure |
+| Containment Action | Môi trường được phép | IAM Enforcement |
 |---|---|---|
-| **Ingestion Latency (P99)** | < 50ms | Phản hồi `202 Accepted` ngay sau khi nhận request |
-| **Result Query Latency (P99)** | < 10ms | Đọc DynamoDB result store |
-| **LLM Inference SLA** | < 30 giây | Gọi Bedrock + ghi DB |
-| **Detection Latency (P95)** | < 20s | Tổng batch processing |
-| **System Availability** | ≥ 99.5% | API Gateway + ALB uptime |
-| **Error Rate** | < 0.5% | 5xx responses / total requests |
-| **AI Detection Precision** | ≥ 80% | True Anomalies / Total Flagged (backtest) |
-| **False Positive Rate** | ≤ 10% | False Anomalies / Total Normal (backtest) |
-| **Rollback Success Rate** | > 99% | Successful rollbacks / total rollbacks |
-| **Containment Success Rate** | > 95% | Successful containments / total triggered |
+| `tag-for-review` | Tất cả | `ec2:CreateTags`, `rds:AddTagsToResource` |
+| `time-gated-countdown` | dev, staging, sandbox, ml-research | Tag + SNS publish |
+| `auto-shutdown` | dev, sandbox, ml-research, staging | `ec2:StopInstances`, `rds:StopDBInstance`, `sagemaker:StopNotebookInstance` |
+| `quota-cap` | dev, sandbox, data-analytics | `servicequotas:GetServiceQuota`, `servicequotas:RequestServiceQuotaIncrease` |
+
+> ⛔ **Hard Boundary:** `resource_tags_user_environment NOT IN ('prod', 'prod-core', 'prod-payments')` được enforce ở cả AI Engine **và** IAM Condition `StringNotEquals` trên tag `environment` (xem Appendix B).
 
 ---
 
-## 15. Security Scan Contract
+## Rate Limiting
 
-Bảo đảm an toàn trước khi promote container lên production (reference: vc-security — STRIDE + OWASP methodology).
+Khóa cứng đồng bộ với ai-api-contract.md §3:
 
-```yaml
-security_scan:
-  image_scan: trivy                # Zero Critical CVE → block deploy
-  dependency_scan: pip-audit       # Python dependency audit
-  secret_detection: gitleaks       # No hardcoded secrets in image
-  fail_on_critical: true
-  scan_frequency: every_build
+| Parameter | Value | Enforcement |
+|---|---|---|
+| `rate_limit_per_tenant` | **100 requests/phút** | API Gateway / ALB WAF rate-based rule |
+| Burst allowance | 20 requests (1 giây) | Token bucket |
+| Response khi vượt | `429 ERR_RATE_LIMITED` | CDO exponential backoff 1s→16s |
+
+---
+
+## Message Queues (SQS)
+
+| Queue Name | Producer | Consumer | Mục đích |
+|---|---|---|---|
+| `finops-watch-audit` | CDO Platform | AI Engine audit writer | Ghi audit trail bất đồng bộ |
+| `finops-watch-rollback` | CDO Platform | CDO audit completion worker | **Audit completion notification only** — KHÔNG dùng để dispatch rollback command |
+
+> [!IMPORTANT]
+> **v1.2.0 clarification:** Queue `finops-watch-rollback` nhận sự kiện **sau khi** CDO đã tự thực thi boto3 rollback thành công. Payload chứa `audit_id`, `rollback_status`, `rollback_executed_at` — khớp `POST /v1/audit/{audit_id}/rollback` request body. AI Engine consume để cập nhật feedback loop, không trả lệnh rollback.
+
+---
+
+## CDO Rollback Cache
+
+> **v1.2.0 — Đồng bộ ai-api-contract.md §5.2 + §5.6 (CDO-P1)**
+
+| Thuộc tính | Giá trị |
+|---|---|
+| **Storage** | DynamoDB table `finops-rollback-cache` (CDO account) + S3 backup `s3://company-cdo-{account_id}-telemetry/rollback-cache/{cdo_namespace}/{anomaly_id}` |
+| **TTL** | 90 ngày (khớp audit retention) |
+| **Write trigger** | Ngay khi nhận `DecideResponse` — cache `rollback_payload.boto3_equivalent` |
+| **Read trigger** | `next_action = ROLLBACK` hoặc engineer manual rollback |
+| **Execution** | CDO boto3 client gọi `service.method(**parameters)` — không gọi AI Engine |
+| **Post-execution** | `POST /v1/audit/{audit_id}/rollback` + publish SQS `finops-watch-rollback` |
+
+**Schema cache item:**
+
+```json
+{
+  "anomaly_id": "ANM-2026-0623A",
+  "correlation_id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+  "boto3_equivalent": {
+    "service": "ec2",
+    "method": "delete_tags",
+    "parameters": {
+      "Resources": ["i-0fbgpu00000004"],
+      "Tags": [{"Key": "finops:review"}, {"Key": "finops:anomaly-id"}]
+    }
+  },
+  "cached_at": "2026-06-23T17:05:46Z",
+  "ttl_epoch": 1750000000
+}
 ```
 
 ---
 
-## Appendix A. Handover Workflow
+## Error Budget Lock
 
-```mermaid
-sequenceDiagram
-    participant AI as Nhóm AI (Engine)
-    participant CI as GitHub Actions (CI/CD)
-    participant ECR as AWS ECR (Kho lưu trữ)
-    participant CDO as CDO Platform (Hạ tầng)
+> **v1.2.0 — Đồng bộ ai-api-contract.md §3.3 (CDO-P3)**
 
-    AI->>CI: Git Push + Tag v1.0.0
-    CI->>CI: Build Docker Image
-    CI->>CI: Trivy Scan + pip-audit + gitleaks
-    alt Scan FAIL
-        CI->>AI: ❌ Block — Fix vulnerabilities
-    else Scan PASS
-        CI->>CI: Sign Image (AWS Signer)
-        CI->>CI: Generate SBOM (CycloneDX)
-        CI->>ECR: Push Image (sha256 digest)
-    end
-    Note over AI, ECR: ✅ AI Team trách nhiệm hoàn thành
-    CDO->>ECR: Pull Docker Image (by digest)
-    CDO->>CDO: Deploy lên ECS Fargate (Private Subnet)
-    CDO->>CDO: Cấu hình ENV, IAM Roles, ALB, SQS
-    CDO->>CDO: Canary Rollout (10% → 50% → 100%)
-    Note over ECR, CDO: ✅ CDO Team trách nhiệm hoàn thành
-```
+| Môi trường | Ngưỡng Rollback Rate (30 ngày) | Hành vi khi vượt |
+|---|---|---|
+| `prod`, `prod-core`, `prod-payments` | **1%** | `LOCKED_MODE` — mọi `/v1/decide` chỉ `dry_run_mode: true` |
+| `staging` | **10%** | `LOCKED_MODE` + cảnh báo; auto-unlock sau 24h nếu rate về dưới ngưỡng |
+| `dev`, `sandbox`, `ml-research`, `data-analytics` | **Không áp dụng** | Không bao giờ tự động khóa |
+
+CDO Platform đọc header `X-Containment-Status: LOCKED` từ AI Engine response và disable real containment execution tại IAM boundary level.
 
 ---
 
-## Appendix B. IAM Policy Example (Containment Service — CDO Side)
+## Appendix B: CDO IAM Policy Mẫu
 
-CDO cấu hình IAM Role cho Containment Worker tuân thủ **Least Privilege + Explicit Deny** (reference: 01_requirements.md §6 IAM Least Privilege):
+Policy mẫu cho CDO Containment Worker Role. CDO customize per-account nhưng **không được** mở rộng quyền trên prod.
 
 ```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllowReadOnlyAndTagging",
-      "Effect": "Allow",
-      "Action": [
-        "ec2:Describe*", "rds:Describe*", "sagemaker:Describe*",
-        "ec2:CreateTags", "rds:AddTagsToResource", "sagemaker:AddTags"
-      ],
-      "Resource": "*"
-    },
-    {
       "Sid": "AllowContainmentOnNonProd",
       "Effect": "Allow",
       "Action": [
+        "ec2:CreateTags",
+        "ec2:DeleteTags",
         "ec2:StopInstances",
+        "ec2:StartInstances",
+        "rds:AddTagsToResource",
+        "rds:RemoveTagsFromResource",
         "rds:StopDBInstance",
-        "sagemaker:StopNotebookInstance"
+        "rds:StartDBInstance",
+        "sagemaker:StopNotebookInstance",
+        "sagemaker:StartNotebookInstance"
       ],
       "Resource": "*",
       "Condition": {
         "StringNotEquals": {
-          "aws:ResourceTag/Environment": ["prod-core", "prod-payments"]
+          "aws:ResourceTag/environment": ["prod", "prod-core", "prod-payments"]
         }
       }
     },
     {
-      "Sid": "AllowQuotaContainmentOnNonProd",
+      "Sid": "AllowQuotaContainment",
       "Effect": "Allow",
       "Action": [
-        "servicequotas:RequestServiceQuotaIncrease",
-        "servicequotas:GetServiceQuota"
+        "servicequotas:GetServiceQuota",
+        "servicequotas:RequestServiceQuotaIncrease"
       ],
-      "Resource": "*"
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/environment": ["dev", "sandbox", "data-analytics"]
+        }
+      }
     },
     {
-      "Sid": "ExplicitDenyDangerous",
-      "Effect": "Deny",
+      "Sid": "AllowAICallSigV4",
+      "Effect": "Allow",
+      "Action": "execute-api:Invoke",
+      "Resource": "arn:aws:execute-api:ap-southeast-1:*:*/v1/*"
+    },
+    {
+      "Sid": "AllowRollbackCacheRW",
+      "Effect": "Allow",
       "Action": [
-        "ec2:TerminateInstances", "rds:DeleteDBInstance", "rds:DeleteDBCluster",
-        "s3:DeleteObject", "s3:DeleteBucket",
-        "iam:*", "sts:AssumeRole"
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:DeleteItem"
       ],
-      "Resource": "*"
+      "Resource": "arn:aws:dynamodb:ap-southeast-1:*:table/finops-rollback-cache"
     }
   ]
 }
 ```
 
-> **WHY Explicit Deny**: `Allow` + `Condition` có thể bị bypass nếu có policy khác grant. `Deny` là absolute — không IAM policy nào override được (reference: AWS IAM Policy Evaluation Logic).
+---
+
+## Appendix C: AI Engine DynamoDB Idempotency Table (v1.3.0)
+
+> **v3.2.0 telemetry-contract.md:** Idempotency hot path = DynamoDB, không phải S3.
+
+| Attribute | Value |
+|---|---|
+| **Table name** | `finops-idempotency-{env}` |
+| **Partition key** | `idempotency_key` (String) |
+| **Attributes** | `payload_sha256`, `status`, `response_cache`, `created_at`, `ttl_expiry` |
+| **TTL** | Attribute `ttl_expiry` (Number, Unix epoch) — auto-delete 24h |
+| **Billing** | On-demand (PAY_PER_REQUEST) — phù hợp batch 24h cadence |
+| **PITR** | Enabled (production) |
+
+**Write flow:**
+
+```
+1. PutItem ConditionExpression: attribute_not_exists(idempotency_key)
+   → status = IN_PROGRESS, ttl_expiry = now + 86400
+2. Process detect → UpdateItem status = COMPLETED, response_cache = DetectResponse JSON
+3. ConditionalCheckFailedException:
+   → GetItem → if COMPLETED + same sha256 → return cache
+   → if COMPLETED + different sha256 → 400 ERR_IDEMPOTENCY_MISMATCH
+   → if IN_PROGRESS + created_at < 5 min ago → 409 Conflict
+   → if IN_PROGRESS + created_at > 5 min ago → stale lock, allow re-process
+```
+
+**AI Engine IAM (minimum):**
+
+```json
+{
+  "Sid": "AllowIdempotencyRW",
+  "Effect": "Allow",
+  "Action": ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:UpdateItem"],
+  "Resource": "arn:aws:dynamodb:ap-southeast-1:*:table/finops-idempotency-*"
+}
+```
+
+**Feature Store (production path):** Table `finops-feature-store-{env}` với PK=`resource_id`, SK=`date`. S3 feature path chỉ dùng capstone/backtest fallback.
 
 ---
 
-## Appendix C. ADR Index (Cross-reference)
+## Open questions (Đã làm rõ / Clarified)
 
-| ADR | Quyết định | Lý do | Trade-off |
-|---|---|---|---|
-| ADR-001 | Host ONCE per Task Force | Chia sẻ prompt cache, giảm cost 50% | CDO phụ thuộc single endpoint |
-| ADR-002 | Batch Cadence 24h | CUR cập nhật 8-12h, data lag chấp nhận được | Max detection delay = 24h |
-| ADR-003 | DynamoDB Cache CE results | CE rate limit 5 req/s, cache tránh throttle | Thêm DynamoDB cost ~$1/month |
-| ADR-004 | IAM SigV4 Auth (no API keys) | Không static secret, auto-rotate | CDO phải implement SigV4 signing |
-| ADR-005 | 1% Error Budget Lock | Bảo vệ trust, auto-lock containment khi lỗi nhiều | Có thể block legitimate containment |
-
----
-
-## Open Questions (Resolved)
-
-- [x] **Q1**: Multi-region cho disaster recovery — có trong scope capstone không?
-  - *Resolved*: Không. Design-only. Single-region `ap-southeast-1` (reference: TF2_FINOPS_LEARNER.md §Out of scope).
-
-- [x] **Q2**: Cost cap per task force per ngày — đặt mức nào?
-  - *Resolved*: $1.67/ngày (= $50/30 ngày). Circuit breaker escalation 3 levels (§10).
-
----
-
-## Related Documents
-
-- ai-api-contract.md — 5 API endpoints specification
-- telemetry-contract.md — CDO signals definition
-- docs/01_requirements.md — success criteria + hard constraints
-- docs/02_solution_design.md — architecture + component breakdown
-- docs/03_ai_engine_spec.md — model governance + Bedrock Guardrails
-- docs/05_adrs.md — Architecture Decision Records
-- data/tf2-finops/README.md — ground truth data schema
-- reference/CAPSTONE_EVIDENCE_PACK_FORMAT.md — evidence documentation standards
+- [x] **Q1: Multi-region cho disaster recovery - có trong scope capstone không?**
+  - *Giải đáp*: **Không thuộc scope bắt buộc của Capstone**. Tuy nhiên, kiến trúc đa vùng (Multi-region Active-Passive) có thể được CDO triển khai tự do làm điểm nhấn kỹ thuật (Differentiation Angle) để ghi điểm cộng với Panel đánh giá.
+- [x] **Q2: Cost cap per task force per ngày - đặt mức nào?**
+  - *Giải đáp*: Ngân sách hoạt động cho Bedrock API của toàn bộ Task Force được khống chế ở mức **$50 USD / tháng** (tương đương ~$1.67 USD / ngày). CDO Platform cần cấu hình alarm cảnh báo chi phí ở mức 80% ($1.33 USD / ngày) và ngắt mạch (Circuit Breaker) dừng gọi Bedrock ở mức 100% ($1.67 USD / ngày).
