@@ -1,6 +1,6 @@
-# Engine Skeleton — Checklist & Insight Notes (Contracts v1.3.0 Final)
+# Engine Skeleton — Checklist & Insight Notes (Contracts v1.5.0 Final)
 
-> **Mục đích**: File này giúp toàn bộ thành viên AIOps, DevOps, CloudOps trong Task Force 2 hiểu rõ engine skeleton giải quyết vấn đề gì, kiểm tra đúng/sai, và biết được ranh giới trách nhiệm giữa các nhóm sau khi đã đồng bộ hoàn toàn với **Contracts Final v1.3.0**.
+> **Mục đích**: File này giúp toàn bộ thành viên AIOps, DevOps, CloudOps trong Task Force 2 hiểu rõ engine skeleton giải quyết vấn đề gì, kiểm tra đúng/sai, và biết được ranh giới trách nhiệm giữa các nhóm sau khi đã đồng bộ hoàn toàn với **Contracts Final v1.5.0**.
 >
 > **Ngày cập nhật**: 2026-06-25 (W11 T4)
 > **Trạng thái**: Skeleton (sync/boto3 logic) — 26/26 tests passed, sẵn sàng đẩy lên ECR.

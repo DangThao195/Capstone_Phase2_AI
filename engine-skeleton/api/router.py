@@ -1,5 +1,5 @@
 """
-API Router — Contract v1.3.0 endpoint definitions.
+API Router — Contract v1.5.0 endpoint definitions.
 ====================================================
 Endpoints (6 total):
   GET  /health                         → Health check (Contract §5.4)
@@ -9,12 +9,12 @@ Endpoints (6 total):
   POST /v1/verify                      → Post-action verification (Contract §5.3)
   POST /v1/audit/{audit_id}/rollback   → Rollback audit notification (Contract §5.6)
 
-v1.3.0 changes from v1.1:
+v1.5.0 changes:
   - /v1/detect: 200 sync (was 202 async) — returns full anomalies_list directly
   - CUR data is primary source of truth; CE only when telemetry_delay_event=true
-  - data_confidence: HIGH (CUR) / LOW (CE fallback)
+  - business_context is now mandatory (includes traffic_volume for cost normalization)
+  - s3_bucket_uri enforces globally unique naming convention
   - rollback_payload includes boto3_equivalent
-  - Health services renamed: dynamodb → s3_audit_bucket
   - Rollback endpoint: receives notification after CDO executes (audit_recorded)
 """
 

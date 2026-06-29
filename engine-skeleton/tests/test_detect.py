@@ -22,11 +22,19 @@ HEADERS = {"X-Tenant-Id": "test-tenant-001"}
 # ---------------------------------------------------------------------------
 
 def _detect_payload() -> dict:
-    """Minimal valid detect request — CUR primary mode (v1.3.0)."""
+    """Minimal valid detect request — CUR primary mode (v1.5.0)."""
     return {
         "data_source_type": "RAW_JSON",
         "is_ad_hoc": False,
         "telemetry_delay_event": False,
+        "business_context": {
+            "linked_account_id": "200000000012",
+            "traffic_volume": 125000.0,
+            "traffic_source": "ALB",
+            "campaign_flag": False,
+            "load_test_flag": False,
+            "migration_flag": False,
+        },
         "aws_cur_line_items": [
             {
                 "line_item_usage_start_date": "2026-06-23T00:00:00Z",
@@ -63,6 +71,20 @@ def _detect_payload_ce_fallback() -> dict:
         "data_source_type": "RAW_JSON",
         "is_ad_hoc": False,
         "telemetry_delay_event": True,
+        "business_context": {
+            "linked_account_id": "200000000012",
+            "traffic_volume": 125000.0,
+            "traffic_source": "ALB",
+            "campaign_flag": False,
+            "load_test_flag": False,
+            "migration_flag": False,
+        },
+        "missing_resources": ["AmazonEC2"],
+        "current_ce_cost_gap_usd": 427.50,
+        "comparison_window": {
+            "start_date": "2026-06-23",
+            "end_date": "2026-06-23",
+        },
         "aws_cost_explorer_daily": [
             {
                 "date": "2026-06-23",
@@ -72,9 +94,6 @@ def _detect_payload_ce_fallback() -> dict:
                 "service": "Amazon Elastic Compute Cloud - Compute",
                 "region": "ap-southeast-1",
                 "unblended_cost": 427.50,
-                "cost_ratio_to_7d_avg": 18.2,
-                "day_of_week": 1,
-                "is_weekend": False,
                 "is_estimated": True,
             }
         ],
@@ -115,6 +134,14 @@ def _verify_payload(correlation_id: str) -> dict:
         "post_telemetry_window": {
             "data_source_type": "RAW_JSON",
             "telemetry_delay_event": False,
+            "business_context": {
+                "linked_account_id": "200000000012",
+                "traffic_volume": 125000.0,
+                "traffic_source": "ALB",
+                "campaign_flag": False,
+                "load_test_flag": False,
+                "migration_flag": False,
+            },
             "aws_cur_line_items": [
                 {
                     "line_item_usage_start_date": "2026-06-24T00:00:00Z",
