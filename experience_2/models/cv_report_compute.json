@@ -1,0 +1,48 @@
+{
+  "resource_type": "compute",
+  "best_cv_f1": 0.4334,
+  "best_params": {
+    "subsample": 0.7,
+    "scale_pos_weight": 15.454619787408014,
+    "reg_lambda": 3,
+    "reg_alpha": 0.01,
+    "n_estimators": 50,
+    "min_child_weight": 1,
+    "max_depth": 4,
+    "learning_rate": 0.05,
+    "gamma": 0,
+    "colsample_bytree": 0.8
+  },
+  "per_fold": [
+    {
+      "fold": 1,
+      "train_f1": 0.8624,
+      "val_f1": 0.253,
+      "overfit_gap": 0.6094
+    },
+    {
+      "fold": 2,
+      "train_f1": 0.7659,
+      "val_f1": 0.3547,
+      "overfit_gap": 0.4112
+    },
+    {
+      "fold": 3,
+      "train_f1": 0.6816,
+      "val_f1": 0.6926,
+      "overfit_gap": -0.011
+    }
+  ],
+  "cv_std": 0.1879,
+  "test_metrics": {
+    "precision": 0.417,
+    "recall": 0.6897,
+    "f1": 0.5198,
+    "fpr": 0.0554,
+    "tp": 789,
+    "fp": 1103,
+    "tn": 18801,
+    "fn": 355,
+    "kpi_pass": false
+  }
+}

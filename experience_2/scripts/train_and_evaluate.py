@@ -153,86 +153,184 @@ def run_training_and_evaluation():
             X_test_scaled = None
             y_test = None
             
-        # 4. Huấn luyện các mô hình
-        # Model A: Baseline
-        model_base = XGBClassifier(n_estimators=100, max_depth=4, learning_rate=0.05, random_state=42, eval_metric='logloss')
-        model_base.fit(X_train_scaled, y_train)
+        # -------------------------------------------------------------
+        # 4. Hyperparameter Tuning với RandomizedSearchCV + TimeSeriesSplit
+        # -------------------------------------------------------------
+        from sklearn.model_selection import RandomizedSearchCV, TimeSeriesSplit
+        from sklearn.metrics import make_scorer
         
-        # Model B: scale_pos_weight
         num_neg = (y_train == 0).sum()
         num_pos = (y_train == 1).sum()
         scale_weight = num_neg / max(1, num_pos)
-        model_weighted = XGBClassifier(
-            n_estimators=100,
-            max_depth=4,
-            learning_rate=0.05,
-            scale_pos_weight=scale_weight,
+        
+        param_distributions = {
+            "n_estimators": [50, 100, 200, 300],
+            "max_depth": [3, 4, 5, 6, 7],
+            "learning_rate": [0.01, 0.03, 0.05, 0.1, 0.2],
+            "subsample": [0.7, 0.8, 0.9, 1.0],
+            "colsample_bytree": [0.6, 0.7, 0.8, 0.9, 1.0],
+            "min_child_weight": [1, 3, 5, 7],
+            "gamma": [0, 0.1, 0.3, 0.5],
+            "reg_alpha": [0, 0.01, 0.1],
+            "reg_lambda": [1, 1.5, 2, 3],
+            "scale_pos_weight": [1, scale_weight, max(1, scale_weight * 0.5)],
+        }
+        
+        tscv = TimeSeriesSplit(n_splits=3)
+        
+        # Custom F1 scorer: trả về 0.0 khi fold không có positive sample (thay vì crash)
+        def safe_f1(y_true, y_pred):
+            if y_true.sum() == 0:
+                return 0.0
+            return f1_score(y_true, y_pred, zero_division=0)
+        
+        safe_f1_scorer = make_scorer(safe_f1)
+        
+        base_estimator = XGBClassifier(
             random_state=42,
-            eval_metric='logloss'
+            eval_metric='logloss',
+            verbosity=0,
         )
-        model_weighted.fit(X_train_scaled, y_train)
         
-        # Model C: SMOTE
-        model_smote = None
-        if has_smote and num_pos > 5:
-            try:
-                smote = SMOTE(random_state=42)
-                X_res, y_res = smote.fit_resample(X_train_scaled, y_train)
-                model_smote = XGBClassifier(n_estimators=100, max_depth=4, learning_rate=0.05, random_state=42, eval_metric='logloss')
-                model_smote.fit(X_res, y_res)
-            except Exception as e:
-                print(f"  [WARNING] Không thể chạy SMOTE: {e}")
-                
-        models_to_eval = [
-            ("XGBoost Baseline", model_base),
-            ("XGBoost + scale_pos_weight", model_weighted)
-        ]
-        if model_smote is not None:
-            models_to_eval.append(("XGBoost + SMOTE", model_smote))
+        print(f"\n  --- Bắt đầu RandomizedSearchCV (n_iter=30, cv=TimeSeriesSplit(3)) ---")
+        print(f"  * Class balance: {num_neg} normal vs {num_pos} anomaly (ratio={scale_weight:.1f}:1)")
+        print(f"  * Thử 30 tổ hợp ngẫu nhiên × 3 folds = 90 lần fit")
+        
+        search = RandomizedSearchCV(
+            estimator=base_estimator,
+            param_distributions=param_distributions,
+            n_iter=30,
+            scoring=safe_f1_scorer,
+            cv=tscv,
+            random_state=42,
+            n_jobs=-1,
+            verbose=0,
+            return_train_score=True,
+            error_score=0.0,  # Trả về 0 thay vì crash khi fold lỗi
+        )
+        
+        search.fit(X_train_scaled, y_train)
+        
+        best_params = search.best_params_
+        best_cv_f1 = search.best_score_
+        
+        print(f"\n  --- Kết quả RandomizedSearchCV ---")
+        print(f"  * Best CV F1 Score: {best_cv_f1*100:.2f}%")
+        print(f"  * Best Hyperparameters:")
+        for param_name, param_val in sorted(best_params.items()):
+            print(f"      {param_name}: {param_val}")
+        
+        # -------------------------------------------------------------
+        # 5. Phân tích Chi tiết Per-Fold Metrics
+        # -------------------------------------------------------------
+        cv_results = search.cv_results_
+        best_idx = search.best_index_
+        
+        cv_report = {
+            "resource_type": rtype,
+            "best_cv_f1": round(best_cv_f1, 4),
+            "best_params": best_params,
+            "per_fold": [],
+        }
+        
+        print(f"\n  --- Chi tiết Metrics per Fold (Best Configuration) ---")
+        for fold_i in range(3):
+            train_score = cv_results[f"split{fold_i}_train_score"][best_idx]
+            val_score = cv_results[f"split{fold_i}_test_score"][best_idx]
+            overfit_gap = train_score - val_score
+            fold_info = {
+                "fold": fold_i + 1,
+                "train_f1": round(train_score, 4),
+                "val_f1": round(val_score, 4),
+                "overfit_gap": round(overfit_gap, 4),
+            }
+            cv_report["per_fold"].append(fold_info)
+            status = "⚠️ OVERFIT" if overfit_gap > 0.15 else "✅ OK"
+            print(f"    Fold {fold_i+1}: Train F1={train_score*100:5.2f}% | Val F1={val_score*100:5.2f}% | Gap={overfit_gap*100:5.2f}% | {status}")
+        
+        # Tính std giữa các fold
+        val_scores = [cv_report["per_fold"][i]["val_f1"] for i in range(3)]
+        cv_std = float(np.std(val_scores))
+        cv_report["cv_std"] = round(cv_std, 4)
+        stability = "✅ ỔN ĐỊNH" if cv_std < 0.05 else "⚠️ BIẾN ĐỘNG"
+        print(f"    Cross-Fold Std: {cv_std*100:.2f}% → {stability}")
+        
+        # -------------------------------------------------------------
+        # 6. Retrain trên toàn bộ Train với best_params → Đánh giá Test
+        # -------------------------------------------------------------
+        print(f"\n  --- Retrain trên toàn bộ Train ({len(X_train_scaled)} samples) với best_params ---")
+        final_model = XGBClassifier(
+            **best_params,
+            random_state=42,
+            eval_metric='logloss',
+            verbosity=0,
+        )
+        final_model.fit(X_train_scaled, y_train)
+        
+        # Đánh giá trên tập Test (tháng 5)
+        if has_test and y_test is not None and y_test.sum() > 0:
+            y_pred = final_model.predict(X_test_scaled)
             
-        # 5. Đánh giá và chọn best model
-        best_f1 = -1
-        best_model_name = ""
-        best_model_obj = None
-        
-        if has_test and y_test.sum() > 0:
-            print("\n  - Đánh giá trên tập Test (Tháng 5):")
-            for name, model in models_to_eval:
-                y_pred = model.predict(X_test_scaled)
-                
-                precision = precision_score(y_test, y_pred, zero_division=0)
-                recall = recall_score(y_test, y_pred, zero_division=0)
-                f1 = f1_score(y_test, y_pred, zero_division=0)
-                
-                tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-                fpr = fp / (fp + tn) if (fp + tn) > 0 else 0
-                
-                kpi_status = "✅ ĐẠT KPI" if (precision >= 0.80 and fpr <= 0.10) else "❌ CHƯA ĐẠT"
-                print(f"    * {name:28}: Precision={precision*100:5.2f}% | FPR={fpr*100:5.2f}% | Recall={recall*100:5.2f}% | F1={f1*100:5.2f}% | {kpi_status}")
-                
-                # Ưu tiên mô hình có Precision cao nhất đạt chuẩn KPI, nếu không thì so sánh F1
-                if f1 > best_f1:
-                    best_f1 = f1
-                    best_model_name = name
-                    best_model_obj = model
+            precision = precision_score(y_test, y_pred, zero_division=0)
+            recall = recall_score(y_test, y_pred, zero_division=0)
+            f1 = f1_score(y_test, y_pred, zero_division=0)
+            
+            tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+            fpr = fp / (fp + tn) if (fp + tn) > 0 else 0
+            
+            # KPI Check
+            kpi_pass = precision >= 0.80 and fpr <= 0.10
+            kpi_status = "✅ ĐẠT KPI" if kpi_pass else "❌ CHƯA ĐẠT"
+            
+            print(f"\n  --- Đánh giá trên tập Test (Tháng 5) ---")
+            print(f"    * Precision: {precision*100:5.2f}%")
+            print(f"    * Recall:    {recall*100:5.2f}%")
+            print(f"    * F1 Score:  {f1*100:5.2f}%")
+            print(f"    * FPR:       {fpr*100:5.2f}%")
+            print(f"    * Confusion: TP={tp} FP={fp} TN={tn} FN={fn}")
+            print(f"    * KPI (Precision≥80% AND FPR≤10%): {kpi_status}")
+            
+            cv_report["test_metrics"] = {
+                "precision": round(precision, 4),
+                "recall": round(recall, 4),
+                "f1": round(f1, 4),
+                "fpr": round(fpr, 4),
+                "tp": int(tp), "fp": int(fp), "tn": int(tn), "fn": int(fn),
+                "kpi_pass": kpi_pass,
+            }
         else:
-            print("\n  - Không thể đánh giá trên test. Chọn mô hình mặc định (Baseline).")
-            best_model_name = "XGBoost Baseline"
-            best_model_obj = model_base
-            best_f1 = 0.0
+            print("\n  - Không có dữ liệu Test. Dùng CV score làm đánh giá duy nhất.")
+            cv_report["test_metrics"] = None
             
-        # 6. Lưu mô hình tốt nhất
-        model_file = os.path.join(output_dir, f"best_model_{rtype.lower()}.json")
-        best_model_obj.save_model(model_file)
-        print(f"    * Saved best model ({best_model_name}) to: {model_file}")
+        # -------------------------------------------------------------
+        # 7. Lưu model + params + cv_report
+        # -------------------------------------------------------------
+        import json as json_module
         
-        # Lưu feature spec
+        model_file = os.path.join(output_dir, f"best_model_{rtype.lower()}.json")
+        final_model.save_model(model_file)
+        print(f"\n    * Saved best model to: {model_file}")
+        
         features_file = os.path.join(output_dir, f"features_spec_{rtype.lower()}.txt")
         with open(features_file, "w") as f:
             f.write("\n".join(feature_cols))
         print(f"    * Saved feature specification to: {features_file}")
         
+        # NEW: Export best hyperparameters
+        params_file = os.path.join(output_dir, f"best_params_{rtype.lower()}.json")
+        serializable_params = {k: (float(v) if isinstance(v, (np.floating, np.integer)) else v) for k, v in best_params.items()}
+        with open(params_file, "w") as f:
+            json_module.dump(serializable_params, f, indent=2)
+        print(f"    * Saved best hyperparameters to: {params_file}")
+        
+        # NEW: Export CV report
+        cv_report_file = os.path.join(output_dir, f"cv_report_{rtype.lower()}.json")
+        with open(cv_report_file, "w") as f:
+            json_module.dump(cv_report, f, indent=2, default=str)
+        print(f"    * Saved CV report to: {cv_report_file}")
+        
     print("\n=== HOÀN THÀNH BƯỚC 4 ===")
 
 if __name__ == "__main__":
     run_training_and_evaluation()
+

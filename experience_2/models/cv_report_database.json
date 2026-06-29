@@ -1,0 +1,48 @@
+{
+  "resource_type": "database",
+  "best_cv_f1": 0.2959,
+  "best_params": {
+    "subsample": 1.0,
+    "scale_pos_weight": 13.650684931506849,
+    "reg_lambda": 2,
+    "reg_alpha": 0,
+    "n_estimators": 200,
+    "min_child_weight": 5,
+    "max_depth": 6,
+    "learning_rate": 0.1,
+    "gamma": 0.1,
+    "colsample_bytree": 0.9
+  },
+  "per_fold": [
+    {
+      "fold": 1,
+      "train_f1": 0.9975,
+      "val_f1": 0.043,
+      "overfit_gap": 0.9545
+    },
+    {
+      "fold": 2,
+      "train_f1": 1.0,
+      "val_f1": 0.0,
+      "overfit_gap": 1.0
+    },
+    {
+      "fold": 3,
+      "train_f1": 0.9979,
+      "val_f1": 0.8446,
+      "overfit_gap": 0.1533
+    }
+  ],
+  "cv_std": 0.3884,
+  "test_metrics": {
+    "precision": 0.5635,
+    "recall": 0.3246,
+    "f1": 0.4119,
+    "fpr": 0.016,
+    "tp": 173,
+    "fp": 134,
+    "tn": 8261,
+    "fn": 360,
+    "kpi_pass": false
+  }
+}
