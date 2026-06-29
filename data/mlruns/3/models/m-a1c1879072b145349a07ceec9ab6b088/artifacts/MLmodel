@@ -1,0 +1,22 @@
+artifact_path: file:H:/Capstone_Phase2_AI/data/mlruns/3/models/m-a1c1879072b145349a07ceec9ab6b088/artifacts
+flavors:
+  python_function:
+    data: model.ubj
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.13.12
+  xgboost:
+    code: null
+    data: model.ubj
+    model_class: xgboost.sklearn.XGBClassifier
+    model_format: ubj
+    xgb_version: 3.3.0
+mlflow_version: 3.14.0
+model_id: m-a1c1879072b145349a07ceec9ab6b088
+model_size_bytes: 2794996
+model_uuid: m-a1c1879072b145349a07ceec9ab6b088
+prompts: null
+run_id: 408cc2307e7a4ca8a9740dc6382cc181
+utc_time_created: '2026-06-29 04:47:21.020286'

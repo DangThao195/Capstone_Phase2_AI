@@ -55,7 +55,9 @@ def _build_system_prompt() -> str:
         "Nhiem vu: Phan tich du lieu chi phi AWS va xac dinh nguyen nhan goc re (Root Cause)\n"
         "bang ngon ngu tai chinh ro rang, de hieu cho CFO va Finance team.\n"
         "TUYET DOI khong dung cac thuat ngu toan hoc nhu: robust_z, rolling window, gradient.\n"
-        "Neu owner tag = null/MISSING: BAT BUOC ket luan root_cause_category = 'Mis-tagged Spend'.\n"
+        "Khi owner tag bi MISSING: can xem xet day la dau hieu vi pham Tag Policy cua doanh nghiep,\n"
+        "nhung van nen phan tich them cac signal khac (usage_density, cost_ratio) de xac dinh root cause chinh xac nhat.\n"
+        "Vi du: neu resource vua missing owner tag vua idle -> root_cause = 'Idle Resource', missing_tags = ['owner'].\n"
         "Chi tra ve JSON thuan tuy, khong them markdown, khong them giai thich ngoai JSON."
     )
 
@@ -170,8 +172,10 @@ def _fallback_rca(reason: str) -> dict:
 # ── Stage 1d: Hardcoded Mis-tagged Spend override ────────────────────────────
 def _enforce_tag_policy(record: dict, rca: dict) -> dict:
     """
-    Bat buoc override root_cause neu owner tag bi thieu.
-    Day la rule cung — khong phu thuoc vao LLM judgment.
+    Neu LLM chua phat hien Mis-tagged Spend khi owner tag bi thieu,
+    bo sung vao missing_tags nhung KHONG override root_cause_category.
+    LLM co the ket luan ca 2: "Idle Resource + missing owner tag"
+    -> chi append tag vao list, giu nguyen RCA cua LLM.
     """
     owner_val = record.get("resource_tags_user_owner")
     owner_missing = (
@@ -180,54 +184,116 @@ def _enforce_tag_policy(record: dict, rca: dict) -> dict:
     )
 
     if owner_missing:
-        rca["root_cause_category"] = "Mis-tagged Spend"
         tags = rca.get("missing_mandatory_tags", [])
         if "resource_tags_user_owner" not in tags:
             tags.append("resource_tags_user_owner")
         rca["missing_mandatory_tags"] = tags
-        logger.info(
-            "[TAG POLICY] Resource %s: owner tag missing -> override to Mis-tagged Spend",
-            record.get("resource_id", "unknown"),
-        )
+        # Chi upgrade risk neu LLM cho Low/Medium nhung owner missing
+        if rca.get("risk_level") in ("Low", "Medium"):
+            rca["risk_level"] = "High"
+            logger.info(
+                "[TAG POLICY] Resource %s: owner missing -> risk upgraded to High, tag appended",
+                record.get("resource_id", "unknown"),
+            )
     return rca
 
 
 # ── Stage 1e: Mock mode (khi khong co Bedrock credentials) ───────────────────
 def _mock_nova_rca(record: dict) -> dict:
     """
-    Sinh RCA gia lap dua tren rule don gian.
-    Dung khi BEDROCK_MOCK=true hoac khi chay unit test.
+    Sinh RCA gia lap dua tren multi-signal rule (khong hardcode owner=missing->Mis-tagged).
+    Thu tu uu tien: Idle Resource > Cost Spike > Runaway Job > Mis-tagged Spend > Other
     """
     cost_ratio    = record.get("cost_ratio_to_7d_avg", 1.0)
     usage_density = record.get("usage_density_24h", 0)
     cpu_mean      = record.get("cpu_mean", 50)
     cost_24h      = record.get("line_item_unblended_cost", 0)
     monthly_proj  = round(cost_24h * 30, 2)
+    db_conn       = record.get("database_connections", None)
+    owner_val     = record.get("resource_tags_user_owner")
+    owner_missing = owner_val is None or str(owner_val).strip().upper() in ("", "NAN", "NONE", "MISSING")
 
-    if usage_density >= 0.9 and cpu_mean < 10:
+    # Rule 1: Idle resource (cpu thap, dang bo hoang)
+    if usage_density <= 0.15 and cost_24h > 5:
         category = "Idle Resource"
-        driver   = "usage_density_24h"
+        driver   = "cpu_mean"
         reason   = (
-            f"Tai nguyen chay lien tuc {usage_density:.0%} thoi gian nhung CPU chi {cpu_mean:.1f}%. "
+            f"Tai nguyen co CPU chi {cpu_mean:.1f}% nhung van tiep tuc phat sinh chi phi. "
             "Khong co workload thuc su, co the da bi bo hoang."
         )
         summary  = (
             f"Tai nguyen tieu ton ${cost_24h:.2f}/ngay (du bao ${monthly_proj:.2f}/thang) "
-            "trong khi khong co hoat dong thuc su. Can dieu tra ngay."
+            "trong khi CPU gan nhu khong hoat dong."
         )
-        risk = "High" if cost_ratio > 5 else "Medium"
-    elif cost_ratio > 10:
+        risk = "Critical" if cost_24h > 100 else ("High" if cost_24h > 20 else "Medium")
+        category = "Idle Resource"
+        driver   = "usage_density_24h"
+        reason   = (
+            f"Tai nguyen chay {usage_density:.0%} thoi gian nhung CPU chi {cpu_mean:.1f}%. "
+            "Khong co workload thuc su, co the da bi bo hoang."
+        )
+        summary  = (
+            f"Tai nguyen tieu ton ${cost_24h:.2f}/ngay (du bao ${monthly_proj:.2f}/thang) "
+            "trong khi khong co hoat dong thuc su."
+        )
+        risk = "Critical" if cost_24h > 100 else ("High" if cost_ratio > 5 else "Medium")
+
+    # Rule 1b: Runaway Job (cpu rat cao, cost ratio binh thuong = unexpected high CPU)
+    elif cpu_mean > 90 and cost_24h > 10:
+        category = "Runaway Job"
+        driver   = "cpu_mean"
+        reason   = (
+            f"CPU dang chay {cpu_mean:.1f}% lien tuc - cao bat thuong. "
+            "Co the la job bi loop, process zombie, hoac workload chua duoc optimize."
+        )
+        summary  = (
+            f"Tai nguyen dang chay full CPU {cpu_mean:.1f}%, tieu ton ${cost_24h:.2f}/ngay. "
+            f"Du bao ${monthly_proj:.2f}/thang neu khong dung lai."
+        )
+        risk = "Critical" if cpu_mean > 95 else "High"
+
+    # Rule 2: DB idle (co connections ~ 0)
+    elif db_conn is not None and db_conn < 2 and usage_density >= 0.5:
+        category = "Idle Resource"
+        driver   = "database_connections"
+        reason   = (
+            f"Database chay lien tuc nhung Active Connections chi {db_conn:.0f}. "
+            "Instance bi bo hoang sau ket thuc cong viec."
+        )
+        summary  = (
+            f"Database tieu ton ${cost_24h:.2f}/ngay du khong co ket noi hoat dong. "
+            f"Du bao ${monthly_proj:.2f}/thang lang phi."
+        )
+        risk = "High"
+
+    # Rule 3: Cost spike dot bien
+    elif cost_ratio > 8:
         category = "Cost Spike"
         driver   = "cost_ratio_to_7d_avg"
         reason   = (
             f"Chi phi tang dot bien {cost_ratio:.1f}x so voi trung binh 7 ngay. "
-            "Co the la runaway job hoac thay doi cau hinh bat ngo."
+            "Co the la runaway job, bat thu vien ngoai lenh, hoac thay doi cau hinh bat ngo."
         )
         summary  = (
             f"Chi phi tang {cost_ratio:.1f}x trong 24h qua, tong ${cost_24h:.2f}/ngay. "
             f"Can kiem tra ngay de tranh thiet hai ${monthly_proj:.2f}/thang."
         )
         risk = "Critical" if cost_ratio > 20 else "High"
+
+    # Rule 4: Missing owner tag (chi khi khong co signal ro rang hon)
+    elif owner_missing:
+        category = "Mis-tagged Spend"
+        driver   = "resource_tags_user_owner"
+        reason   = (
+            "Tai nguyen khong co owner tag bat buoc. "
+            "Khong the xac dinh team chiu trach nhiem chi phi."
+        )
+        summary  = (
+            f"Chi phi ${cost_24h:.2f}/ngay khong the quy cho team cu the do thieu owner tag. "
+            "Vi pham Tag Policy cong ty."
+        )
+        risk = "Medium"
+
     else:
         category = "Other"
         driver   = "line_item_unblended_cost"
@@ -235,12 +301,14 @@ def _mock_nova_rca(record: dict) -> dict:
         summary  = f"Phat hien chi phi bat thuong ${cost_24h:.2f}/ngay. Can review."
         risk = "Medium"
 
+    missing_tags = ["resource_tags_user_owner"] if owner_missing else []
+
     return {
         "primary_driver_feature": driver,
         "root_cause_category":    category,
         "finance_summary":        summary,
         "technical_reason":       reason,
-        "missing_mandatory_tags": [],
+        "missing_mandatory_tags": missing_tags,
         "risk_level":             risk,
         "_mock":                  True,
     }

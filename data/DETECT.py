@@ -128,10 +128,20 @@ def train_final_model(
     print('STEP 5 - TRAIN FINAL XGBOOST (Gradient Boosting)')
     print('=' * 65)
 
-    sample_weights   = compute_sample_weight('balanced', y=y_train)
-    scale_pos_weight = float(
-        (len(y_train) - (y_train == 1).sum()) / max((y_train == 1).sum(), 1)
-    )
+    sample_weights = compute_sample_weight('balanced', y=y_train)
+
+    # scale_pos_weight chỉ có tác dụng với binary classification (binary:logistic).
+    # Với multi:softprob (3 class), imbalance được xử lý bằng sample_weight ở trên.
+    # Tính per-class weights để log MLflow, không pass vào XGBClassifier.
+    class_counts  = np.bincount(y_train.astype(int))
+    total         = len(y_train)
+    # weight_class_i = total / (n_classes * count_i)
+    per_class_w   = {int(i): round(total / (len(class_counts) * max(c, 1)), 4)
+                     for i, c in enumerate(class_counts)}
+    print(f'  Class imbalance weights: {per_class_w}')
+    print(f'  sample_weight min={sample_weights.min():.3f} '
+          f'mean={sample_weights.mean():.3f} '
+          f'max={sample_weights.max():.3f}')
 
     # Noise augmentation: add Gaussian noise to sensor features during training
     # Reduces over-reliance on CPU/memory metrics, improves perturbation robustness
@@ -166,7 +176,8 @@ def train_final_model(
             colsample_bytree=0.75,
             reg_alpha=0.5,
             reg_lambda=1.5,
-            scale_pos_weight=scale_pos_weight,
+            # scale_pos_weight removed: has NO effect with multi:softprob.
+            # Imbalance handled by sample_weight passed to model.fit().
             random_state=42,
             tree_method='hist',
             n_jobs=-1,
@@ -177,6 +188,8 @@ def train_final_model(
         mlflow.log_params(model.get_params())
         mlflow.log_metric('cv_f1_mean', float(np.mean(cv_scores)))
         mlflow.log_metric('cv_f1_std',  float(np.std(cv_scores)))
+        for cls_idx, w in per_class_w.items():
+            mlflow.log_metric(f'class_weight_{cls_idx}', w)
         mlflow.xgboost.log_model(model, 'model')
         print('  Model logged to MLflow.')
 
@@ -258,9 +271,24 @@ def evaluate_model(
     test_prob     = test_prob_all[:, 1]                 # prob of class anomaly
     test_pred     = (test_prob >= best_threshold).astype(int)
 
-    # 1. Full 3-class report
-    print('\n-- Classification Report (3 classes) --')
-    print(classification_report(y_test, model.predict(X_test), digits=4))
+    # 1. Full 3-class report - only show labels present in test set
+    y_pred_full   = model.predict(X_test)
+    labels_in_test = sorted(y_test.unique().tolist())
+    name_map       = {0: 'normal', 1: 'anomaly', 2: 'benign'}
+    target_names   = [name_map[l] for l in labels_in_test]
+
+    print('\n-- Classification Report (labels present in test) --')
+    print(classification_report(y_test, y_pred_full,
+                                 labels=labels_in_test,
+                                 target_names=target_names,
+                                 digits=4, zero_division=0))
+
+    missing = set([0,1,2]) - set(labels_in_test)
+    if missing:
+        missing_names = [name_map[m] for m in missing]
+        print(f'  [NOTE] Classes absent from test set: {missing_names}')
+        print(f'  Reason: benign events clustered in early dates -> all fall in train split')
+        print(f'  benign F1 in CV folds: model learned to predict it, but no test samples to evaluate')
 
     # 2. Binary ROC-AUC (anomaly vs rest)
     auc = roc_auc_score(y_test == 1, test_prob)

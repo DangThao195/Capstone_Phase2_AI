@@ -105,9 +105,21 @@ def row_to_record(row: pd.Series, df_test_raw: pd.DataFrame, idx: int) -> dict:
     env = str(raw_row.get("resource_tags_user_environment",
               row.get("resource_tags_user_environment", "dev"))).lower()
 
-    usage_amount = float(raw_row.get("line_item_usage_amount",
-                         row.get("line_item_usage_amount", 0)))
-    usage_density = round(usage_amount / 24.0, 4) if usage_amount > 0 else 0.0
+    # usage_density trong CUR = usage_amount (GB/hours) / 24
+    # Khong dung de detect idle - dung cpu_mean thay the
+    # Map rieng cpu_mean de RCA engine co the dung
+    cpu_mean = float(row.get("cpu_mean", 0))
+    cost_24h = float(raw_row.get("line_item_unblended_cost",
+                                  row.get("line_item_unblended_cost", 0)))
+    rolling_avg = float(row.get("rolling_7d_avg", cost_24h + 1e-6))
+    cost_ratio  = float(row.get("cost_ratio_to_7d_avg", 1.0))
+
+    # database_connections tu metrics (neu co)
+    db_conn = raw_row.get("database_connections", None)
+    if db_conn is not None and not pd.isna(db_conn):
+        db_conn = float(db_conn)
+    else:
+        db_conn = None
 
     return {
         "resource_id":               str(raw_row.get("line_item_resource_id",
@@ -116,16 +128,17 @@ def row_to_record(row: pd.Series, df_test_raw: pd.DataFrame, idx: int) -> dict:
         "confidence_score":          float(row.get("Probability", 0)),
         "line_item_product_code":    str(raw_row.get("line_item_product_code",
                                          row.get("line_item_product_code", "unknown"))),
-        "line_item_unblended_cost":  float(raw_row.get("line_item_unblended_cost",
-                                           row.get("line_item_unblended_cost", 0))),
-        "cost_ratio_to_7d_avg":      float(row.get("cost_ratio_to_7d_avg", 1.0)),
-        "usage_density_24h":         usage_density,
-        "cpu_mean":                  float(row.get("cpu_mean", 0)),
+        "line_item_unblended_cost":  cost_24h,
+        "cost_ratio_to_7d_avg":      cost_ratio,
+        # usage_density_24h: normalize ve [0,1] bang cpu_mean/100 khi usage_amount khong reliable
+        "usage_density_24h":         round(cpu_mean / 100.0, 4),
+        "cpu_mean":                  cpu_mean,
+        "database_connections":      db_conn,
         "resource_tags_user_owner":  owner,
         "resource_tags_user_team":   str(raw_row.get("resource_tags_user_team",
                                          row.get("resource_tags_user_team", "unknown"))),
         "absolute_cost_spike":       float(row.get("absolute_cost_spike", 0)),
-        "rolling_7d_avg":            float(row.get("rolling_7d_avg", 0)),
+        "rolling_7d_avg":            rolling_avg,
     }
 
 

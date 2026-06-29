@@ -166,7 +166,7 @@ def _mock_mitigation(record: dict, rca: dict) -> dict:
             "immediate_action": "tag-for-review",
             "cli_commands":     [f"aws ec2 create-tags --resources {resource} --tags Key=FinOps_Alert,Value=Review_Required"],
             "rollback_command": f"aws ec2 delete-tags --resources {resource} --tags Key=FinOps_Alert",
-            "slack_message":    f"[PROD ALERT] Resource {resource} flagged for review. Cost: /day. SRE action required.",
+            "slack_message":    f"[PROD ALERT] Resource {resource} flagged for review. Cost: ${cost:.2f}/day. SRE action required.",
             "enforcement_countdown": {"enabled": False, "time_lock_seconds": 0, "fallback_action": "none"},
             "requires_human_approval": True,
         }
@@ -178,7 +178,7 @@ def _mock_mitigation(record: dict, rca: dict) -> dict:
                 f"aws ec2 create-tags --resources {resource} --tags Key=FinOps_Alert,Value=Staging_Review_Countdown",
             ],
             "rollback_command": f"aws ec2 delete-tags --resources {resource} --tags Key=FinOps_Alert",
-            "slack_message":    f"[STAGING] Resource {resource} tagged. 4h countdown started. Cost: /day.",
+            "slack_message":    f"[STAGING] Resource {resource} tagged. 4h countdown started. Cost: ${cost:.2f}/day.",
             "enforcement_countdown": {"enabled": True, "time_lock_seconds": 14400, "fallback_action": "schedule-shutdown"},
             "requires_human_approval": False,
         }
@@ -189,7 +189,7 @@ def _mock_mitigation(record: dict, rca: dict) -> dict:
                 "immediate_action": "stop-instance",
                 "cli_commands":     [f"aws ec2 stop-instances --instance-ids {resource}"],
                 "rollback_command": f"aws ec2 start-instances --instance-ids {resource}",
-                "slack_message":    f"[DEV] Instance {resource} stopped. Confidence={confidence:.2f}. Cost saved: /day.",
+                "slack_message":    f"[DEV] Instance {resource} stopped. Confidence={confidence:.2f}. Cost saved: ${cost:.2f}/day.",
                 "enforcement_countdown": {"enabled": False, "time_lock_seconds": 0, "fallback_action": "none"},
                 "requires_human_approval": False,
             }
@@ -222,7 +222,7 @@ def _mock_mitigation(record: dict, rca: dict) -> dict:
                 f"aws service-quotas request-service-quota-increase --service-code {service.lower()} --quota-code L-PLACEHOLDER --desired-value 10"
             ],
             "rollback_command": f"aws service-quotas request-service-quota-increase --service-code {service.lower()} --quota-code L-PLACEHOLDER --desired-value 1000",
-            "slack_message":    f"[DATA-ANALYTICS] Quota cap applied to {resource}. Runaway query protection active. Cost: /day.",
+            "slack_message":    f"[DATA-ANALYTICS] Quota cap applied to {resource}. Runaway query protection active. Cost: ${cost:.2f}/day.",
             "enforcement_countdown": {"enabled": False, "time_lock_seconds": 0, "fallback_action": "none"},
             "requires_human_approval": False,
         }
@@ -522,8 +522,8 @@ def send_slack_alert(webhook_url: str, output_json: dict) -> bool:
             "text":   summary,
             "fields": [
                 {"title": "Resource",         "value": meta["resource_id"],  "short": False},
-                {"title": "Cost 24h",         "value": f"",       "short": True},
-                {"title": "Projected/Month",  "value": f"",    "short": True},
+                {"title": "Cost 24h",         "value": f"${cost:.2f}",       "short": True},
+                {"title": "Projected/Month",  "value": f"${monthly:.2f}",    "short": True},
                 {"title": "Root Cause",       "value": eng["root_cause_analysis"].get("primary_driver_feature", "N/A"), "short": True},
                 {"title": "Confidence",       "value": str(meta["confidence_score"]), "short": True},
                 {"title": "Action",           "value": action,               "short": True},
