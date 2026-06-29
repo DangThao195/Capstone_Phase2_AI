@@ -49,7 +49,7 @@
 | FPR | 0.027 |
 | ROC-AUC | 1.000 |
 
-> **Ghi chú đánh giá:** Recall = 1.000 được tính ở record level (mỗi ngày = 1 record). A2 có ~73 records, A6 có ~7 records. Model bắt được phần lớn records trong 2 window → Recall cao. Detection Coverage bên dưới thể hiện tỉ lệ bắt theo từng sự kiện cụ thể.
+> **Ghi chú đánh giá:** Recall = 1.000 được tính ở record level. 1 record = 1 ngày × 1 account × 1 service_code (cost_explorer_daily có 30 rows/ngày). A2 có 292 records (73 ngày × 4 services trong account staging) — chỉ AmazonRDS là anomaly thật, 3 services còn lại bị label nhầm do _build_label match theo account, không filter service. A6 có 28 records (7 ngày × 4 services trong account dev). Recall cao vì model bắt đúng tất cả labeled rows, kể cả mislabeled ones.
 
 - Optuna (30 trials, TPE sampler) tối ưu 9 hyperparameter.
 - Walk-forward validation (60d train / 7d val / 7d step) — không có look-ahead bias.
