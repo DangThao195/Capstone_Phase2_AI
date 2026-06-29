@@ -18,6 +18,13 @@ PRECISION_TARGET_MIN = 0.50
 WALK_FORWARD_MAX_FOLDS = 3
 WALK_FORWARD_MIN_TRAIN_DAYS = 21
 WALK_FORWARD_MIN_VALID_DAYS = 7
+VARIANT_THRESHOLD_FLOOR = {
+    "unified_hourly": 0.70,
+}
+RUNTIME_MIN_TRAIN_LABEL_ROWS = 300
+RUNTIME_MIN_METRICS_COVERAGE = 0.20
+RUNTIME_MIN_LABEL_COVERAGE = 0.15
+INCIDENT_COOLDOWN_DAYS = 7
 DEFAULT_METRIC_COLS = [
     "cpu_percent",
     "gpu_utilization",
@@ -294,6 +301,46 @@ def fbeta_score_from_metrics(metrics: dict[str, float], beta: float = 2.0) -> fl
     if denom <= 0.0:
         return 0.0
     return ((1.0 + beta_sq) * precision * recall) / denom
+
+
+def assess_runtime_quality(
+    rd: pd.DataFrame,
+    train_mask: pd.Series,
+    metrics_context: dict[str, Any],
+) -> dict[str, Any]:
+    valid_labels = rd["supervised_label"].isin(["anomaly", "normal", "benign"])
+    metrics_coverage = float(rd["has_metrics_int"].fillna(0.0).gt(0.0).mean()) if "has_metrics_int" in rd.columns else 0.0
+    label_coverage = float(valid_labels.mean()) if len(rd) else 0.0
+    train_label_rows = int(train_mask.sum())
+    train_unique_resources = int(rd.loc[train_mask, "line_item_resource_id"].nunique()) if train_label_rows else 0
+    telemetry_cols = ["cpu_percent", "network_out_bytes", "memory_mib", "database_connections", "gpu_utilization"]
+    telemetry_non_null = float(rd[telemetry_cols].notna().any(axis=1).mean()) if set(telemetry_cols).issubset(rd.columns) and len(rd) else 0.0
+
+    if (
+        train_label_rows >= RUNTIME_MIN_TRAIN_LABEL_ROWS
+        and metrics_coverage >= RUNTIME_MIN_METRICS_COVERAGE
+        and label_coverage >= RUNTIME_MIN_LABEL_COVERAGE
+    ):
+        quality_tier = "healthy"
+        model_enabled = True
+    elif train_label_rows >= 200 and label_coverage >= 0.08:
+        quality_tier = "degraded"
+        model_enabled = True
+    else:
+        quality_tier = "poor"
+        model_enabled = False
+
+    return {
+        "quality_tier": quality_tier,
+        "model_enabled": model_enabled,
+        "metrics_variant": metrics_context.get("metrics_variant", "none"),
+        "label_source": metrics_context.get("label_source", "unlabeled"),
+        "metrics_coverage": round(metrics_coverage, 4),
+        "telemetry_non_null_rate": round(telemetry_non_null, 4),
+        "label_coverage": round(label_coverage, 4),
+        "train_labeled_rows": train_label_rows,
+        "train_unique_resources": train_unique_resources,
+    }
 
 
 def choose_probability_threshold(y_true: pd.Series, probabilities: pd.Series) -> tuple[float, dict[str, float]]:
@@ -803,6 +850,8 @@ def add_type_evidence(rd: pd.DataFrame) -> pd.DataFrame:
 
 def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
     metrics_context = dict(rd.attrs.get("metrics_context", {}))
+    metrics_variant = metrics_context.get("metrics_variant", "none")
+    threshold_floor = float(VARIANT_THRESHOLD_FLOOR.get(metrics_variant, 0.0))
     rd = add_type_evidence(rd)
     rd = rd.copy()
     rd.attrs["metrics_context"] = metrics_context
@@ -815,6 +864,7 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
     train_mask = labeled_mask & rd["dataset_phase"].eq("train")
     test_mask = labeled_mask & rd["dataset_phase"].eq("test")
     rd.loc[test_mask, "is_holdout_row"] = True
+    runtime_quality = assess_runtime_quality(rd, train_mask, metrics_context)
     training_summary: dict[str, Any] = {
         "label_source": metrics_context.get("label_source", "unlabeled"),
         "train_labeled_rows": int(train_mask.sum()),
@@ -825,23 +875,23 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
         "cv_folds_requested": WALK_FORWARD_MAX_FOLDS,
         "cv_folds_completed": 0,
         "cv_fold_metrics": [],
+        "runtime_quality": runtime_quality,
+        "runtime_mode": "hybrid_supervised" if runtime_quality["model_enabled"] else "rule_backbone_safe_mode",
     }
 
-    if train_mask.sum() >= 200 and rd.loc[train_mask, "supervised_target"].nunique() == 2:
+    if runtime_quality["model_enabled"] and train_mask.sum() >= 200 and rd.loc[train_mask, "supervised_target"].nunique() == 2:
         train_frame = rd.loc[train_mask].copy()
         fold_metrics, oof_prob = walk_forward_cv(train_frame)
         training_summary["cv_folds_completed"] = len(fold_metrics)
         training_summary["cv_fold_metrics"] = fold_metrics
 
         threshold_source = "in_sample_train"
+        chosen_threshold_before_floor: float | None = None
         if not oof_prob.empty and train_frame.loc[oof_prob.index, "supervised_target"].nunique() == 2:
             cv_threshold, cv_oof_metrics = choose_probability_threshold(train_frame.loc[oof_prob.index, "supervised_target"], oof_prob)
             threshold = cv_threshold
+            chosen_threshold_before_floor = cv_threshold
             threshold_source = "walk_forward_oof"
-            rd.loc[oof_prob.index, "cv_oof_score"] = oof_prob.round(4)
-            training_summary["cv_oof_rows"] = int(len(oof_prob))
-            training_summary["cv_oof_anomaly_rows"] = int(train_frame.loc[oof_prob.index, "supervised_target"].sum())
-            training_summary["cv_oof_metrics"] = cv_oof_metrics
 
         positives = int(train_frame["supervised_target"].sum())
         negatives = int(len(train_frame)) - positives
@@ -850,6 +900,20 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
         train_prob = pd.Series(model.predict_proba(train_frame[SUPERVISED_FEATURES])[:, 1], index=train_frame.index)
         if threshold_source == "in_sample_train":
             threshold, _ = choose_probability_threshold(train_frame["supervised_target"], train_prob)
+            chosen_threshold_before_floor = threshold
+
+        if threshold_floor > 0.0 and threshold < threshold_floor:
+            threshold = threshold_floor
+            threshold_source = f"{threshold_source}_with_variant_floor"
+
+        if not oof_prob.empty and train_frame.loc[oof_prob.index, "supervised_target"].nunique() == 2:
+            rd.loc[oof_prob.index, "cv_oof_score"] = oof_prob.round(4)
+            training_summary["cv_oof_rows"] = int(len(oof_prob))
+            training_summary["cv_oof_anomaly_rows"] = int(train_frame.loc[oof_prob.index, "supervised_target"].sum())
+            training_summary["cv_oof_metrics"] = summarize_binary_metrics(
+                train_frame.loc[oof_prob.index, "supervised_target"],
+                pd.Series(oof_prob >= threshold, index=oof_prob.index),
+            )
 
         train_pred = pd.Series(train_prob >= threshold, index=train_prob.index)
         train_metrics = summarize_binary_metrics(train_frame["supervised_target"], train_pred)
@@ -857,6 +921,9 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
         rd["xgb_score"] = all_prob.round(4)
         rd["xgb_candidate"] = rd["xgb_score"].ge(threshold)
         training_summary["threshold"] = threshold
+        training_summary["threshold_before_variant_floor"] = chosen_threshold_before_floor
+        training_summary["threshold_floor_applied"] = threshold_floor > 0.0 and (chosen_threshold_before_floor or 0.0) < threshold_floor
+        training_summary["threshold_floor_value"] = threshold_floor if threshold_floor > 0.0 else None
         training_summary["threshold_source"] = threshold_source
         training_summary["train_metrics"] = train_metrics
         if test_mask.any():
@@ -865,8 +932,11 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
             training_summary["test_model_only_metrics"] = summarize_binary_metrics(rd.loc[test_mask, "supervised_target"], test_pred)
     else:
         training_summary["threshold"] = 0.8
-        training_summary["threshold_source"] = "heuristic_fallback"
+        training_summary["threshold_source"] = "quality_gate_rule_backbone" if not runtime_quality["model_enabled"] else "heuristic_fallback"
         rd["xgb_candidate"] = rd["type_hint_confidence"].ge(0.70)
+        training_summary["threshold_before_variant_floor"] = None
+        training_summary["threshold_floor_applied"] = False
+        training_summary["threshold_floor_value"] = threshold_floor if threshold_floor > 0.0 else None
 
     cost_only_rule_context = rd["has_metrics_int"].le(0.0)
     untagged_rule = (
@@ -1157,6 +1227,64 @@ def group_related_events(events: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def cooldown_dedup_events(events: pd.DataFrame, cooldown_days: int = INCIDENT_COOLDOWN_DAYS) -> pd.DataFrame:
+    if events.empty:
+        return events.copy()
+
+    rows: list[dict[str, Any]] = []
+    group_keys = ["anomaly_type", "resource_id", "service_code", "environment"]
+    for _, resource_group in events.sort_values(["event_start", "event_end"]).groupby(group_keys, dropna=False):
+        resource_group = resource_group.sort_values(["event_start", "event_end"]).reset_index(drop=True)
+        current: dict[str, Any] | None = None
+        recurrence_count = 0
+        for row in resource_group.to_dict(orient="records"):
+            row_start = pd.Timestamp(row["event_start"])
+            row_end = pd.Timestamp(row["event_end"])
+            if current is None:
+                current = dict(row)
+                recurrence_count = 1
+                continue
+
+            current_end = pd.Timestamp(current["event_end"])
+            gap_days = int((row_start - current_end).days)
+            if gap_days <= cooldown_days:
+                recurrence_count += 1
+                current["event_start"] = min(pd.Timestamp(current["event_start"]), row_start)
+                current["event_end"] = max(current_end, row_end)
+                current["event_days"] = int((pd.Timestamp(current["event_end"]) - pd.Timestamp(current["event_start"])).days + 1)
+                current["event_total_cost"] = round(float(current["event_total_cost"]) + float(row["event_total_cost"]), 2)
+                current["avg_daily_cost"] = round(float(current["event_total_cost"]) / max(current["event_days"], 1), 2)
+                current["latest_daily_cost"] = round(max(float(current["latest_daily_cost"]), float(row["latest_daily_cost"])), 2)
+                current["usage_amount_24h"] = round(float(current["usage_amount_24h"]) + float(row["usage_amount_24h"]), 4)
+                current["detector_score"] = round(max(float(current["detector_score"]), float(row["detector_score"])), 2)
+                current["confidence_score"] = round(max(float(current["confidence_score"]), float(row["confidence_score"])), 2)
+                current["ranking_score"] = round(max(float(current["ranking_score"]), float(row["ranking_score"])), 2)
+                current["type_hint_confidence"] = round(max(float(current["type_hint_confidence"]), float(row["type_hint_confidence"])), 2)
+                current["xgb_support"] = bool(current["xgb_support"] or row["xgb_support"])
+                current["rule_support"] = bool(current["rule_support"] or row["rule_support"])
+                current["xgb_score"] = safe_round(max(float(current["xgb_score"]), float(row["xgb_score"])), 4) or 0.0
+                current["rule_support_score"] = safe_round(max(float(current["rule_support_score"]), float(row["rule_support_score"])), 4) or 0.0
+                current["candidate_sources"] = sorted(set(current["candidate_sources"]) | set(row["candidate_sources"]))
+                current["impacted_resource_ids"] = sorted(set(current["impacted_resource_ids"]) | set(row["impacted_resource_ids"]))
+                current["impacted_resource_count"] = len(current["impacted_resource_ids"])
+                current["incident_scope"] = "multi_resource_cluster" if current["impacted_resource_count"] > 1 else "single_resource"
+                current["estimated_penalty"] = round(max(float(current["estimated_penalty"]), float(row["estimated_penalty"])), 2)
+                current["benign_context_penalty"] = round(max(float(current["benign_context_penalty"]), float(row["benign_context_penalty"])), 2)
+                current["recurrence_count"] = recurrence_count
+                continue
+
+            current["recurrence_count"] = recurrence_count
+            rows.append(current)
+            current = dict(row)
+            recurrence_count = 1
+
+        if current is not None:
+            current["recurrence_count"] = recurrence_count
+            rows.append(current)
+
+    return pd.DataFrame(rows)
+
+
 def rerank_events(events: pd.DataFrame) -> pd.DataFrame:
     if events.empty:
         return events.copy()
@@ -1174,6 +1302,7 @@ def rerank_events(events: pd.DataFrame) -> pd.DataFrame:
     detector_score = events["detector_score"].clip(lower=0.0, upper=0.99)
     multi_resource_bonus = (events["impacted_resource_count"].fillna(1).astype(float) - 1.0).clip(lower=0.0, upper=4.0) * 0.02
     type_bonus = events["type_hint_confidence"].fillna(0.0).clip(lower=0.0, upper=0.99) * 0.04
+    recurrence_bonus = (events.get("recurrence_count", pd.Series(1, index=events.index)).fillna(1).astype(float) - 1.0).clip(lower=0.0, upper=3.0) * 0.02
 
     events["cost_impact_score"] = cost_impact_score.round(2)
     events["duration_score"] = duration_score.round(2)
@@ -1190,6 +1319,7 @@ def rerank_events(events: pd.DataFrame) -> pd.DataFrame:
         + environment_risk_score
         + multi_resource_bonus
         + type_bonus
+        + recurrence_bonus
         - events["estimated_penalty"]
         - events["benign_context_penalty"]
     )
@@ -1220,13 +1350,15 @@ def detect_events(ce: pd.DataFrame, cur: pd.DataFrame, metrics: pd.DataFrame | N
     scored = apply_rule_flags(rd)
     candidates = build_candidate_events(scored, flag_col="predicted_anomaly")
     suppressed = apply_fp_suppressor(candidates)
-    incidents = group_related_events(suppressed)
+    incidents = cooldown_dedup_events(group_related_events(suppressed))
     ranked = precision_cleanup_events(rerank_events(incidents))
     supervised_only_events = precision_cleanup_events(
         rerank_events(
-            group_related_events(
-                apply_fp_suppressor(
-                    build_candidate_events(scored, flag_col="supervised_only_prediction")
+            cooldown_dedup_events(
+                group_related_events(
+                    apply_fp_suppressor(
+                        build_candidate_events(scored, flag_col="supervised_only_prediction")
+                    )
                 )
             )
         )
@@ -1236,6 +1368,10 @@ def detect_events(ce: pd.DataFrame, cur: pd.DataFrame, metrics: pd.DataFrame | N
     temporal_split["label_source"] = temporal_split["training_summary"].get("label_source", "unlabeled")
     temporal_split["metrics_variant"] = scored.attrs.get("metrics_context", {}).get("metrics_variant", "none")
     temporal_split["metrics_dir"] = scored.attrs.get("metrics_context", {}).get("metrics_dir")
+    temporal_split["runtime_mode"] = temporal_split["training_summary"].get("runtime_mode")
+    temporal_split["runtime_quality"] = temporal_split["training_summary"].get("runtime_quality", {})
+    ranked["runtime_mode"] = temporal_split["runtime_mode"]
+    ranked["runtime_quality_tier"] = temporal_split["runtime_quality"].get("quality_tier", "unknown")
     ranked.attrs["temporal_split"] = temporal_split
     ranked.attrs["evaluation_bundle"] = build_evaluation_bundle(scored, temporal_split)
     ranked.attrs["supervised_only_events"] = supervised_only_events
@@ -1247,6 +1383,8 @@ def compact_training_summary(training_summary: dict[str, Any]) -> dict[str, Any]
         return {}
     return {
         "label_source": training_summary.get("label_source"),
+        "runtime_mode": training_summary.get("runtime_mode"),
+        "runtime_quality": training_summary.get("runtime_quality"),
         "train_labeled_rows": training_summary.get("train_labeled_rows"),
         "test_labeled_rows": training_summary.get("test_labeled_rows"),
         "train_anomaly_rows": training_summary.get("train_anomaly_rows"),
@@ -1255,6 +1393,9 @@ def compact_training_summary(training_summary: dict[str, Any]) -> dict[str, Any]
         "cv_folds_completed": training_summary.get("cv_folds_completed"),
         "threshold_source": training_summary.get("threshold_source"),
         "threshold": training_summary.get("threshold"),
+        "threshold_before_variant_floor": training_summary.get("threshold_before_variant_floor"),
+        "threshold_floor_applied": training_summary.get("threshold_floor_applied"),
+        "threshold_floor_value": training_summary.get("threshold_floor_value"),
         "cv_oof_metrics": training_summary.get("cv_oof_metrics"),
         "cv_oof_supervised_only_metrics": training_summary.get("cv_oof_supervised_only_metrics"),
         "cv_oof_pipeline_metrics": training_summary.get("cv_oof_pipeline_metrics"),
@@ -1336,6 +1477,9 @@ def build_evaluation_bundle(scored: pd.DataFrame, temporal_split: dict[str, Any]
         "cross_validation_strategy": temporal_split.get("cross_validation_strategy"),
         "cross_validation_max_folds": temporal_split.get("cross_validation_max_folds"),
         "label_source": temporal_split.get("label_source"),
+        "metrics_variant": temporal_split.get("metrics_variant"),
+        "runtime_mode": training_summary.get("runtime_mode"),
+        "runtime_quality_tier": training_summary.get("runtime_quality", {}).get("quality_tier"),
     }
 
     return {
@@ -1364,6 +1508,7 @@ def build_evaluation_bundle(scored: pd.DataFrame, temporal_split: dict[str, Any]
 def mitigation_for(event: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     rid = event["resource_id"]
     env = event["environment"]
+    runtime_mode = event.get("runtime_mode", "unknown")
     strategy = "Prod-safe tag and escalate" if env == "prod" else "Alert-only review"
     action_type = "tag-for-review"
     action = "tag-for-review"
@@ -1371,7 +1516,13 @@ def mitigation_for(event: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any
     countdown = {"time_lock_seconds": 0, "fallback_action": ""}
     post_state = "tagged"
 
-    if event["is_estimated"]:
+    if runtime_mode == "rule_backbone_safe_mode":
+        strategy = "Runtime quality degraded - review only"
+        action_type = "manual-review-only"
+        action = "manual-review-only"
+        parameters = {}
+        post_state = "review-only"
+    elif event["is_estimated"]:
         strategy = "Estimated-data safe mode"
         action_type = "review-estimated-cost"
         parameters = {}
@@ -1493,6 +1644,8 @@ def record_from_event(event: dict[str, Any], index: int, rca_generator: Any | No
             "detector_score": event["detector_score"],
             "ranking_score": event["ranking_score"],
             "ai_model_used": MODEL_NAME,
+            "runtime_mode": event.get("runtime_mode", "unknown"),
+            "runtime_quality_tier": event.get("runtime_quality_tier", "unknown"),
             "supporting_detectors": event["candidate_sources"],
             "incident_scope": event["incident_scope"],
             "impacted_resource_count": event["impacted_resource_count"],

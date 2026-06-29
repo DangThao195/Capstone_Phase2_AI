@@ -149,7 +149,7 @@ def build_frames(payload: DetectRequest) -> tuple[pd.DataFrame, pd.DataFrame]:
     return ce, cur
 
 
-def compute_telemetry_quality(ce: pd.DataFrame, cur: pd.DataFrame) -> dict[str, Any]:
+def compute_telemetry_quality(ce: pd.DataFrame, cur: pd.DataFrame, metrics: pd.DataFrame | None = None) -> dict[str, Any]:
     required_cur = [
         "line_item_usage_start_date",
         "line_item_usage_account_id",
@@ -168,9 +168,16 @@ def compute_telemetry_quality(ce: pd.DataFrame, cur: pd.DataFrame) -> dict[str, 
         age_days = max((max_expected - freshest).days, 0)
         freshness = max(0.0, 1.0 - (age_days / 2.0))
     integrity = 1.0 if not cur.empty and not ce.empty else 0.0
+    metrics_rows = int(len(metrics)) if metrics is not None else 0
+    metrics_variant = metrics.attrs.get("metrics_variant", "none") if metrics is not None else "none"
+    metrics_label_source = metrics.attrs.get("label_source", "unlabeled") if metrics is not None else "unlabeled"
     return {
         "cur_status": "HEALTHY" if not cur.empty else "MISSING",
         "cost_explorer_status": "HEALTHY" if not ce.empty else "STALE",
+        "metrics_status": "HEALTHY" if metrics_rows > 0 else "MISSING",
+        "metrics_variant": metrics_variant,
+        "metrics_label_source": metrics_label_source,
+        "metrics_rows": metrics_rows,
         "completeness_score": round(completeness, 3),
         "freshness_score": round(freshness, 3),
         "integrity_score": round(integrity, 3),
@@ -250,7 +257,7 @@ def persist_run(
     metrics = load_default_metrics()
     events = detect_events(ce, cur, metrics)
     result = build_result(events, audit_id=audit_id, rca_generator=RCA_GENERATOR)
-    telemetry_quality = compute_telemetry_quality(ce, cur)
+    telemetry_quality = compute_telemetry_quality(ce, cur, metrics)
     split_meta = result.get("temporal_split", {})
     evaluation_bundle = events.attrs.get("evaluation_bundle", {})
     result["telemetry_quality"] = telemetry_quality
@@ -302,7 +309,7 @@ def run_demo(write_output: bool = True) -> dict[str, Any]:
     result = build_result(events, audit_id=str(uuid.uuid4()), rca_generator=RCA_GENERATOR)
     split_meta = result.get("temporal_split", {})
     evaluation_bundle = events.attrs.get("evaluation_bundle", {})
-    result["telemetry_quality"] = compute_telemetry_quality(ce, cur)
+    result["telemetry_quality"] = compute_telemetry_quality(ce, cur, metrics)
     result["processing_context"] = {"is_ad_hoc": False, "data_source_type": "RAW_JSON", "temporal_split": split_meta}
     result["llm_context"] = {"provider": RCA_GENERATOR.provider, "model_id": RCA_GENERATOR.model_id, "enabled": RCA_GENERATOR.enabled}
     result["evaluation_context"] = {

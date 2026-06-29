@@ -22,6 +22,7 @@ from detect_core import (
     build_pair_daily,
     build_resource_daily,
     build_result,
+    cooldown_dedup_events,
     evaluate_public,
     group_related_events,
     load_local_metrics,
@@ -100,6 +101,8 @@ print(
         "threshold": training_summary.get("threshold"),
         "cv_oof_metrics": training_summary.get("cv_oof_metrics"),
         "test_pipeline_metrics": training_summary.get("test_pipeline_metrics"),
+        "runtime_mode": training_summary.get("runtime_mode"),
+        "runtime_quality": training_summary.get("runtime_quality"),
     },
 )
 print("So resource-day duoc model flag:", int(scored_daily["xgb_candidate"].sum()))
@@ -154,22 +157,34 @@ suppressed_candidates[
 
 # %%
 # Cell 7: Group nhieu resource cung incident va re-rank candidate cuoi cung
-incident_events = group_related_events(suppressed_candidates)
+incident_events = cooldown_dedup_events(group_related_events(suppressed_candidates))
 final_events = precision_cleanup_events(rerank_events(incident_events))
 supervised_only_events = rerank_events(
-    group_related_events(
+    cooldown_dedup_events(
+        group_related_events(
         apply_fp_suppressor(
             build_candidate_events(scored_daily, flag_col="supervised_only_prediction")
+        )
         )
     )
 )
 supervised_only_events = precision_cleanup_events(supervised_only_events)
+runtime_mode = scored_daily.attrs.get("supervised_training", {}).get("runtime_mode")
+runtime_quality_tier = scored_daily.attrs.get("supervised_training", {}).get("runtime_quality", {}).get("quality_tier", "unknown")
+if not final_events.empty:
+    final_events["runtime_mode"] = runtime_mode
+    final_events["runtime_quality_tier"] = runtime_quality_tier
+if not supervised_only_events.empty:
+    supervised_only_events["runtime_mode"] = runtime_mode
+    supervised_only_events["runtime_quality_tier"] = runtime_quality_tier
 final_events.attrs["temporal_split"] = {
     **pair.attrs.get("temporal_split", {}),
     "training_summary": scored_daily.attrs.get("supervised_training", {}),
     "label_source": scored_daily.attrs.get("supervised_training", {}).get("label_source", "unlabeled"),
     "metrics_variant": scored_daily.attrs.get("metrics_context", {}).get("metrics_variant", "none"),
     "metrics_dir": scored_daily.attrs.get("metrics_context", {}).get("metrics_dir"),
+    "runtime_mode": scored_daily.attrs.get("supervised_training", {}).get("runtime_mode"),
+    "runtime_quality": scored_daily.attrs.get("supervised_training", {}).get("runtime_quality", {}),
 }
 evaluation_bundle = build_evaluation_bundle(scored_daily, final_events.attrs["temporal_split"])
 final_events.attrs["evaluation_bundle"] = evaluation_bundle
