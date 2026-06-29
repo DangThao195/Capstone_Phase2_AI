@@ -43,10 +43,10 @@
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.930 |
+| Precision | 0.827 |
 | Recall | 1.000 |
-| F1 | 0.964 |
-| FPR | 0.010 |
+| F1 | 0.905 |
+| FPR | 0.027 |
 | ROC-AUC | 1.000 |
 
 > **Ghi chú đánh giá:** Recall = 1.000 được tính ở record level (mỗi ngày = 1 record). A2 có ~73 records, A6 có ~7 records. Model bắt được phần lớn records trong 2 window → Recall cao. Detection Coverage bên dưới thể hiện tỉ lệ bắt theo từng sự kiện cụ thể.
@@ -63,11 +63,11 @@
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.041 |
-| Recall | 0.025 |
-| F1 | 0.031 |
-| FPR | 0.076 |
-| ROC-AUC | 0.263 |
+| Precision | 0.014 |
+| Recall | 0.013 |
+| F1 | 0.013 |
+| FPR | 0.111 |
+| ROC-AUC | 0.278 |
 
 - Không cần nhãn — áp dụng ngay cho account/service mới.
 - Contamination tối ưu: 3–5%. Tốc độ train nhanh (~0.1–0.5s).
@@ -80,8 +80,8 @@
 
 | Model | Precision | Precision ≥ 80% | FPR | FPR ≤ 10% | Overall |
 |---|---|---|---|---|---|
-| XGBoost (Optuna) | 0.930 | ✅ PASS | 0.010 | ✅ PASS | ✅ PASS |
-| Isolation Forest | 0.041 | ❌ FAIL | 0.076 | ✅ PASS | ❌ FAIL |
+| XGBoost (Optuna) | 0.827 | ✅ PASS | 0.027 | ✅ PASS | ✅ PASS |
+| Isolation Forest | 0.014 | ❌ FAIL | 0.111 | ❌ FAIL | ❌ FAIL |
 
 ---
 
@@ -89,7 +89,7 @@
 
 **Model chính: XGBoost (Optuna-tuned)**
 
-XGBoost đạt Precision = 0.930, Recall = 1.000 và F1-score = 0.964, cho thấy mô hình cân bằng tốt giữa khả năng phát hiện anomaly và kiểm soát cảnh báo giả. Kết hợp với SHAP explainability và Walk-Forward Validation, mô hình phù hợp để triển khai làm supervised detector trong hệ thống FinOps Watch.
+XGBoost đạt Precision = 0.827, Recall = 1.000 và F1-score = 0.905, cho thấy mô hình cân bằng tốt giữa khả năng phát hiện anomaly và kiểm soát cảnh báo giả. Kết hợp với SHAP explainability và Walk-Forward Validation, mô hình phù hợp để triển khai làm supervised detector trong hệ thống FinOps Watch.
 
 **Model phụ: Isolation Forest**
 - Chạy song song như unsupervised signal cho account/service chưa có anomaly history.
@@ -111,14 +111,12 @@ XGBoost đạt Precision = 0.930, Recall = 1.000 và F1-score = 0.964, cho thấ
 
 | Event ID | Type | Window | Records | XGBoost | Isolation Forest |
 |---|---|---|---|---|---|
-| A2 | `idle_resource` | Mar 20 – May 31 (~73 days) | ~73 | ✅ Fully detected (292/292) | ⚠️ Weakly detected (8/292 records) |
+| A2 | `idle_resource` | Mar 20 – May 31 (~73 days) | ~73 | ✅ Fully detected (292/292) | ⚠️ Weakly detected (4/292 records) |
 | A6 | `sudden_spike` | Apr 28 – May 4 (7 days) | ~7 | ✅ Fully detected (28/28) | ❌ Missed (0/28 records) |
-| B2 | `benign_event` | Mar 28 – Mar 30 (3 days) | ~3 | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 5/18 records falsely flagged |
+| B2 | `benign_event` | Mar 28 – Mar 30 (3 days) | ~3 | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 4/18 records falsely flagged |
 
 > **B2 là benign** — model không nên báo. Nếu báo = False Positive, ảnh hưởng FPR.
 >
-> **Cold-start note:** A6 bị miss bởi XGBoost vì CloudWatch account dev không có lịch sử billing trước spike. Rule-based fallback (cost > 3× median) được thêm để bù đắp. Trong production: bất kỳ (account, service) pair nào có < 7 ngày lịch sử đều được route sang rule detector thay vì ML model.
-
 ---
 
 _Auto-generated từ `anomaly_detection_pipeline.ipynb` — Capstone Phase 2, FinOps Watch AI Engine._
