@@ -1,0 +1,18 @@
+{
+  "matched_anomalies": [
+    "A2",
+    "A6"
+  ],
+  "missed_anomalies": [],
+  "benign_hits": [],
+  "tp_public": 2,
+  "fn_public": 0,
+  "fp_public": 0,
+  "anomaly_support_public": 2,
+  "benign_support_public": 1,
+  "public_recall": 1.0,
+  "public_false_positive_rate": 0.0,
+  "fp_requirement_max": 0.1,
+  "fp_requirement_passed": true,
+  "evaluation_note": "This supervised sandbox run uses metrics.label for training; final FP<=10% still needs full backtest disclosure."
+}

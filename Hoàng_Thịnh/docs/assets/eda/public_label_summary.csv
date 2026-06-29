@@ -1,0 +1,4 @@
+anomaly_id,label,anomaly_type,linked_account_name,service,event_days,event_total_cost,event_mean_cost,pre14_mean_cost
+A2,anomaly,idle_resource,staging,AmazonRDS,73,6246.09,85.56,55.49
+A6,anomaly,sudden_spike,dev,AmazonCloudWatch,7,1838.98,262.71,
+B2,benign,benign_event,data-analytics,AWSDataTransfer,3,1960.86,653.62,

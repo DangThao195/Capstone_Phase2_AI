@@ -1,0 +1,2825 @@
+{
+  "result": {
+    "audit_id": "998c2d79-3c66-4b4e-bf77-dcb43d845e6e",
+    "status": "completed",
+    "total_anomalies_found": 28,
+    "anomalies_list": [
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260322-A",
+          "timestamp": "2026-03-22T00:00:00Z",
+          "resource_id": "res-awsdatatransfer-1053",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 396.86,
+            "cost_ratio_to_7d_avg": 0.74,
+            "projected_monthly_waste_usd": 15187.2
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-1001"
+          },
+          "executive_summary": "res-awsdatatransfer-1053 is costing about $506.24/day over 8 days and matches sudden_spike."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AWSDataTransfer",
+            "usage_type": "DataTransfer-Out-Bytes",
+            "pricing_unit": "GB",
+            "usage_amount_24h": 4409.5411,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 0.74,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9974,
+            "type_hint_confidence": 0.47,
+            "impacted_resource_ids": [
+              "res-awsdatatransfer-1053"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_ratio_to_7d_avg",
+            "technical_reason": "Daily spend jumped sharply versus its own recent baseline and stayed elevated.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "res-awsdatatransfer-1053",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000010:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260318-B",
+          "timestamp": "2026-03-18T00:00:00Z",
+          "resource_id": "res-amazondynamodb-1067",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 401.17,
+            "cost_ratio_to_7d_avg": 0.99,
+            "projected_monthly_waste_usd": 11737.5
+          },
+          "allocation": {
+            "responsible_team": "fraud",
+            "cost_center_code": "CC-1002"
+          },
+          "executive_summary": "res-amazondynamodb-1067 is costing about $391.25/day over 8 days and matches gradual_drift."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonDynamoDB",
+            "usage_type": "WriteCapacityUnit-Hrs",
+            "pricing_unit": "WCU-Hrs",
+            "usage_amount_24h": 617183.1115,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 0.99,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.995,
+            "type_hint_confidence": 0.41,
+            "impacted_resource_ids": [
+              "res-amazondynamodb-1067"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_mean_ratio_28vprev28",
+            "technical_reason": "Spend has climbed for multiple weeks without a sharp one-day jump, which matches gradual drift.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "res-amazondynamodb-1067",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000011:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260529-C",
+          "timestamp": "2026-05-29T00:00:00Z",
+          "resource_id": "res-awsdatatransfer-1053",
+          "environment": "prod",
+          "dataset_phase": "test",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 634.02,
+            "cost_ratio_to_7d_avg": 1.18,
+            "projected_monthly_waste_usd": 18002.4
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-1001"
+          },
+          "executive_summary": "res-awsdatatransfer-1053 is costing about $600.08/day over 4 days and matches sudden_spike."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AWSDataTransfer",
+            "usage_type": "DataTransfer-Out-Bytes",
+            "pricing_unit": "GB",
+            "usage_amount_24h": 7044.6922,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 1.18,
+            "resource_cost_mean_ratio_28vprev28": 1.02,
+            "resource_usage_mean_ratio_28vprev28": 1.02,
+            "xgb_score": 0.9966,
+            "type_hint_confidence": 0.46,
+            "impacted_resource_ids": [
+              "res-awsdatatransfer-1053"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_ratio_to_7d_avg",
+            "technical_reason": "Daily spend jumped sharply versus its own recent baseline and stayed elevated.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "res-awsdatatransfer-1053",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000010:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260510-D",
+          "timestamp": "2026-05-10T00:00:00Z",
+          "resource_id": "res-amazondynamodb-1230",
+          "environment": "data-analytics",
+          "dataset_phase": "cross_split",
+          "confidence_score": 0.99,
+          "detector_score": 0.98,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 281.68,
+            "cost_ratio_to_7d_avg": 0.51,
+            "projected_monthly_waste_usd": 8735.1
+          },
+          "allocation": {
+            "responsible_team": "data-eng",
+            "cost_center_code": "CC-3001"
+          },
+          "executive_summary": "res-amazondynamodb-1230 is costing about $291.17/day over 8 days and matches gradual_drift."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonDynamoDB",
+            "usage_type": "ReadCapacityUnit-Hrs",
+            "pricing_unit": "RCU-Hrs",
+            "usage_amount_24h": 2166741.9878,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 0.87,
+            "resource_cost_mean_ratio_28vprev28": 1.02,
+            "resource_usage_mean_ratio_28vprev28": 1.02,
+            "xgb_score": 0.9751,
+            "type_hint_confidence": 0.53,
+            "impacted_resource_ids": [
+              "res-amazondynamodb-1230"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_mean_ratio_28vprev28",
+            "technical_reason": "Spend has climbed for multiple weeks without a sharp one-day jump, which matches gradual drift.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Quota-cap and human review",
+            "immediate_action": "quota-cap-request",
+            "applied_payload": {
+              "action_type": "restrict-quota-request",
+              "resource_id": "res-amazondynamodb-1230",
+              "parameters": {
+                "service_code": "AmazonDynamoDB",
+                "reason": "finops_cost_spike"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-restriction",
+            "execution_iam_role": "arn:aws:iam::200000000014:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260510-E",
+          "timestamp": "2026-05-10T00:00:00Z",
+          "resource_id": "i-0untaggedfleet01",
+          "environment": "prod",
+          "dataset_phase": "cross_split",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 152.09,
+            "cost_ratio_to_7d_avg": 0.28,
+            "projected_monthly_waste_usd": 4414.5
+          },
+          "allocation": {
+            "responsible_team": NaN,
+            "cost_center_code": "CC-1002"
+          },
+          "executive_summary": "i-0untaggedfleet01 is costing about $147.15/day over 8 days and matches untagged_spend."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:m5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 198.037,
+            "usage_density_24h": 2.0,
+            "resource_cost_ratio_to_7d_avg": 1.04,
+            "resource_cost_mean_ratio_28vprev28": 1.04,
+            "resource_usage_mean_ratio_28vprev28": 1.04,
+            "xgb_score": 0.9932,
+            "type_hint_confidence": 0.99,
+            "impacted_resource_ids": [
+              "i-0untaggedfleet01"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_tags_user_team",
+            "technical_reason": "Cost is accruing without a team tag, so finance allocation is incomplete.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_team",
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0untaggedfleet01",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000011:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260503-F",
+          "timestamp": "2026-05-03T00:00:00Z",
+          "resource_id": "res-awslambda-1214",
+          "environment": "dev",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 131.73,
+            "cost_ratio_to_7d_avg": 0.84,
+            "projected_monthly_waste_usd": 4679.4
+          },
+          "allocation": {
+            "responsible_team": "onboarding",
+            "cost_center_code": "CC-2002"
+          },
+          "executive_summary": "res-awslambda-1214 is costing about $155.98/day over 6 days and matches untagged_spend."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AWSLambda",
+            "usage_type": "Lambda-GB-Second",
+            "pricing_unit": "GB-Sec",
+            "usage_amount_24h": 7903935.3123,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 0.84,
+            "resource_cost_mean_ratio_28vprev28": 1.02,
+            "resource_usage_mean_ratio_28vprev28": 1.02,
+            "xgb_score": 0.9956,
+            "type_hint_confidence": 0.0,
+            "impacted_resource_ids": [
+              "res-awslambda-1214"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_tags_user_team",
+            "technical_reason": "Cost is accruing without a team tag, so finance allocation is incomplete.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Alert-only review",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "res-awslambda-1214",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000013:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260510-G",
+          "timestamp": "2026-05-10T00:00:00Z",
+          "resource_id": "arn:aws:rds:us-east-1:acct:db:db-1028",
+          "environment": "prod",
+          "dataset_phase": "cross_split",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 61.07,
+            "cost_ratio_to_7d_avg": 0.19,
+            "projected_monthly_waste_usd": 1842.6
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-1001"
+          },
+          "executive_summary": "arn:aws:rds:us-east-1:acct:db:db-1028 is costing about $61.42/day over 13 days and matches gradual_drift."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonRDS",
+            "usage_type": "InstanceUsage:db.r5.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 52.6501,
+            "usage_density_24h": 2.0,
+            "resource_cost_ratio_to_7d_avg": 0.86,
+            "resource_cost_mean_ratio_28vprev28": 1.03,
+            "resource_usage_mean_ratio_28vprev28": 1.03,
+            "xgb_score": 0.9955,
+            "type_hint_confidence": 0.99,
+            "impacted_resource_ids": [
+              "arn:aws:rds:us-east-1:acct:db:db-1028"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_mean_ratio_28vprev28",
+            "technical_reason": "Spend has climbed for multiple weeks without a sharp one-day jump, which matches gradual drift.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "arn:aws:rds:us-east-1:acct:db:db-1028",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000010:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260417-H",
+          "timestamp": "2026-04-17T00:00:00Z",
+          "resource_id": "res-awsdatatransfer-1146",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 242.94,
+            "cost_ratio_to_7d_avg": 1.02,
+            "projected_monthly_waste_usd": 7284.0
+          },
+          "allocation": {
+            "responsible_team": "payments",
+            "cost_center_code": "CC-1002"
+          },
+          "executive_summary": "res-awsdatatransfer-1146 is costing about $242.80/day over 3 days and matches sudden_spike."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AWSDataTransfer",
+            "usage_type": "DataTransfer-Out-Bytes",
+            "pricing_unit": "GB",
+            "usage_amount_24h": 2699.2869,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 1.02,
+            "resource_cost_mean_ratio_28vprev28": 1.01,
+            "resource_usage_mean_ratio_28vprev28": 1.01,
+            "xgb_score": 0.9943,
+            "type_hint_confidence": 0.43,
+            "impacted_resource_ids": [
+              "res-awsdatatransfer-1146"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_ratio_to_7d_avg",
+            "technical_reason": "Daily spend jumped sharply versus its own recent baseline and stayed elevated.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "res-awsdatatransfer-1146",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000011:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260313-I",
+          "timestamp": "2026-03-13T00:00:00Z",
+          "resource_id": "i-0untaggedfleet01",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 151.79,
+            "cost_ratio_to_7d_avg": 0.3,
+            "projected_monthly_waste_usd": 4337.4
+          },
+          "allocation": {
+            "responsible_team": NaN,
+            "cost_center_code": "CC-1002"
+          },
+          "executive_summary": "i-0untaggedfleet01 is costing about $144.58/day over 4 days and matches untagged_spend."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:m5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 197.6374,
+            "usage_density_24h": 2.0,
+            "resource_cost_ratio_to_7d_avg": 1.01,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9972,
+            "type_hint_confidence": 0.99,
+            "impacted_resource_ids": [
+              "i-0untaggedfleet01"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_tags_user_team",
+            "technical_reason": "Cost is accruing without a team tag, so finance allocation is incomplete.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_team",
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0untaggedfleet01",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000011:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260525-J",
+          "timestamp": "2026-05-25T00:00:00Z",
+          "resource_id": "res-awslambda-1214",
+          "environment": "dev",
+          "dataset_phase": "test",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 177.46,
+            "cost_ratio_to_7d_avg": 1.17,
+            "projected_monthly_waste_usd": 4335.3
+          },
+          "allocation": {
+            "responsible_team": "onboarding",
+            "cost_center_code": "CC-2002"
+          },
+          "executive_summary": "res-awslambda-1214 is costing about $144.51/day over 4 days and matches untagged_spend."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AWSLambda",
+            "usage_type": "Lambda-GB-Second",
+            "pricing_unit": "GB-Sec",
+            "usage_amount_24h": 10647331.6943,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 1.17,
+            "resource_cost_mean_ratio_28vprev28": 1.03,
+            "resource_usage_mean_ratio_28vprev28": 1.03,
+            "xgb_score": 0.9853,
+            "type_hint_confidence": 0.0,
+            "impacted_resource_ids": [
+              "res-awslambda-1214"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_tags_user_team",
+            "technical_reason": "Cost is accruing without a team tag, so finance allocation is incomplete.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Alert-only review",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "res-awslambda-1214",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000013:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260411-K",
+          "timestamp": "2026-04-11T00:00:00Z",
+          "resource_id": "i-0fbgpu00000004",
+          "environment": "ml-research",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "multi_resource_cluster",
+          "impacted_resource_count": 2
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 144.84,
+            "cost_ratio_to_7d_avg": 0.33,
+            "projected_monthly_waste_usd": 3920.4
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0fbgpu00000004 is costing about $130.68/day over 4 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:p3.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 47.3346,
+            "usage_density_24h": 0.9681,
+            "resource_cost_ratio_to_7d_avg": 71.1,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9992,
+            "type_hint_confidence": 0.91,
+            "impacted_resource_ids": [
+              "i-0fbgpu00000000",
+              "i-0fbgpu00000004"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Alert-only review",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0fbgpu00000004",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260425-L",
+          "timestamp": "2026-04-25T00:00:00Z",
+          "resource_id": "i-0fbgpu00000001",
+          "environment": "ml-research",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 74.75,
+            "cost_ratio_to_7d_avg": 0.13,
+            "projected_monthly_waste_usd": 2216.7
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0fbgpu00000001 is costing about $73.89/day over 7 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:p3.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 24.427,
+            "usage_density_24h": 1.0178,
+            "resource_cost_ratio_to_7d_avg": 1.02,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9951,
+            "type_hint_confidence": 0.99,
+            "impacted_resource_ids": [
+              "i-0fbgpu00000001"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Auto-shutdown request in low-risk environment",
+            "immediate_action": "auto-shutdown-request",
+            "applied_payload": {
+              "action_type": "stop-instance-request",
+              "resource_id": "i-0fbgpu00000001",
+              "parameters": {
+                "instance_ids": [
+                  "i-0fbgpu00000001"
+                ],
+                "reason": "finops_runaway_usage"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-stop",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260413-M",
+          "timestamp": "2026-04-13T00:00:00Z",
+          "resource_id": "i-0fbgpu00000002",
+          "environment": "ml-research",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 70.04,
+            "cost_ratio_to_7d_avg": 0.33,
+            "projected_monthly_waste_usd": 2213.4
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0fbgpu00000002 is costing about $73.78/day over 6 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:p3.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 22.8878,
+            "usage_density_24h": 0.9537,
+            "resource_cost_ratio_to_7d_avg": 70.04,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.999,
+            "type_hint_confidence": 0.99,
+            "impacted_resource_ids": [
+              "i-0fbgpu00000002"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Auto-shutdown request in low-risk environment",
+            "immediate_action": "auto-shutdown-request",
+            "applied_payload": {
+              "action_type": "stop-instance-request",
+              "resource_id": "i-0fbgpu00000002",
+              "parameters": {
+                "instance_ids": [
+                  "i-0fbgpu00000002"
+                ],
+                "reason": "finops_runaway_usage"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-stop",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260403-N",
+          "timestamp": "2026-04-03T00:00:00Z",
+          "resource_id": "arn:aws:rds:us-east-1:acct:db:db-staging-orphan-01",
+          "environment": "staging",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 28.91,
+            "cost_ratio_to_7d_avg": 0.51,
+            "projected_monthly_waste_usd": 841.5
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-2001"
+          },
+          "executive_summary": "arn:aws:rds:us-east-1:acct:db:db-staging-orphan-01 is costing about $28.05/day over 15 days and matches gradual_drift."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonRDS",
+            "usage_type": "InstanceUsage:db.r5.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 24.9184,
+            "usage_density_24h": 1.0383,
+            "resource_cost_ratio_to_7d_avg": 28.91,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9987,
+            "type_hint_confidence": 0.61,
+            "impacted_resource_ids": [
+              "arn:aws:rds:us-east-1:acct:db:db-staging-orphan-01"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_mean_ratio_28vprev28",
+            "technical_reason": "Spend has climbed for multiple weeks without a sharp one-day jump, which matches gradual drift.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Time-gated containment",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "schedule-shutdown-review",
+              "resource_id": "arn:aws:rds:us-east-1:acct:db:db-staging-orphan-01",
+              "parameters": {
+                "delay_seconds": 14400
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 14400,
+              "fallback_action": "schedule-shutdown"
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000012:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260401-O",
+          "timestamp": "2026-04-01T00:00:00Z",
+          "resource_id": "i-0000000003e9",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 28.69,
+            "cost_ratio_to_7d_avg": 0.05,
+            "projected_monthly_waste_usd": 842.4
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-1001"
+          },
+          "executive_summary": "i-0000000003e9 is costing about $28.08/day over 8 days and matches idle_resource."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:m5.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 74.7046,
+            "usage_density_24h": 2.0,
+            "resource_cost_ratio_to_7d_avg": 1.13,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9917,
+            "type_hint_confidence": 0.91,
+            "impacted_resource_ids": [
+              "i-0000000003e9"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "cpu_percent",
+            "technical_reason": "Spend is stable while utilization remains near zero, which matches an idle-resource pattern.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0000000003e9",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000010:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260416-P",
+          "timestamp": "2026-04-16T00:00:00Z",
+          "resource_id": "i-0fbgpu00000004",
+          "environment": "ml-research",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 73.28,
+            "cost_ratio_to_7d_avg": 0.13,
+            "projected_monthly_waste_usd": 2191.2
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0fbgpu00000004 is costing about $73.04/day over 3 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:p3.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 23.9477,
+            "usage_density_24h": 0.9978,
+            "resource_cost_ratio_to_7d_avg": 0.98,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9977,
+            "type_hint_confidence": 0.99,
+            "impacted_resource_ids": [
+              "i-0fbgpu00000004"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Auto-shutdown request in low-risk environment",
+            "immediate_action": "auto-shutdown-request",
+            "applied_payload": {
+              "action_type": "stop-instance-request",
+              "resource_id": "i-0fbgpu00000004",
+              "parameters": {
+                "instance_ids": [
+                  "i-0fbgpu00000004"
+                ],
+                "reason": "finops_runaway_usage"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-stop",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260321-Q",
+          "timestamp": "2026-03-21T00:00:00Z",
+          "resource_id": "i-0000000003e9",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 22.01,
+            "cost_ratio_to_7d_avg": 0.04,
+            "projected_monthly_waste_usd": 787.8
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-1001"
+          },
+          "executive_summary": "i-0000000003e9 is costing about $26.26/day over 8 days and matches idle_resource."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:m5.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 57.3094,
+            "usage_density_24h": 2.0,
+            "resource_cost_ratio_to_7d_avg": 0.8,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9968,
+            "type_hint_confidence": 0.85,
+            "impacted_resource_ids": [
+              "i-0000000003e9"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "cpu_percent",
+            "technical_reason": "Spend is stable while utilization remains near zero, which matches an idle-resource pattern.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0000000003e9",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000010:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260419-R",
+          "timestamp": "2026-04-19T00:00:00Z",
+          "resource_id": "i-0000000003e9",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 20.82,
+            "cost_ratio_to_7d_avg": 0.04,
+            "projected_monthly_waste_usd": 776.4
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-1001"
+          },
+          "executive_summary": "i-0000000003e9 is costing about $25.88/day over 8 days and matches idle_resource."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:m5.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 54.219,
+            "usage_density_24h": 2.0,
+            "resource_cost_ratio_to_7d_avg": 0.73,
+            "resource_cost_mean_ratio_28vprev28": 1.03,
+            "resource_usage_mean_ratio_28vprev28": 1.03,
+            "xgb_score": 0.998,
+            "type_hint_confidence": 0.99,
+            "impacted_resource_ids": [
+              "i-0000000003e9"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "cpu_percent",
+            "technical_reason": "Spend is stable while utilization remains near zero, which matches an idle-resource pattern.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0000000003e9",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000010:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260407-S",
+          "timestamp": "2026-04-07T00:00:00Z",
+          "resource_id": "i-000000000422",
+          "environment": "prod",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 29.46,
+            "cost_ratio_to_7d_avg": 0.06,
+            "projected_monthly_waste_usd": 809.1
+          },
+          "allocation": {
+            "responsible_team": "payments",
+            "cost_center_code": "CC-1002"
+          },
+          "executive_summary": "i-000000000422 is costing about $26.97/day over 7 days and matches gradual_drift."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:m5.2xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 76.7225,
+            "usage_density_24h": 2.0,
+            "resource_cost_ratio_to_7d_avg": 1.0,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9937,
+            "type_hint_confidence": 0.46,
+            "impacted_resource_ids": [
+              "i-000000000422"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_mean_ratio_28vprev28",
+            "technical_reason": "Spend has climbed for multiple weeks without a sharp one-day jump, which matches gradual drift.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Prod-safe tag and escalate",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-000000000422",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000011:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260502-T",
+          "timestamp": "2026-05-02T00:00:00Z",
+          "resource_id": "i-0000000004dc",
+          "environment": "ml-research",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 12.85,
+            "cost_ratio_to_7d_avg": 0.03,
+            "projected_monthly_waste_usd": 882.6
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0000000004dc is costing about $29.42/day over 6 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:c5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 18.8982,
+            "usage_density_24h": 0.7874,
+            "resource_cost_ratio_to_7d_avg": 0.4,
+            "resource_cost_mean_ratio_28vprev28": 1.02,
+            "resource_usage_mean_ratio_28vprev28": 1.02,
+            "xgb_score": 0.9906,
+            "type_hint_confidence": 0.76,
+            "impacted_resource_ids": [
+              "i-0000000004dc"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Auto-shutdown request in low-risk environment",
+            "immediate_action": "auto-shutdown-request",
+            "applied_payload": {
+              "action_type": "stop-instance-request",
+              "resource_id": "i-0000000004dc",
+              "parameters": {
+                "instance_ids": [
+                  "i-0000000004dc"
+                ],
+                "reason": "finops_runaway_usage"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-stop",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260406-U",
+          "timestamp": "2026-04-06T00:00:00Z",
+          "resource_id": "i-0000000004dc",
+          "environment": "ml-research",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 25.95,
+            "cost_ratio_to_7d_avg": 0.12,
+            "projected_monthly_waste_usd": 724.8
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0000000004dc is costing about $24.16/day over 6 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:c5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 38.1549,
+            "usage_density_24h": 1.5898,
+            "resource_cost_ratio_to_7d_avg": 0.88,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9904,
+            "type_hint_confidence": 0.76,
+            "impacted_resource_ids": [
+              "i-0000000004dc"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Auto-shutdown request in low-risk environment",
+            "immediate_action": "auto-shutdown-request",
+            "applied_payload": {
+              "action_type": "stop-instance-request",
+              "resource_id": "i-0000000004dc",
+              "parameters": {
+                "instance_ids": [
+                  "i-0000000004dc"
+                ],
+                "reason": "finops_runaway_usage"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-stop",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260323-V",
+          "timestamp": "2026-03-23T00:00:00Z",
+          "resource_id": "arn:aws:rds:us-east-1:acct:db:db-1159",
+          "environment": "staging",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 13.58,
+            "cost_ratio_to_7d_avg": 0.24,
+            "projected_monthly_waste_usd": 402.3
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-2001"
+          },
+          "executive_summary": "arn:aws:rds:us-east-1:acct:db:db-1159 is costing about $13.41/day over 8 days and matches gradual_drift."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonRDS",
+            "usage_type": "InstanceUsage:db.m5.xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 39.7154,
+            "usage_density_24h": 1.6548,
+            "resource_cost_ratio_to_7d_avg": 1.02,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9985,
+            "type_hint_confidence": 0.54,
+            "impacted_resource_ids": [
+              "arn:aws:rds:us-east-1:acct:db:db-1159"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_mean_ratio_28vprev28",
+            "technical_reason": "Spend has climbed for multiple weeks without a sharp one-day jump, which matches gradual drift.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Time-gated containment",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "schedule-shutdown-review",
+              "resource_id": "arn:aws:rds:us-east-1:acct:db:db-1159",
+              "parameters": {
+                "delay_seconds": 14400
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 14400,
+              "fallback_action": "schedule-shutdown"
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000012:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260327-W",
+          "timestamp": "2026-03-27T00:00:00Z",
+          "resource_id": "arn:aws:rds:us-east-1:acct:db:db-1160",
+          "environment": "staging",
+          "dataset_phase": "train",
+          "confidence_score": 0.99,
+          "detector_score": 0.99,
+          "ranking_score": 0.99,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 14.89,
+            "cost_ratio_to_7d_avg": 0.26,
+            "projected_monthly_waste_usd": 390.6
+          },
+          "allocation": {
+            "responsible_team": "platform",
+            "cost_center_code": "CC-2001"
+          },
+          "executive_summary": "arn:aws:rds:us-east-1:acct:db:db-1160 is costing about $13.02/day over 8 days and matches idle_resource."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonRDS",
+            "usage_type": "InstanceUsage:db.m5.xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 43.5269,
+            "usage_density_24h": 1.8136,
+            "resource_cost_ratio_to_7d_avg": 1.08,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9983,
+            "type_hint_confidence": 0.88,
+            "impacted_resource_ids": [
+              "arn:aws:rds:us-east-1:acct:db:db-1160"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "database_connections",
+            "technical_reason": "Spend is stable while utilization remains near zero, which matches an idle-resource pattern.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Time-gated containment",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "schedule-shutdown-review",
+              "resource_id": "arn:aws:rds:us-east-1:acct:db:db-1160",
+              "parameters": {
+                "delay_seconds": 14400
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 14400,
+              "fallback_action": "schedule-shutdown"
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000012:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260323-X",
+          "timestamp": "2026-03-23T00:00:00Z",
+          "resource_id": "i-0000000004dc",
+          "environment": "ml-research",
+          "dataset_phase": "train",
+          "confidence_score": 0.93,
+          "detector_score": 0.99,
+          "ranking_score": 0.93,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 28.26,
+            "cost_ratio_to_7d_avg": 0.14,
+            "projected_monthly_waste_usd": 757.5
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0000000004dc is costing about $25.25/day over 8 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:c5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 41.5583,
+            "usage_density_24h": 1.7316,
+            "resource_cost_ratio_to_7d_avg": 0.96,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.9882,
+            "type_hint_confidence": 0.76,
+            "impacted_resource_ids": [
+              "i-0000000004dc"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Auto-shutdown request in low-risk environment",
+            "immediate_action": "auto-shutdown-request",
+            "applied_payload": {
+              "action_type": "stop-instance-request",
+              "resource_id": "i-0000000004dc",
+              "parameters": {
+                "instance_ids": [
+                  "i-0000000004dc"
+                ],
+                "reason": "finops_runaway_usage"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-stop",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260502-Y",
+          "timestamp": "2026-05-02T00:00:00Z",
+          "resource_id": "log-group-debug-runaway",
+          "environment": "dev",
+          "dataset_phase": "train",
+          "confidence_score": 0.9,
+          "detector_score": 0.68,
+          "ranking_score": 0.9,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "hybrid_rule_backbone"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 251.1,
+            "cost_ratio_to_7d_avg": 0.94,
+            "projected_monthly_waste_usd": 7883.4
+          },
+          "allocation": {
+            "responsible_team": "onboarding",
+            "cost_center_code": "CC-2002"
+          },
+          "executive_summary": "log-group-debug-runaway is costing about $262.78/day over 2 days and matches sudden_spike."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonCloudWatch",
+            "usage_type": "DataProcessing-Bytes",
+            "pricing_unit": "GB",
+            "usage_amount_24h": 502.2093,
+            "usage_density_24h": 1.0,
+            "resource_cost_ratio_to_7d_avg": 0.94,
+            "resource_cost_mean_ratio_28vprev28": 1.0,
+            "resource_usage_mean_ratio_28vprev28": 1.0,
+            "xgb_score": 0.0276,
+            "type_hint_confidence": 0.68,
+            "impacted_resource_ids": [
+              "log-group-debug-runaway"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "resource_cost_ratio_to_7d_avg",
+            "technical_reason": "Daily spend jumped sharply versus its own recent baseline and stayed elevated.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Alert-only review",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "log-group-debug-runaway",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000013:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260509-Z",
+          "timestamp": "2026-05-09T00:00:00Z",
+          "resource_id": "i-0000000004dc",
+          "environment": "ml-research",
+          "dataset_phase": "test",
+          "confidence_score": 0.88,
+          "detector_score": 0.74,
+          "ranking_score": 0.88,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 10.79,
+            "cost_ratio_to_7d_avg": 0.05,
+            "projected_monthly_waste_usd": 759.0
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0000000004dc is costing about $25.30/day over 4 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:c5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 15.8682,
+            "usage_density_24h": 0.6612,
+            "resource_cost_ratio_to_7d_avg": 0.34,
+            "resource_cost_mean_ratio_28vprev28": 1.02,
+            "resource_usage_mean_ratio_28vprev28": 1.02,
+            "xgb_score": 0.7416,
+            "type_hint_confidence": 0.76,
+            "impacted_resource_ids": [
+              "i-0000000004dc"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Auto-shutdown request in low-risk environment",
+            "immediate_action": "auto-shutdown-request",
+            "applied_payload": {
+              "action_type": "stop-instance-request",
+              "resource_id": "i-0000000004dc",
+              "parameters": {
+                "instance_ids": [
+                  "i-0000000004dc"
+                ],
+                "reason": "finops_runaway_usage"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "system_auto_containment",
+            "pre_action_state": "running",
+            "post_action_state": "pending-stop",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260527-A",
+          "timestamp": "2026-05-27T00:00:00Z",
+          "resource_id": "i-0000000004dc",
+          "environment": "ml-research",
+          "dataset_phase": "test",
+          "confidence_score": 0.85,
+          "detector_score": 0.91,
+          "ranking_score": 0.85,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 32.14,
+            "cost_ratio_to_7d_avg": 0.16,
+            "projected_monthly_waste_usd": 614.7
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0000000004dc is costing about $20.49/day over 9 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:c5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 47.2705,
+            "usage_density_24h": 1.9696,
+            "resource_cost_ratio_to_7d_avg": 1.06,
+            "resource_cost_mean_ratio_28vprev28": 1.03,
+            "resource_usage_mean_ratio_28vprev28": 1.03,
+            "xgb_score": 0.9149,
+            "type_hint_confidence": 0.75,
+            "impacted_resource_ids": [
+              "i-0000000004dc"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Alert-only review",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0000000004dc",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      },
+      {
+        "anomaly_metadata": {
+          "anomaly_id": "ANM-20260516-B",
+          "timestamp": "2026-05-16T00:00:00Z",
+          "resource_id": "i-0000000004dc",
+          "environment": "ml-research",
+          "dataset_phase": "test",
+          "confidence_score": 0.8,
+          "detector_score": 0.89,
+          "ranking_score": 0.8,
+          "ai_model_used": "xgboost-supervised-v1",
+          "supporting_detectors": [
+            "heuristic_type_mapper",
+            "xgboost_supervised"
+          ],
+          "incident_scope": "single_resource",
+          "impacted_resource_count": 1
+        },
+        "finance_dashboard_data": {
+          "target_recipient": "Finance Team & CFO Dashboard",
+          "metrics": {
+            "unblended_cost_24h_usd": 13.86,
+            "cost_ratio_to_7d_avg": 0.07,
+            "projected_monthly_waste_usd": 828.0
+          },
+          "allocation": {
+            "responsible_team": "ml",
+            "cost_center_code": "CC-3002"
+          },
+          "executive_summary": "i-0000000004dc is costing about $27.60/day over 5 days and matches runaway_usage."
+        },
+        "engineering_dashboard_data": {
+          "target_recipient": "Engineering Console & Slack Alert",
+          "technical_context": {
+            "aws_service": "AmazonEC2",
+            "usage_type": "BoxUsage:c5.4xlarge",
+            "pricing_unit": "Hrs",
+            "usage_amount_24h": 20.3827,
+            "usage_density_24h": 0.8493,
+            "resource_cost_ratio_to_7d_avg": 0.47,
+            "resource_cost_mean_ratio_28vprev28": 1.03,
+            "resource_usage_mean_ratio_28vprev28": 1.03,
+            "xgb_score": 0.8864,
+            "type_hint_confidence": 0.76,
+            "impacted_resource_ids": [
+              "i-0000000004dc"
+            ]
+          },
+          "root_cause_analysis": {
+            "primary_driver_feature": "gpu_utilization",
+            "technical_reason": "New compute workload is running continuously with no cooldown, which matches runaway usage.",
+            "missing_mandatory_tags": [
+              "resource_tags_user_owner"
+            ],
+            "rca_generation_mode": "fallback_rule_template",
+            "llm_rca_status": "disabled",
+            "recommended_follow_up": "Review the owning team, confirm intent, and validate whether containment should proceed.",
+            "llm_provider": "disabled",
+            "llm_model_id": "none",
+            "llm_latency_ms": null,
+            "llm_error": null
+          },
+          "mitigation_action": {
+            "strategy": "Alert-only review",
+            "immediate_action": "tag-for-review",
+            "applied_payload": {
+              "action_type": "tag-for-review",
+              "resource_id": "i-0000000004dc",
+              "parameters": {
+                "tag_key": "FinOps_Alert",
+                "tag_value": "Review_Required"
+              }
+            },
+            "enforcement_countdown": {
+              "time_lock_seconds": 0,
+              "fallback_action": ""
+            }
+          },
+          "audit_trail_context": {
+            "action_triggered_by": "human_operator",
+            "pre_action_state": "running",
+            "post_action_state": "tagged",
+            "execution_iam_role": "arn:aws:iam::200000000015:role/FinOpsEngineExecutionRole",
+            "rollback_script_encapsulated": ""
+          }
+        }
+      }
+    ],
+    "pagination": {
+      "next_token": null,
+      "limit": 50
+    },
+    "temporal_split": {
+      "strategy": "time_ordered_train_then_score_all",
+      "train_ratio": 0.7,
+      "train_end_date": "2026-05-03",
+      "test_start_date": "2026-05-04",
+      "train_rows": 1929,
+      "test_rows": 841,
+      "baseline_method": "rolling_median_mad",
+      "model_type": "xgboost_supervised_binary",
+      "feature_scaler": "not_required_tree_model",
+      "cross_validation_strategy": "walk_forward_expanding_window",
+      "cross_validation_max_folds": 3,
+      "training_summary": {
+        "label_source": "metrics.label_hourly_aggregated_daily",
+        "train_labeled_rows": 3496,
+        "test_labeled_rows": 1521,
+        "train_anomaly_rows": 261,
+        "test_anomaly_rows": 89,
+        "cv_strategy": "walk_forward_expanding_window",
+        "cv_folds_requested": 3,
+        "cv_folds_completed": 3,
+        "cv_fold_metrics": [
+          {
+            "fold_index": 1,
+            "train_start_date": "2026-03-01",
+            "train_end_date": "2026-03-21",
+            "validation_start_date": "2026-03-22",
+            "validation_end_date": "2026-04-05",
+            "train_rows": 1094,
+            "validation_rows": 800,
+            "train_anomaly_rows": 64,
+            "validation_anomaly_rows": 74,
+            "threshold": 0.2,
+            "precision": 0.4343,
+            "recall": 0.5811,
+            "fpr": 0.0771,
+            "accuracy": 0.8912,
+            "tp": 43,
+            "tn": 670,
+            "fp": 56,
+            "fn": 31
+          },
+          {
+            "fold_index": 2,
+            "train_start_date": "2026-03-01",
+            "train_end_date": "2026-04-05",
+            "validation_start_date": "2026-04-06",
+            "validation_end_date": "2026-04-19",
+            "train_rows": 1894,
+            "validation_rows": 816,
+            "train_anomaly_rows": 138,
+            "validation_anomaly_rows": 59,
+            "threshold": 0.3,
+            "precision": 0.58,
+            "recall": 0.4915,
+            "fpr": 0.0277,
+            "accuracy": 0.9375,
+            "tp": 29,
+            "tn": 736,
+            "fp": 21,
+            "fn": 30
+          },
+          {
+            "fold_index": 3,
+            "train_start_date": "2026-03-01",
+            "train_end_date": "2026-04-19",
+            "validation_start_date": "2026-04-20",
+            "validation_end_date": "2026-05-03",
+            "train_rows": 2710,
+            "validation_rows": 786,
+            "train_anomaly_rows": 197,
+            "validation_anomaly_rows": 64,
+            "threshold": 0.65,
+            "precision": 0.6078,
+            "recall": 0.4844,
+            "fpr": 0.0277,
+            "accuracy": 0.9326,
+            "tp": 31,
+            "tn": 702,
+            "fp": 20,
+            "fn": 33
+          }
+        ],
+        "cv_oof_rows": 2402,
+        "cv_oof_anomaly_rows": 197,
+        "cv_oof_metrics": {
+          "precision": 0.5,
+          "recall": 0.4822,
+          "fpr": 0.0431,
+          "accuracy": 0.918,
+          "tp": 95,
+          "tn": 2110,
+          "fp": 95,
+          "fn": 102
+        },
+        "threshold": 0.45,
+        "threshold_source": "walk_forward_oof",
+        "train_metrics": {
+          "precision": 0.9739,
+          "recall": 1.0,
+          "fpr": 0.0022,
+          "accuracy": 0.998,
+          "tp": 261,
+          "tn": 3228,
+          "fp": 7,
+          "fn": 0
+        },
+        "test_model_only_metrics": {
+          "precision": 0.5979,
+          "recall": 0.6517,
+          "fpr": 0.0272,
+          "accuracy": 0.954,
+          "tp": 58,
+          "tn": 1393,
+          "fp": 39,
+          "fn": 31
+        },
+        "test_supervised_only_metrics": {
+          "precision": 0.6591,
+          "recall": 0.6517,
+          "fpr": 0.0209,
+          "accuracy": 0.9599,
+          "tp": 58,
+          "tn": 1402,
+          "fp": 30,
+          "fn": 31
+        },
+        "test_pipeline_metrics": {
+          "precision": 0.6591,
+          "recall": 0.6517,
+          "fpr": 0.0209,
+          "accuracy": 0.9599,
+          "tp": 58,
+          "tn": 1402,
+          "fp": 30,
+          "fn": 31
+        },
+        "cv_oof_supervised_only_metrics": {
+          "precision": 0.5759,
+          "recall": 0.4619,
+          "fpr": 0.0304,
+          "accuracy": 0.928,
+          "tp": 91,
+          "tn": 2138,
+          "fp": 67,
+          "fn": 106
+        },
+        "cv_oof_pipeline_metrics": {
+          "precision": 0.5759,
+          "recall": 0.4619,
+          "fpr": 0.0304,
+          "accuracy": 0.928,
+          "tp": 91,
+          "tn": 2138,
+          "fp": 67,
+          "fn": 106
+        },
+        "cv_oof_hybrid_metrics": {
+          "precision": 0.5759,
+          "recall": 0.4619,
+          "fpr": 0.0304,
+          "accuracy": 0.928,
+          "tp": 91,
+          "tn": 2138,
+          "fp": 67,
+          "fn": 106
+        },
+        "hybrid_rule_trigger_rows": 89,
+        "hybrid_rule_only_rows": 89
+      },
+      "label_source": "metrics.label_hourly_aggregated_daily",
+      "metrics_variant": "unified_hourly",
+      "metrics_dir": "C:\\Users\\Admin\\Capstone_Phase2_AI\\Hoàng_Thịnh\\data\\metrics_data"
+    },
+    "llm_context": {
+      "provider": "disabled",
+      "model_id": "none",
+      "enabled": false
+    },
+    "evaluation_context": {
+      "split_summary": {
+        "strategy": "time_ordered_train_then_score_all",
+        "train_ratio": 0.7,
+        "train_end_date": "2026-05-03",
+        "test_start_date": "2026-05-04",
+        "train_rows_account_service": 1929,
+        "test_rows_account_service": 841,
+        "baseline_method": "rolling_median_mad",
+        "model_type": "xgboost_supervised_binary",
+        "feature_scaler": "not_required_tree_model",
+        "cross_validation_strategy": "walk_forward_expanding_window",
+        "cross_validation_max_folds": 3,
+        "label_source": "metrics.label_hourly_aggregated_daily"
+      },
+      "training_summary_compact": {
+        "label_source": "metrics.label_hourly_aggregated_daily",
+        "train_labeled_rows": 3496,
+        "test_labeled_rows": 1521,
+        "train_anomaly_rows": 261,
+        "test_anomaly_rows": 89,
+        "cv_strategy": "walk_forward_expanding_window",
+        "cv_folds_completed": 3,
+        "threshold_source": "walk_forward_oof",
+        "threshold": 0.45,
+        "cv_oof_metrics": {
+          "precision": 0.5,
+          "recall": 0.4822,
+          "fpr": 0.0431,
+          "accuracy": 0.918,
+          "tp": 95,
+          "tn": 2110,
+          "fp": 95,
+          "fn": 102
+        },
+        "cv_oof_supervised_only_metrics": {
+          "precision": 0.5759,
+          "recall": 0.4619,
+          "fpr": 0.0304,
+          "accuracy": 0.928,
+          "tp": 91,
+          "tn": 2138,
+          "fp": 67,
+          "fn": 106
+        },
+        "cv_oof_pipeline_metrics": {
+          "precision": 0.5759,
+          "recall": 0.4619,
+          "fpr": 0.0304,
+          "accuracy": 0.928,
+          "tp": 91,
+          "tn": 2138,
+          "fp": 67,
+          "fn": 106
+        },
+        "test_model_only_metrics": {
+          "precision": 0.5979,
+          "recall": 0.6517,
+          "fpr": 0.0272,
+          "accuracy": 0.954,
+          "tp": 58,
+          "tn": 1393,
+          "fp": 39,
+          "fn": 31
+        },
+        "test_supervised_only_metrics": {
+          "precision": 0.6591,
+          "recall": 0.6517,
+          "fpr": 0.0209,
+          "accuracy": 0.9599,
+          "tp": 58,
+          "tn": 1402,
+          "fp": 30,
+          "fn": 31
+        },
+        "test_pipeline_metrics": {
+          "precision": 0.6591,
+          "recall": 0.6517,
+          "fpr": 0.0209,
+          "accuracy": 0.9599,
+          "tp": 58,
+          "tn": 1402,
+          "fp": 30,
+          "fn": 31
+        },
+        "hybrid_rule_trigger_rows": 89,
+        "hybrid_rule_only_rows": 89
+      },
+      "method_comparison": {
+        "supervised_only": {
+          "precision": 0.6591,
+          "recall": 0.6517,
+          "fpr": 0.0209,
+          "accuracy": 0.9599,
+          "tp": 58,
+          "tn": 1402,
+          "fp": 30,
+          "fn": 31
+        },
+        "hybrid_pipeline": {
+          "precision": 0.6591,
+          "recall": 0.6517,
+          "fpr": 0.0209,
+          "accuracy": 0.9599,
+          "tp": 58,
+          "tn": 1402,
+          "fp": 30,
+          "fn": 31
+        },
+        "cv_supervised_only": {
+          "precision": 0.5759,
+          "recall": 0.4619,
+          "fpr": 0.0304,
+          "accuracy": 0.928,
+          "tp": 91,
+          "tn": 2138,
+          "fp": 67,
+          "fn": 106
+        },
+        "cv_hybrid_pipeline": {
+          "precision": 0.5759,
+          "recall": 0.4619,
+          "fpr": 0.0304,
+          "accuracy": 0.928,
+          "tp": 91,
+          "tn": 2138,
+          "fp": 67,
+          "fn": 106
+        },
+        "hybrid_rule_trigger_rows": 89,
+        "hybrid_rule_only_rows": 89
+      }
+    }
+  },
+  "public_eval": {
+    "matched_anomalies": [
+      "A2",
+      "A6"
+    ],
+    "missed_anomalies": [],
+    "benign_hits": [],
+    "tp_public": 2,
+    "fn_public": 0,
+    "fp_public": 0,
+    "anomaly_support_public": 2,
+    "benign_support_public": 1,
+    "public_recall": 1.0,
+    "public_false_positive_rate": 0.0,
+    "fp_requirement_max": 0.1,
+    "fp_requirement_passed": true,
+    "evaluation_note": "This supervised sandbox run uses metrics.label for training; final FP<=10% still needs full backtest disclosure."
+  },
+  "public_eval_by_method": {
+    "hybrid_pipeline": {
+      "matched_anomalies": [
+        "A2",
+        "A6"
+      ],
+      "missed_anomalies": [],
+      "benign_hits": [],
+      "tp_public": 2,
+      "fn_public": 0,
+      "fp_public": 0,
+      "anomaly_support_public": 2,
+      "benign_support_public": 1,
+      "public_recall": 1.0,
+      "public_false_positive_rate": 0.0,
+      "fp_requirement_max": 0.1,
+      "fp_requirement_passed": true,
+      "evaluation_note": "This supervised sandbox run uses metrics.label for training; final FP<=10% still needs full backtest disclosure."
+    },
+    "supervised_only": {
+      "matched_anomalies": [
+        "A2"
+      ],
+      "missed_anomalies": [
+        "A6"
+      ],
+      "benign_hits": [],
+      "tp_public": 1,
+      "fn_public": 1,
+      "fp_public": 0,
+      "anomaly_support_public": 2,
+      "benign_support_public": 1,
+      "public_recall": 0.5,
+      "public_false_positive_rate": 0.0,
+      "fp_requirement_max": 0.1,
+      "fp_requirement_passed": true,
+      "evaluation_note": "This supervised sandbox run uses metrics.label for training; final FP<=10% still needs full backtest disclosure."
+    }
+  },
+  "model_name": "xgboost-supervised-v1"
+}

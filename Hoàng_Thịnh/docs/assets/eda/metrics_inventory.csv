@@ -1,0 +1,6 @@
+dataset,rows,resources,days,label_normal,label_anomaly,label_benign
+other_services_metrics,11331,126,92,10462,378,491.0
+ec2_metrics,10308,118,92,8381,1006,921.0
+rds_metrics,1545,17,92,1045,256,244.0
+sagemaker_metrics,1104,12,92,799,122,183.0
+ddb_metrics,245,3,92,184,61,

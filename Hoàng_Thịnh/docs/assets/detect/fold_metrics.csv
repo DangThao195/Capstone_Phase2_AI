@@ -1,0 +1,4 @@
+fold_index,train_start_date,train_end_date,validation_start_date,validation_end_date,train_rows,validation_rows,train_anomaly_rows,validation_anomaly_rows,threshold,precision,recall,fpr,accuracy,tp,tn,fp,fn
+1,2026-03-01,2026-03-21,2026-03-22,2026-04-05,1094,800,64,74,0.2,0.4343,0.5811,0.0771,0.8912,43,670,56,31
+2,2026-03-01,2026-04-05,2026-04-06,2026-04-19,1894,816,138,59,0.3,0.58,0.4915,0.0277,0.9375,29,736,21,30
+3,2026-03-01,2026-04-19,2026-04-20,2026-05-03,2710,786,197,64,0.65,0.6078,0.4844,0.0277,0.9326,31,702,20,33

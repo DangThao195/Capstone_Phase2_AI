@@ -1,0 +1,155 @@
+{
+  "files": {
+    "cur_line_items_rows": 24533,
+    "cost_explorer_rows": 2770,
+    "public_labels_rows": 3,
+    "metrics_total_rows": 24533
+  },
+  "coverage": {
+    "date_start": "2026-03-01",
+    "date_end": "2026-05-31",
+    "linked_accounts": 6,
+    "services": 17,
+    "resources": 276,
+    "regions": 2,
+    "usage_types": 30,
+    "operations": 19
+  },
+  "cost": {
+    "cur_total": 593773.34,
+    "ce_total": 593773.09,
+    "monthly_totals": {
+      "2026-03": 186806.09,
+      "2026-04": 196080.48,
+      "2026-05": 210886.77
+    },
+    "daily_min": 4520.57,
+    "daily_median": 6534.46,
+    "daily_max": 8341.37,
+    "peak_day": "2026-05-25"
+  },
+  "concentration": {
+    "top_accounts": {
+      "prod-core": 221950.01,
+      "prod-payments": 136092.73,
+      "data-analytics": 125546.8,
+      "ml-research": 45606.5,
+      "dev": 33744.01,
+      "staging": 30833.29
+    },
+    "top_services": {
+      "AmazonEC2": 148965.53,
+      "AmazonS3": 117927.31,
+      "AmazonDynamoDB": 77244.06,
+      "AWSDataTransfer": 75076.12,
+      "AmazonRDS": 63645.8,
+      "AmazonCloudWatch": 45603.21,
+      "AWSLambda": 13683.02,
+      "AmazonMSK": 11905.06,
+      "AmazonES": 9938.46,
+      "AmazonElastiCache": 7731.4
+    },
+    "top2_account_share_pct": 60.3,
+    "top3_service_share_pct": 57.96
+  },
+  "data_quality": {
+    "untagged_rows": 92,
+    "untagged_resources": 1,
+    "untagged_cost": 13606.23,
+    "untagged_share_pct": 2.29,
+    "owner_blank_pct": 99.63,
+    "ce_estimated_days": [
+      "2026-05-30",
+      "2026-05-31"
+    ],
+    "ce_estimated_cost": 12015.93,
+    "cur_ce_max_abs_daily_diff": 0.0362
+  },
+  "public_labels": [
+    {
+      "anomaly_id": "A2",
+      "label": "anomaly",
+      "anomaly_type": "idle_resource",
+      "linked_account_name": "staging",
+      "service": "AmazonRDS",
+      "event_days": 73,
+      "event_total_cost": 6246.09,
+      "event_mean_cost": 85.56,
+      "pre14_mean_cost": 55.49
+    },
+    {
+      "anomaly_id": "A6",
+      "label": "anomaly",
+      "anomaly_type": "sudden_spike",
+      "linked_account_name": "dev",
+      "service": "AmazonCloudWatch",
+      "event_days": 7,
+      "event_total_cost": 1838.98,
+      "event_mean_cost": 262.71,
+      "pre14_mean_cost": null
+    },
+    {
+      "anomaly_id": "B2",
+      "label": "benign",
+      "anomaly_type": "benign_event",
+      "linked_account_name": "data-analytics",
+      "service": "AWSDataTransfer",
+      "event_days": 3,
+      "event_total_cost": 1960.86,
+      "event_mean_cost": 653.62,
+      "pre14_mean_cost": null
+    }
+  ],
+  "metrics": {
+    "total_rows": 24533,
+    "total_unique_keys": 24533,
+    "cur_unique_keys": 24533,
+    "metrics_inventory": [
+      {
+        "dataset": "other_services_metrics",
+        "rows": 11331,
+        "resources": 126,
+        "days": 92,
+        "label_normal": 10462,
+        "label_anomaly": 378,
+        "label_benign": 491.0
+      },
+      {
+        "dataset": "ec2_metrics",
+        "rows": 10308,
+        "resources": 118,
+        "days": 92,
+        "label_normal": 8381,
+        "label_anomaly": 1006,
+        "label_benign": 921.0
+      },
+      {
+        "dataset": "rds_metrics",
+        "rows": 1545,
+        "resources": 17,
+        "days": 92,
+        "label_normal": 1045,
+        "label_anomaly": 256,
+        "label_benign": 244.0
+      },
+      {
+        "dataset": "sagemaker_metrics",
+        "rows": 1104,
+        "resources": 12,
+        "days": 92,
+        "label_normal": 799,
+        "label_anomaly": 122,
+        "label_benign": 183.0
+      },
+      {
+        "dataset": "ddb_metrics",
+        "rows": 245,
+        "resources": 3,
+        "days": 92,
+        "label_normal": 184,
+        "label_anomaly": 61,
+        "label_benign": null
+      }
+    ]
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "description": "Schema for cloud infrastructure metrics time-series dataset",
+  "version": "1.0.0",
+  "time_range": {
+    "start": "2026-03-01T00:00:00Z",
+    "end": "2026-05-31T23:00:00Z",
+    "granularity": "hourly"
+  },
+  "columns": {
+    "timestamp": {
+      "type": "datetime",
+      "format": "ISO 8601",
+      "description": "UTC timestamp for the observation (hourly granularity)",
+      "nullable": false
+    },
+    "resource_id": {
+      "type": "string",
+      "description": "Unique resource identifier from CUR data (e.g., i-0000000003e9, arn:aws:rds:...)",
+      "nullable": false
+    },
+    "resource_type": {
+      "type": "string",
+      "enum": ["compute", "database", "gpu_compute", "container", "cache", "storage"],
+      "description": "Classified resource type derived from CUR product_code and usage_type",
+      "nullable": false
+    },
+    "account_name": {
+      "type": "string",
+      "description": "Linked AWS account name from CUR",
+      "nullable": false
+    },
+    "cpu_percent": {
+      "type": "number",
+      "description": "CPU utilization percentage [0-100]. Generated via Ornstein-Uhlenbeck process with cost-derived baseline.",
+      "range": [0.0, 100.0],
+      "unit": "percent",
+      "nullable": true,
+      "null_condition": "null for storage-only resources"
+    },
+    "cpu_utilization_hourly": {
+      "type": "array<number>",
+      "description": "JSON array of 12 five-minute CPU utilization samples within the hour. Provides sub-hourly granularity for detailed analysis.",
+      "element_range": [0.0, 100.0],
+      "length": 12,
+      "nullable": true,
+      "null_condition": "null for storage-only resources"
+    },
+    "memory_mib": {
+      "type": "number",
+      "description": "Memory usage in MiB. Generated via Ornstein-Uhlenbeck process.",
+      "range": [0.0, null],
+      "unit": "MiB",
+      "nullable": true,
+      "null_condition": "null for storage-only resources"
+    },
+    "network_in_bytes": {
+      "type": "number",
+      "description": "Inbound network traffic in bytes per hour. Generated via Geometric Brownian Motion.",
+      "range": [0.0, null],
+      "unit": "bytes",
+      "nullable": false
+    },
+    "network_out_bytes": {
+      "type": "number",
+      "description": "Outbound network traffic in bytes per hour. Generated via Geometric Brownian Motion.",
+      "range": [0.0, null],
+      "unit": "bytes",
+      "nullable": false
+    },
+    "disk_io_ops": {
+      "type": "number",
+      "description": "Disk I/O operations per hour. Generated via Geometric Brownian Motion.",
+      "range": [0.0, null],
+      "unit": "operations/hour",
+      "nullable": false
+    },
+    "database_connections": {
+      "type": "integer",
+      "description": "Active database connections. Generated via Ornstein-Uhlenbeck process.",
+      "range": [0, null],
+      "nullable": true,
+      "null_condition": "null for non-database and non-cache resources"
+    },
+    "gpu_utilization": {
+      "type": "number",
+      "description": "GPU utilization percentage [0-100]. Generated via Ornstein-Uhlenbeck process.",
+      "range": [0.0, 100.0],
+      "unit": "percent",
+      "nullable": true,
+      "null_condition": "null for non-GPU resources"
+    },
+    "label": {
+      "type": "string",
+      "enum": ["normal", "benign", "anomaly"],
+      "description": "Classification label assigned AFTER metric generation. Distribution target: normal ~87%, benign ~7%, anomaly ~6%.",
+      "nullable": false
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Specific event type when label != 'normal'. Examples: memory_leak, ddos_spike, db_saturation, scheduled_backup, autoscaling, etc.",
+      "nullable": true,
+      "null_condition": "null when label is 'normal'"
+    }
+  },
+  "generation_methodology": {
+    "baseline_derivation": "Metric baselines are probabilistically estimated from CUR cost data, NOT from labels",
+    "stochastic_processes": {
+      "ornstein_uhlenbeck": "Used for mean-reverting metrics (CPU, memory, connections)",
+      "geometric_brownian_motion": "Used for multiplicative/growth metrics (network, disk IO)",
+      "poisson": "Used for burst events and spike counts"
+    },
+    "seasonality": "Daily (business/night hours) and weekly (weekday/weekend) patterns",
+    "correlations": "Cross-metric correlations via Cholesky-decomposed noise",
+    "anomaly_generation": "Anomalies emerge from realistic failure mechanisms applied to the natural time series",
+    "label_assignment": "Labels assigned AFTER complete metric generation based on injected events"
+  },
+  "leakage_prevention": {
+    "no_label_encoding": "Metrics are never generated from labels",
+    "distribution_overlap": "Benign and anomaly distributions intentionally overlap",
+    "normal_spikes": "Normal data contains random spikes (0.5% of hours)",
+    "subtle_anomalies": "30% of anomalies have dampened effects",
+    "extreme_benign": "20% of benign events have amplified effects"
+  }
+}
