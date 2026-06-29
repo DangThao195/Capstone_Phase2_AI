@@ -114,6 +114,28 @@ class Settings(BaseSettings):
     bedrock_region: str = Field(default="ap-southeast-1")
     aws_region: str = Field(default="ap-southeast-1")
 
+    # --- Storage (DynamoDB + S3) ---
+    dynamodb_idempotency_table: str = Field(
+        default="finops-idempotency-dev",
+        description="DynamoDB table for idempotency (deployment-contract §Appendix C)",
+    )
+    dynamodb_feature_store_table: str = Field(
+        default="finops-feature-store-dev",
+        description="DynamoDB table for feature vectors (deployment-contract §Appendix C)",
+    )
+    s3_telemetry_bucket: str = Field(
+        default="",
+        description="S3 bucket for CUR files (telemetry-contract §5). Empty = S3_POINTER rejected.",
+    )
+    enable_dynamodb: bool = Field(
+        default=False,
+        description="Enable DynamoDB for idempotency + feature store. Off = in-memory fallback.",
+    )
+    enable_s3: bool = Field(
+        default=False,
+        description="Enable S3 CUR file reading for S3_POINTER mode. Off = reject S3_POINTER.",
+    )
+
     # --- CORS ---
     allowed_origins: List[str] = Field(default=["*"])
 

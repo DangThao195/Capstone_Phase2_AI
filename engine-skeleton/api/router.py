@@ -74,6 +74,8 @@ from engine.strategies.dummy import DummyStrategy
 from engine.strategies.statistical import StatisticalStrategy
 from engine.strategies.xgboost_strategy import XGBoostStrategy
 from engine.llm_client import BedrockLLMClient
+from engine.storage.dynamodb_client import DynamoDBClient
+from engine.storage.s3_client import S3Client
 from models.domain import AnomalyResult, CostRecord, JobRecord
 from models.enums import (
     AnomalyType,
@@ -89,8 +91,21 @@ api_router = APIRouter()
 _llm_client = BedrockLLMClient()
 
 # ---------------------------------------------------------------------------
-# In-memory stores (skeleton phase — W12: swap to DynamoDB)
+# Storage clients (DynamoDB + S3) — graceful fallback to in-memory
 # ---------------------------------------------------------------------------
+_settings_init = get_settings()
+_dynamodb_client = DynamoDBClient(
+    idempotency_table=_settings_init.dynamodb_idempotency_table,
+    feature_store_table=_settings_init.dynamodb_feature_store_table,
+    region=_settings_init.aws_region,
+    enabled=_settings_init.enable_dynamodb,
+)
+_s3_client = S3Client(
+    region=_settings_init.aws_region,
+    enabled=_settings_init.enable_s3,
+)
+
+# In-memory stores (fallback khi DynamoDB disabled hoặc unavailable)
 _jobs: Dict[str, JobRecord] = {}           # correlation_id → JobRecord
 _decide_cache: Dict[str, dict] = {}        # correlation_id → decide response data
 _error_budget: Dict[str, float] = {}       # tenant_id → burned % (0-100)
@@ -174,13 +189,15 @@ def _is_uuid(value: str) -> bool:
     description="ALB/App Runner health probe. No authentication required. Contract §5.4.",
 )
 async def health_check():
+    dynamo_ok = _dynamodb_client.is_healthy()
+    s3_ok = _s3_client.is_healthy()
     return HealthResponse(
         status="healthy",
         timestamp=datetime.now(timezone.utc),
         services=HealthServices(
-            s3_audit_bucket="connected",    # Skeleton: always connected
-            bedrock_api="accessible",       # Skeleton: always accessible
-            s3_cur_bucket="reachable",      # Skeleton: always reachable
+            s3_audit_bucket="connected" if s3_ok else "unavailable",
+            bedrock_api="accessible",
+            s3_cur_bucket="reachable" if s3_ok else "unavailable",
         ),
     )
 
