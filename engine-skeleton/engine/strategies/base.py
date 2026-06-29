@@ -15,7 +15,7 @@ instead of API schema objects. Router handles the schema → domain conversion.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from models.domain import AnomalyResult, CostRecord
 
@@ -29,6 +29,8 @@ class DetectionStrategy(ABC):
         cost_window: List[CostRecord],
         baseline: Optional[object],
         tenant_id: str,
+        utilization_metrics: Optional[List[Any]] = None,
+        business_context: Optional[Any] = None,
     ) -> AnomalyResult:
         """
         Analyse cost data and return an anomaly result.

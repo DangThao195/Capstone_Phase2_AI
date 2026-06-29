@@ -1,0 +1,11 @@
+cost_deviation_ratio_14d
+cost_deviation_ratio_7d
+cost_diff_1d
+cost_diff_1h
+cpu_hourly_std
+cpu_per_dollar
+day_of_week
+hour_of_day
+is_business_hours
+is_weekend
+network_ratio

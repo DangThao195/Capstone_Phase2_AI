@@ -37,6 +37,7 @@ class AnomalyItem(BaseModel):
     responsible_team: Optional[str] = None
     unblended_cost_24h_usd: float = Field(ge=0.0)
     cost_ratio_to_7d_avg: float = Field(ge=0.0)
+    affected_service: Optional[str] = None
     ai_model_used: str = "skeleton-rules-v1"
     alert_routing: AlertRouting
 

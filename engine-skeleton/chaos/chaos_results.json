@@ -1,0 +1,95 @@
+{
+  "false_alarms": 0,
+  "experiments": [
+    {
+      "id": 1,
+      "name": "payment-svc latency +500ms",
+      "detected": "Y",
+      "mttd": "10.9s",
+      "mttd_val": 10.9,
+      "rca_service": "AmazonEC2",
+      "rca_correct": "Y"
+    },
+    {
+      "id": 2,
+      "name": "payment-svc network loss 30%",
+      "detected": "Y",
+      "mttd": "12.2s",
+      "mttd_val": 12.2,
+      "rca_service": "AmazonEC2",
+      "rca_correct": "Y"
+    },
+    {
+      "id": 3,
+      "name": "inventory-svc pod kill every 60s",
+      "detected": "N",
+      "mttd": "\u2014",
+      "mttd_val": null,
+      "rca_service": "N/A",
+      "rca_correct": "N"
+    },
+    {
+      "id": 4,
+      "name": "api-gateway stress CPU 90%",
+      "detected": "Y",
+      "mttd": "12.9s",
+      "mttd_val": 12.9,
+      "rca_service": "AmazonEC2",
+      "rca_correct": "Y"
+    },
+    {
+      "id": 5,
+      "name": "payment-db memory fill 95%",
+      "detected": "Y",
+      "mttd": "7.9s",
+      "mttd_val": 7.9,
+      "rca_service": "AmazonRDS",
+      "rca_correct": "Y"
+    },
+    {
+      "id": 6,
+      "name": "auth-svc clock skew +60s",
+      "detected": "Y",
+      "mttd": "11.5s",
+      "mttd_val": 11.5,
+      "rca_service": "AmazonEC2",
+      "rca_correct": "N"
+    },
+    {
+      "id": 7,
+      "name": "log-collector disk fill 95%",
+      "detected": "Y",
+      "mttd": "7.2s",
+      "mttd_val": 7.2,
+      "rca_service": "AmazonS3",
+      "rca_correct": "Y"
+    },
+    {
+      "id": 8,
+      "name": "frontend <-> api-gateway partition 30s",
+      "detected": "Y",
+      "mttd": "12.1s",
+      "mttd_val": 12.1,
+      "rca_service": "AmazonEC2",
+      "rca_correct": "Y"
+    },
+    {
+      "id": 9,
+      "name": "dns resolver slow lookup +2s",
+      "detected": "Y",
+      "mttd": "9.9s",
+      "mttd_val": 9.9,
+      "rca_service": "AmazonEC2",
+      "rca_correct": "Y"
+    },
+    {
+      "id": 10,
+      "name": "checkout-svc HTTP 500 inject 20%",
+      "detected": "N",
+      "mttd": "\u2014",
+      "mttd_val": null,
+      "rca_service": "N/A",
+      "rca_correct": "N"
+    }
+  ]
+}

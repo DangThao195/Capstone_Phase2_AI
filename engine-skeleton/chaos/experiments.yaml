@@ -1,0 +1,141 @@
+experiments:
+  - id: 1
+    name: "payment-svc latency +500ms"
+    hypothesis: "Steady-state: latency <= 100ms. Latency +500ms causes cost spike and trips XGBoost compute detection."
+    blast_radius:
+      target: "payment-svc"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "remove netem delay"
+    measurement:
+      metrics: ["cost_deviation_ratio", "cpu_percent"]
+    ground_truth:
+      anomaly_type: "runaway_usage"
+      expected_rca: "compute"
+  - id: 2
+    name: "payment-svc network loss 30%"
+    hypothesis: "Steady-state: packet loss = 0%. 30% loss causes retry storm and trips error rate detection."
+    blast_radius:
+      target: "payment-svc"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "remove netem loss"
+    measurement:
+      metrics: ["cost_deviation_ratio", "network_in_bytes"]
+    ground_truth:
+      anomaly_type: "runaway_usage"
+      expected_rca: "compute"
+  - id: 3
+    name: "inventory-svc pod kill every 60s"
+    hypothesis: "Steady-state: service up. Killing pod causes availability anomaly and triggers idle resource alert."
+    blast_radius:
+      target: "inventory-svc"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "stop pod killing"
+    measurement:
+      metrics: ["usage_density_24h", "cost"]
+    ground_truth:
+      anomaly_type: "idle_resource"
+      expected_rca: "container"
+  - id: 4
+    name: "api-gateway stress CPU 90%"
+    hypothesis: "Steady-state: CPU < 30%. CPU at 90% triggers high CPU warning and cascades latency alerts."
+    blast_radius:
+      target: "api-gateway"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "kill stress-ng"
+    measurement:
+      metrics: ["cpu_percent"]
+    ground_truth:
+      anomaly_type: "runaway_usage"
+      expected_rca: "compute"
+  - id: 5
+    name: "payment-db memory fill 95%"
+    hypothesis: "Steady-state: memory < 70%. Memory 95% triggers db connections spike and alerts on database service."
+    blast_radius:
+      target: "payment-db"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "free memory hog"
+    measurement:
+      metrics: ["database_connections", "memory_mib"]
+    ground_truth:
+      anomaly_type: "runaway_usage"
+      expected_rca: "database"
+  - id: 6
+    name: "auth-svc clock skew +60s"
+    hypothesis: "Steady-state: time sync. Clock skew +60s causes token signature failure and alerts on auth service."
+    blast_radius:
+      target: "auth-svc"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "resync ntp"
+    measurement:
+      metrics: ["clock_skew"]
+    ground_truth:
+      anomaly_type: "other"
+      expected_rca: "other"
+  - id: 7
+    name: "log-collector disk fill 95%"
+    hypothesis: "Steady-state: disk < 50%. Disk 95% causes storage utilization alert."
+    blast_radius:
+      target: "log-collector"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "clean temporary files"
+    measurement:
+      metrics: ["disk_io_ops"]
+    ground_truth:
+      anomaly_type: "gradual_drift"
+      expected_rca: "storage"
+  - id: 8
+    name: "frontend <-> api-gateway partition 30s"
+    hypothesis: "Steady-state: partition = 0. Partition causes zero traffic but persistent base cost."
+    blast_radius:
+      target: "api-gateway"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "flush iptables"
+    measurement:
+      metrics: ["traffic_volume"]
+    ground_truth:
+      anomaly_type: "idle_resource"
+      expected_rca: "compute"
+  - id: 9
+    name: "dns resolver slow lookup +2s"
+    hypothesis: "Steady-state: lookup < 10ms. Slow lookup +2s causes API gateway timeout errors."
+    blast_radius:
+      target: "dns-resolver"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "restore dns configuration"
+    measurement:
+      metrics: ["latency"]
+    ground_truth:
+      anomaly_type: "runaway_usage"
+      expected_rca: "compute"
+  - id: 10
+    name: "checkout-svc HTTP 500 inject 20%"
+    hypothesis: "Steady-state: error_rate < 1%. 20% error rate causes retry storm, but cost/request remains normal."
+    blast_radius:
+      target: "checkout-svc"
+      duration: 120
+    rollback:
+      automatic: true
+      method: "stop HTTP error injection"
+    measurement:
+      metrics: ["cost_per_request"]
+    ground_truth:
+      anomaly_type: "runaway_usage"
+      expected_rca: "container"

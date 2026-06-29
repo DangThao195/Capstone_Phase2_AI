@@ -72,6 +72,8 @@ from engine.containment import evaluate_containment
 from engine.strategies.base import DetectionStrategy
 from engine.strategies.dummy import DummyStrategy
 from engine.strategies.statistical import StatisticalStrategy
+from engine.strategies.xgboost_strategy import XGBoostStrategy
+from engine.llm_client import BedrockLLMClient
 from models.domain import AnomalyResult, CostRecord, JobRecord
 from models.enums import (
     AnomalyType,
@@ -84,6 +86,7 @@ from models.enums import (
 logger = logging.getLogger("finops-engine.router")
 
 api_router = APIRouter()
+_llm_client = BedrockLLMClient()
 
 # ---------------------------------------------------------------------------
 # In-memory stores (skeleton phase — W12: swap to DynamoDB)
@@ -93,19 +96,29 @@ _decide_cache: Dict[str, dict] = {}        # correlation_id → decide response 
 _error_budget: Dict[str, float] = {}       # tenant_id → burned % (0-100)
 
 
-# ---------------------------------------------------------------------------
 # Strategy selection (feature-flag driven)
 # ---------------------------------------------------------------------------
+_strategy_cache: Dict[str, DetectionStrategy] = {}
+
 def _get_strategy() -> DetectionStrategy:
     """
     Select detection strategy based on configuration.
-    Skeleton phase: DummyStrategy.
-    W12: switch to StatisticalStrategy via env var FINOPS_ENABLE_LLM_ANALYSIS.
     """
     settings = get_settings()
-    if settings.enable_llm_analysis:
-        return StatisticalStrategy()
-    return DummyStrategy()
+    strat = settings.detection_strategy.lower()
+    
+    # We cache the instantiated strategy object so that its internal state (like historical telemetry data)
+    # is persisted in memory across multiple requests.
+    cache_key = f"{strat}_llm_{settings.enable_llm_analysis}"
+    if cache_key not in _strategy_cache:
+        if strat == "xgboost":
+            _strategy_cache[cache_key] = XGBoostStrategy()
+        elif strat == "statistical" or settings.enable_llm_analysis:
+            _strategy_cache[cache_key] = StatisticalStrategy()
+        else:
+            _strategy_cache[cache_key] = DummyStrategy()
+            
+    return _strategy_cache[cache_key]
 
 
 # ---------------------------------------------------------------------------
@@ -229,6 +242,7 @@ async def detect_anomaly(
                     environment=_resolve_environment(cur.resource_tags_user_environment),
                     cost_period_start=cur.line_item_usage_start_date,
                     cost_period_end=cur.line_item_usage_end_date or cur.line_item_usage_start_date,
+                    idempotency_key=cur.line_item_resource_id,
                 ))
         elif body.aws_cost_explorer_daily:
             # Fallback path: CE data (when CUR delayed)
@@ -243,12 +257,15 @@ async def detect_anomaly(
                     environment=_resolve_environment("unknown"),
                     cost_period_start=datetime.combine(ce.date, datetime.min.time(), tzinfo=timezone.utc),
                     cost_period_end=datetime.combine(ce.date, datetime.min.time(), tzinfo=timezone.utc),
+                    idempotency_key=ce.service_code,
                 ))
 
         result = strategy.detect(
             cost_window=cost_window,
             baseline=None,
             tenant_id=tenant_id,
+            utilization_metrics=body.resource_utilization_metrics,
+            business_context=body.business_context,
         )
 
         # Build anomalies_list from result
@@ -283,6 +300,7 @@ async def detect_anomaly(
                 responsible_team=responsible_team,
                 unblended_cost_24h_usd=unblended_cost,
                 cost_ratio_to_7d_avg=cost_ratio,
+                affected_service=result.affected_service,
                 ai_model_used=f"skeleton-{strategy.strategy_name}",
                 alert_routing=AlertRouting(
                     finance=alert_route.value in ("finance", "both"),
@@ -378,6 +396,7 @@ async def get_status(
                     responsible_team=a.get("responsible_team"),
                     unblended_cost_24h_usd=a["unblended_cost_24h_usd"],
                     cost_ratio_to_7d_avg=a["cost_ratio_to_7d_avg"],
+                    affected_service=a.get("affected_service"),
                     ai_model_used=a.get("ai_model_used", "skeleton-rules-v1"),
                     alert_routing=StatusAlertRouting(**a["alert_routing"]),
                 )
@@ -491,6 +510,9 @@ async def decide_action(
         ),
     )
 
+    # LLM-enhanced RCA via Bedrock Nova Pro (or fallback templates)
+    llm_res = _llm_client.generate_rca(ctx.model_dump())
+
     # Build dashboard data
     projected_monthly = ctx.unblended_cost_24h_usd * 30
     finance_data = FinanceDashboardData(
@@ -504,13 +526,7 @@ async def decide_action(
             responsible_team=ctx.responsible_team or "unassigned",
             cost_center_code=ctx.cost_center_code or "N/A",
         ),
-        executive_summary=(
-            f"Resource {ctx.resource_id} ({ctx.environment}) "
-            f"flagged as {ctx.anomaly_type} — ${ctx.unblended_cost_24h_usd:.2f}/day, "
-            f"{ctx.cost_ratio_to_7d_avg:.1f}x baseline. "
-            f"Projected monthly waste: ${projected_monthly:.2f}. "
-            f"Action: {containment_action.value} ({'dry-run' if body.dry_run_mode else 'live'})."
-        ),
+        executive_summary=llm_res.get("executive_summary", ""),
     )
 
     engineering_data = EngineeringDashboardData(
@@ -523,12 +539,9 @@ async def decide_action(
             usage_density_24h=0.0,
         ),
         root_cause_analysis=RootCauseAnalysis(
-            primary_driver_feature=f"{ctx.anomaly_type}_detection",
-            technical_reason=(
-                f"Skeleton RCA: {ctx.anomaly_type} detected on {ctx.resource_id} "
-                f"in {ctx.environment}. Cost ratio {ctx.cost_ratio_to_7d_avg:.1f}x baseline."
-            ),
-            missing_mandatory_tags=[],
+            primary_driver_feature=llm_res.get("primary_driver_feature", "unknown"),
+            technical_reason=llm_res.get("technical_reason", ""),
+            missing_mandatory_tags=llm_res.get("missing_mandatory_tags", []),
         ),
     )
 

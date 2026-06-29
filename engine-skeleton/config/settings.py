@@ -121,6 +121,10 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO")
 
     # --- Feature flags (curveball-ready) ---
+    detection_strategy: str = Field(
+        default="xgboost",
+        description="Active detection strategy: xgboost | dummy | statistical",
+    )
     enable_llm_analysis: bool = Field(
         default=False,
         description="Toggle LLM-based analysis vs pure rule-based. Off for skeleton.",

@@ -13,7 +13,7 @@ Updated for Contract v1.1: now accepts CostRecord (internal domain model).
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from engine.strategies.base import DetectionStrategy
 from models.domain import AnomalyResult, CostRecord
@@ -38,6 +38,8 @@ class DummyStrategy(DetectionStrategy):
         cost_window: List[CostRecord],
         baseline: Optional[object],
         tenant_id: str,
+        utilization_metrics: Optional[List[Any]] = None,
+        business_context: Optional[Any] = None,
     ) -> AnomalyResult:
         # Deterministic: if any item has cost > 200, flag as anomaly
         total_cost = sum(item.cost_usd for item in cost_window)

@@ -112,3 +112,9 @@ pythonfiles/
 
 # Local configuration file
 .env
+
+# Ignore large dataset CSV files in experience folders
+experience_1/data/**/*.csv
+experience_2/data/**/*.csv
+*.pdf
+terraform/.terraform/

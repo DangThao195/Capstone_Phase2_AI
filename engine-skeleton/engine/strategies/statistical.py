@@ -21,7 +21,7 @@ W12 TODO:
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from engine.strategies.base import DetectionStrategy
 from models.domain import AnomalyResult, CostRecord
@@ -45,6 +45,8 @@ class StatisticalStrategy(DetectionStrategy):
         cost_window: List[CostRecord],
         baseline: Optional[object],
         tenant_id: str,
+        utilization_metrics: Optional[List[Any]] = None,
+        business_context: Optional[Any] = None,
     ) -> AnomalyResult:
         settings = get_settings()
 
