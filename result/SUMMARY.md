@@ -155,8 +155,8 @@ Incoming daily cost record
          │                                  ├─ Threshold = argmax F1 trên val split
          │                                  └─ SHAP waterfall cho explainability
          │
-         └─ NO (cold-start) ─────────────► Rule: cost > 3× global service median
-                                            └─ Flag as spike candidate
+         └─ NO (cold-start) ─────────────► Imputed features (service median)
+                                            └─ XGBoost handles via rate_of_change/delta
          │
          └─ Isolation Forest (parallel, unsupervised)
               ├─ Không cần label
@@ -164,9 +164,15 @@ Incoming daily cost record
               └─ Safety net cho account/service mới
 ```
 
-### Vấn đề quan trọng: Rule-based không phân biệt được anomaly spike vs benign spike
+### Vấn đề quan trọng: Phân biệt anomaly spike vs benign spike
 
-**Rule `cost > 3× median` chỉ nhìn vào magnitude — không biết spike có được lên kế hoạch không.**
+**Không còn dùng rule `cost > 3× median` — đã bỏ vì hardcoded và có thể FP trên benign events như B2.**
+
+Thay vào đó, XGBoost tự học phân biệt qua coherence features:
+- `coherence_cost_cpu >> 1` → cost tăng nhưng CPU không tăng → anomaly
+- `coherence_cost_net ≈ 1` → cost và network tăng proportional → benign
+
+**Tuy nhiên**, model vẫn có thể FP trên B2 nếu pattern chưa được học trong training data.
 
 Ví dụ cụ thể từ dataset:
 - **A6** (anomaly): CloudWatch $263/ngày, median ~$90/ngày → 2.9× → rule flag ✅ đúng
@@ -184,7 +190,7 @@ Trong production, có 3 cách giải quyết:
 | **Pattern-based suppression** | Benign spike thường đều đặn (scheduled_backup 2AM mỗi ngày). Rule thêm: "recurring at same time → benign". Nhưng one-time event như B2 thì không áp dụng được | Recurring benign events |
 | **Human-in-the-loop** | Flag cả hai (anomaly + benign), human review confirm. Nếu confirm benign → add vào suppression list. **Đây là cách TF2 chọn** | Mọi trường hợp — safety first |
 
-**Bottom line**: Rule-based layer trong notebook này có thể FP trên B2. Đây không phải bug — đây là known limitation cần document rõ. Threshold `SPIKE_K = 3.0` là tunable — tăng lên sẽ giảm FP nhưng tăng FN. TF2 chọn human-in-the-loop như safety net cuối cùng.
+**Bottom line**: Rule `SPIKE_K = 3×` đã được bỏ. Thay vào đó, cold-start rows được impute bằng service median → XGBoost tự detect thông qua `rate_of_change` và `delta` cao. B2 FP risk vẫn tồn tại ở model level — được xử lý bằng human-in-the-loop review. TF2 chọn đây là safety net cuối cùng, không cố tự động phân biệt anomaly vs benign spike.
 
 ---
 
@@ -254,8 +260,8 @@ Raw Data (cost + metrics + labels)
       SHAP waterfall cho top anomalies
     │
     ▼
-[Cold-Start Rule] Parallel: cost > 3× service median,
-      flags new services with no history
+[Cold-Start Imputation] NaN lag/rolling → filled with service median,
+      cold-start rows enter XGBoost with valid rate_of_change/delta
     │
     ▼
 [Isolation Forest] Parallel unsupervised baseline,

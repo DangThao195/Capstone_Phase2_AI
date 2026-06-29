@@ -55,7 +55,7 @@
 - Walk-forward validation (60d train / 7d val / 7d step) — không có look-ahead bias.
 - Recall floor ≥ 50% trong Optuna objective tránh bias về phía conservative params.
 - **Cold-start limitation:** A6 (AmazonCloudWatch, account dev) chỉ xuất hiện đúng 7 ngày spike — không có lịch sử trước đó → lag/rolling features là NaN → bị drop trước khi vào model. XGBoost không thể phát hiện service chưa từng có trong billing history.
-- **Giải pháp bổ sung:** Rule-based spike detector (cost > 3× global service median) được layered on top, bắt cold-start events mà ML model không thể xử lý. A6 được phát hiện bởi rule này.
+- **Cold-start handling:** Rows không có lịch sử billing (lag = NaN) được impute bằng global per-service median thay vì drop. XGBoost thấy `rate_of_change` và `delta` lớn → tự detect cold-start spike mà không cần rule riêng.
 
 ---
 
