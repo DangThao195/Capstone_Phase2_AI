@@ -1,0 +1,32 @@
+{
+  "model_only": {
+    "precision": 0.4706,
+    "recall": 0.2963,
+    "fpr": 0.0154,
+    "accuracy": 0.9541,
+    "tp": 8,
+    "tn": 574,
+    "fp": 9,
+    "fn": 19
+  },
+  "supervised_only": {
+    "precision": 0.5,
+    "recall": 0.2963,
+    "fpr": 0.0137,
+    "accuracy": 0.9557,
+    "tp": 8,
+    "tn": 575,
+    "fp": 8,
+    "fn": 19
+  },
+  "pipeline": {
+    "precision": 0.5,
+    "recall": 0.2963,
+    "fpr": 0.0137,
+    "accuracy": 0.9557,
+    "tp": 8,
+    "tn": 575,
+    "fp": 8,
+    "fn": 19
+  }
+}

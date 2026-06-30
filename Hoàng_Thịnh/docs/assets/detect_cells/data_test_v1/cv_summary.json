@@ -1,0 +1,70 @@
+{
+  "label_source": "metrics.label_hourly_aggregated_daily",
+  "train_labeled_rows": 1281,
+  "test_labeled_rows": 549,
+  "train_anomaly_rows": 74,
+  "test_anomaly_rows": 16,
+  "cv_strategy": "walk_forward_expanding_window",
+  "cv_folds_requested": 3,
+  "cv_folds_completed": 0,
+  "cv_fold_metrics": [],
+  "runtime_quality": {
+    "quality_tier": "healthy",
+    "model_enabled": true,
+    "metrics_variant": "unified_hourly",
+    "label_source": "metrics.label_hourly_aggregated_daily",
+    "metrics_coverage": 0.221,
+    "telemetry_non_null_rate": 1.0,
+    "label_coverage": 0.221,
+    "train_labeled_rows": 1281,
+    "train_unique_resources": 61
+  },
+  "runtime_mode": "hybrid_supervised",
+  "threshold": 0.7,
+  "threshold_before_variant_floor": 0.55,
+  "threshold_floor_applied": true,
+  "threshold_floor_value": 0.7,
+  "threshold_source": "in_sample_train_with_variant_floor",
+  "train_metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "fpr": 0.0,
+    "accuracy": 1.0,
+    "tp": 74,
+    "tn": 1207,
+    "fp": 0,
+    "fn": 0
+  },
+  "test_model_only_metrics": {
+    "precision": 0.8,
+    "recall": 0.5,
+    "fpr": 0.0038,
+    "accuracy": 0.9818,
+    "tp": 8,
+    "tn": 531,
+    "fp": 2,
+    "fn": 8
+  },
+  "test_supervised_only_metrics": {
+    "precision": 0.8,
+    "recall": 0.5,
+    "fpr": 0.0038,
+    "accuracy": 0.9818,
+    "tp": 8,
+    "tn": 531,
+    "fp": 2,
+    "fn": 8
+  },
+  "test_pipeline_metrics": {
+    "precision": 0.8,
+    "recall": 0.5,
+    "fpr": 0.0038,
+    "accuracy": 0.9818,
+    "tp": 8,
+    "tn": 531,
+    "fp": 2,
+    "fn": 8
+  },
+  "hybrid_rule_trigger_rows": 299,
+  "hybrid_rule_only_rows": 299
+}

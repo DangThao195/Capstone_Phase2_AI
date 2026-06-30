@@ -1,0 +1,17 @@
+{
+  "strategy": "time_ordered_train_then_score_all",
+  "train_ratio": 0.7,
+  "train_end_date": "2026-06-21",
+  "test_start_date": "2026-06-22",
+  "train_rows_account_service": 672,
+  "test_rows_account_service": 288,
+  "baseline_method": "rolling_median_mad",
+  "model_type": "xgboost_supervised_binary",
+  "feature_scaler": "not_required_tree_model",
+  "cross_validation_strategy": "walk_forward_expanding_window",
+  "cross_validation_max_folds": 3,
+  "label_source": "metrics.label_hourly_aggregated_daily",
+  "metrics_variant": "unified_hourly",
+  "runtime_mode": "hybrid_supervised",
+  "runtime_quality_tier": "healthy"
+}

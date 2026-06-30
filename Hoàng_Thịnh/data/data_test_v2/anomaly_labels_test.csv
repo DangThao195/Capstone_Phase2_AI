@@ -1,0 +1,4 @@
+anomaly_id,label,anomaly_type,linked_account_id,linked_account_name,service,resource_id,start_date,end_date,approx_daily_cost,approx_total_cost,description
+T1,anomaly,sudden_spike,200000000010,prod-core,AmazonS3,bucket-1054,2026-07-08,2026-07-12,1569.93,7849.64,anomaly sudden_spike on AmazonS3 bucket storage; 5-day elevated storage cost window confirmed from CUR and daily metrics labels.
+T2,anomaly,sudden_spike,200000000013,dev,AmazonCloudWatch,log-group-debug-runaway,2026-07-01,2026-07-07,1264.42,8850.95,anomaly sudden_spike on AmazonCloudWatch debug log ingestion; 7-day elevated spend window confirmed from CUR.
+T3,benign,batch_etl,200000000015,ml-research,AmazonS3,bucket-1250,2026-07-01,2026-07-07,758.03,5306.2,"benign batch_etl on AmazonS3; initial 7-day window validated as legitimate operation, no alert."

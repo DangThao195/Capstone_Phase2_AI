@@ -1,0 +1,75 @@
+{
+  "holdout": {
+    "supervised_only": {
+      "precision": 0.5357,
+      "recall": 0.5556,
+      "fpr": 0.0223,
+      "accuracy": 0.959,
+      "tp": 15,
+      "tn": 570,
+      "fp": 13,
+      "fn": 12
+    },
+    "hybrid_pipeline": {
+      "precision": 0.5357,
+      "recall": 0.5556,
+      "fpr": 0.0223,
+      "accuracy": 0.959,
+      "tp": 15,
+      "tn": 570,
+      "fp": 13,
+      "fn": 12
+    },
+    "cv_supervised_only": {},
+    "cv_hybrid_pipeline": {},
+    "hybrid_rule_trigger_rows": 418,
+    "hybrid_rule_only_rows": 418
+  },
+  "public": {
+    "hybrid_pipeline": {
+      "matched_anomalies": [
+        "T1",
+        "T2"
+      ],
+      "missed_anomalies": [],
+      "benign_hits": [],
+      "tp_public": 2,
+      "fn_public": 0,
+      "fp_public": 0,
+      "anomaly_support_public": 2,
+      "benign_support_public": 1,
+      "public_recall": 1.0,
+      "public_false_positive_rate": 0.0,
+      "fp_requirement_max": 0.1,
+      "fp_requirement_passed": true,
+      "evaluation_note": "This supervised sandbox run uses metrics.label for training; final FP<=10% still needs full backtest disclosure.",
+      "label_catalog_validation": {
+        "issues_found": 0,
+        "issues": []
+      }
+    },
+    "supervised_only": {
+      "matched_anomalies": [
+        "T1"
+      ],
+      "missed_anomalies": [
+        "T2"
+      ],
+      "benign_hits": [],
+      "tp_public": 1,
+      "fn_public": 1,
+      "fp_public": 0,
+      "anomaly_support_public": 2,
+      "benign_support_public": 1,
+      "public_recall": 0.5,
+      "public_false_positive_rate": 0.0,
+      "fp_requirement_max": 0.1,
+      "fp_requirement_passed": true,
+      "evaluation_note": "This supervised sandbox run uses metrics.label for training; final FP<=10% still needs full backtest disclosure.",
+      "label_catalog_validation": {
+        "issues_found": 0,
+        "issues": []
+      }
+    }
+  }
+}

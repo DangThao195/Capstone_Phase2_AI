@@ -18,8 +18,20 @@ from pydantic import BaseModel, Field, model_validator
 HERE = Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
-from detect_core import MODEL_NAME, build_result, detect_events, evaluate_public, load_local_metrics, resolve_metrics_dir
+from detect_core import (
+    MODEL_NAME,
+    build_result,
+    detect_events,
+    evaluate_public,
+    load_local_metrics,
+    normalize_timestamp,
+    parse_cpu_hourly_samples,
+    resolve_metrics_dir,
+    validate_label_catalog,
+)
 from llm_rca import load_rca_generator
 
 
@@ -185,11 +197,46 @@ def compute_telemetry_quality(ce: pd.DataFrame, cur: pd.DataFrame, metrics: pd.D
     }
 
 
-def load_default_metrics() -> pd.DataFrame | None:
-    metrics_dir = resolve_metrics_dir(DATA_DIR)
+def resolve_dataset_file(data_dir: Path, candidates: list[str]) -> Path:
+    for candidate in candidates:
+        path = data_dir / candidate
+        if path.exists():
+            return path
+    raise FileNotFoundError(f"Could not find any of {candidates} under {data_dir}")
+
+
+def load_direct_metrics(metrics_path: Path) -> pd.DataFrame:
+    metrics = pd.read_csv(metrics_path, parse_dates=["timestamp"])
+    metrics["timestamp"] = normalize_timestamp(metrics["timestamp"])
+    metrics["usage_date"] = metrics["timestamp"].dt.normalize()
+    if "cpu_utilization_hourly" in metrics.columns:
+        cpu_samples = metrics["cpu_utilization_hourly"].apply(parse_cpu_hourly_samples)
+        metrics["cpu_subhour_mean"] = cpu_samples.apply(lambda values: float(sum(values) / len(values)) if values else float("nan"))
+        metrics["cpu_subhour_std"] = cpu_samples.apply(lambda values: float(pd.Series(values).std(ddof=0)) if values else float("nan"))
+        metrics["cpu_subhour_max"] = cpu_samples.apply(lambda values: float(max(values)) if values else float("nan"))
+        metrics["cpu_subhour_peak_samples"] = cpu_samples.apply(lambda values: int(sum(sample >= 85.0 for sample in values)) if values else 0)
+    if "event_type" in metrics.columns:
+        metrics["event_type_present_int"] = metrics["event_type"].notna().astype(int)
+    metrics["has_metrics_int"] = 1
+    metrics.attrs["metrics_dir"] = str(metrics_path.parent)
+    metrics.attrs["metrics_variant"] = "unified_hourly"
+    metrics.attrs["label_source"] = "metrics.label_hourly_aggregated_daily" if "label" in metrics.columns else "unlabeled"
+    return metrics
+
+
+def load_metrics_for_dir(data_dir: Path) -> pd.DataFrame | None:
+    metrics_dir = resolve_metrics_dir(data_dir)
     if metrics_dir is None:
+        direct_metrics = [data_dir / "new_metrics.csv", data_dir / "metrics.csv"]
+        for metrics_path in direct_metrics:
+            if metrics_path.exists():
+                return load_direct_metrics(metrics_path)
         return None
     return load_local_metrics(metrics_dir)
+
+
+def load_default_metrics() -> pd.DataFrame | None:
+    return load_metrics_for_dir(DATA_DIR)
 
 
 def generate_rollback_payload(anomaly: dict[str, Any]) -> dict[str, Any]:
@@ -297,14 +344,18 @@ def safe_json_response(result: dict[str, Any], start: int | None = None, end: in
     return response
 
 
-def run_demo(write_output: bool = True) -> dict[str, Any]:
+def run_demo(write_output: bool = True, data_dir: Path | None = None) -> dict[str, Any]:
+    dataset_dir = data_dir.resolve() if data_dir is not None else DATA_DIR
+    cost_path = resolve_dataset_file(dataset_dir, ["cost_explorer_daily.csv", "new_cost_explorer_daily.csv"])
+    cur_path = resolve_dataset_file(dataset_dir, ["cur_line_items.csv", "new_cur_line_items.csv"])
+    labels_path = resolve_dataset_file(dataset_dir, ["anomaly_labels_public.csv", "anomaly_labels_test.csv"])
     payload = DetectRequest(
         data_source_type="RAW_JSON",
-        aws_cost_explorer_daily=pd.read_csv(DATA_DIR / "cost_explorer_daily.csv").to_dict(orient="records"),
-        aws_cur_line_items=pd.read_csv(DATA_DIR / "cur_line_items.csv").to_dict(orient="records"),
+        aws_cost_explorer_daily=pd.read_csv(cost_path).to_dict(orient="records"),
+        aws_cur_line_items=pd.read_csv(cur_path).to_dict(orient="records"),
     )
     ce, cur = build_frames(payload)
-    metrics = load_default_metrics()
+    metrics = load_metrics_for_dir(dataset_dir)
     events = detect_events(ce, cur, metrics)
     result = build_result(events, audit_id=str(uuid.uuid4()), rca_generator=RCA_GENERATOR)
     split_meta = result.get("temporal_split", {})
@@ -317,39 +368,51 @@ def run_demo(write_output: bool = True) -> dict[str, Any]:
         "training_summary_compact": evaluation_bundle.get("training_summary_compact", {}),
         "method_comparison": evaluation_bundle.get("method_comparison", {}),
     }
-    public_eval = evaluate_public(events, DATA_DIR / "anomaly_labels_public.csv")
+    public_eval = evaluate_public(events, labels_path)
+    label_catalog_validation = validate_label_catalog(cur, labels_path)
+    public_eval["label_catalog_validation"] = label_catalog_validation
     supervised_only_events = events.attrs.get("supervised_only_events", pd.DataFrame())
     public_eval_by_method = {
         "hybrid_pipeline": public_eval,
-        "supervised_only": evaluate_public(supervised_only_events, DATA_DIR / "anomaly_labels_public.csv"),
+        "supervised_only": {
+            **evaluate_public(supervised_only_events, labels_path),
+            "label_catalog_validation": label_catalog_validation,
+        },
     }
-    output = {"result": result, "public_eval": public_eval, "public_eval_by_method": public_eval_by_method, "model_name": MODEL_NAME}
+    output = {
+        "result": result,
+        "public_eval": public_eval,
+        "public_eval_by_method": public_eval_by_method,
+        "model_name": MODEL_NAME,
+        "dataset_dir": str(dataset_dir),
+    }
     if write_output:
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        (OUTPUT_DIR / "demo_result.json").write_text(json.dumps(json_safe(output), indent=2, ensure_ascii=False), encoding="utf-8")
+        output_dir = OUTPUT_DIR if dataset_dir == DATA_DIR else OUTPUT_DIR / dataset_dir.name
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "demo_result.json").write_text(json.dumps(json_safe(output), indent=2, ensure_ascii=False), encoding="utf-8")
         if not events.empty:
-            events.to_csv(OUTPUT_DIR / "detected_events.csv", index=False)
-        (OUTPUT_DIR / "public_eval.json").write_text(json.dumps(public_eval, indent=2, ensure_ascii=False), encoding="utf-8")
-        (OUTPUT_DIR / "method_comparison.json").write_text(
+            events.to_csv(output_dir / "detected_events.csv", index=False)
+        (output_dir / "public_eval.json").write_text(json.dumps(public_eval, indent=2, ensure_ascii=False), encoding="utf-8")
+        (output_dir / "method_comparison.json").write_text(
             json.dumps(json_safe({"holdout": evaluation_bundle.get("method_comparison", {}), "public": public_eval_by_method}), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
         training_summary = evaluation_bundle.get("training_summary_full", {})
-        (OUTPUT_DIR / "split_summary.json").write_text(json.dumps(json_safe(evaluation_bundle.get("split_summary", {})), indent=2, ensure_ascii=False), encoding="utf-8")
-        (OUTPUT_DIR / "cv_summary.json").write_text(json.dumps(json_safe(training_summary), indent=2, ensure_ascii=False), encoding="utf-8")
-        (OUTPUT_DIR / "holdout_test_metrics.json").write_text(
+        (output_dir / "split_summary.json").write_text(json.dumps(json_safe(evaluation_bundle.get("split_summary", {})), indent=2, ensure_ascii=False), encoding="utf-8")
+        (output_dir / "cv_summary.json").write_text(json.dumps(json_safe(training_summary), indent=2, ensure_ascii=False), encoding="utf-8")
+        (output_dir / "holdout_test_metrics.json").write_text(
             json.dumps(json_safe(evaluation_bundle.get("holdout_test_metrics", {})), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
         cv_fold_metrics = evaluation_bundle.get("cv_fold_metrics", pd.DataFrame())
         if not cv_fold_metrics.empty:
-            cv_fold_metrics.to_csv(OUTPUT_DIR / "fold_metrics.csv", index=False)
+            cv_fold_metrics.to_csv(output_dir / "fold_metrics.csv", index=False)
         holdout_predictions = evaluation_bundle.get("holdout_predictions", pd.DataFrame())
         if not holdout_predictions.empty:
-            holdout_predictions.to_csv(OUTPUT_DIR / "holdout_predictions.csv", index=False)
+            holdout_predictions.to_csv(output_dir / "holdout_predictions.csv", index=False)
         cv_oof_predictions = evaluation_bundle.get("cv_oof_predictions", pd.DataFrame())
         if not cv_oof_predictions.empty:
-            cv_oof_predictions.to_csv(OUTPUT_DIR / "cv_oof_predictions.csv", index=False)
+            cv_oof_predictions.to_csv(output_dir / "cv_oof_predictions.csv", index=False)
     return output
 
 
@@ -521,12 +584,17 @@ def action_rollback(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--no-write-output", action="store_true")
+    parser.add_argument("--data-dir", type=str, default=None)
     args = parser.parse_args()
-    output = run_demo(write_output=not args.no_write_output)
+    data_dir = Path(args.data_dir) if args.data_dir else None
+    if data_dir is not None and not data_dir.is_absolute():
+        data_dir = (ROOT / data_dir).resolve()
+    output = run_demo(write_output=not args.no_write_output, data_dir=data_dir)
     result = output["result"]
     split_meta = result.get("temporal_split", {})
     training_summary = split_meta.get("training_summary", {})
     print(f"model_name={MODEL_NAME}")
+    print(f"dataset_dir={output.get('dataset_dir')}")
     print(f"audit_id={result['audit_id']}")
     print(f"total_anomalies_found={result['total_anomalies_found']}")
     print(

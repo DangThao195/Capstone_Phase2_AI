@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # %%
+import argparse
 import json
 import sys
 import uuid
@@ -26,31 +27,90 @@ from detect_core import (
     evaluate_public,
     group_related_events,
     load_local_metrics,
+    normalize_timestamp,
+    parse_cpu_hourly_samples,
     precision_cleanup_events,
     resolve_metrics_dir,
     rerank_events,
+    validate_label_catalog,
 )
 from llm_rca import load_rca_generator
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
-METRICS_DIR = resolve_metrics_dir(DATA_DIR)
 OUTPUT_DIR = ROOT / "docs" / "assets" / "detect_cells"
 RCA_GENERATOR = load_rca_generator()
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
+
+def parse_data_dir() -> Path:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--data-dir", type=str, default=None)
+    args, _ = parser.parse_known_args()
+    if args.data_dir:
+        candidate = Path(args.data_dir)
+        if not candidate.is_absolute():
+            candidate = (ROOT / candidate).resolve()
+        return candidate
+    return DATA_DIR
+
+
+def resolve_dataset_file(data_dir: Path, candidates: list[str]) -> Path:
+    for candidate in candidates:
+        path = data_dir / candidate
+        if path.exists():
+            return path
+    raise FileNotFoundError(f"Could not find any of {candidates} under {data_dir}")
+
+
+def load_direct_metrics(metrics_path: Path) -> pd.DataFrame:
+    metrics = pd.read_csv(metrics_path, parse_dates=["timestamp"])
+    metrics["timestamp"] = normalize_timestamp(metrics["timestamp"])
+    metrics["usage_date"] = metrics["timestamp"].dt.normalize()
+    if "cpu_utilization_hourly" in metrics.columns:
+        cpu_samples = metrics["cpu_utilization_hourly"].apply(parse_cpu_hourly_samples)
+        metrics["cpu_subhour_mean"] = cpu_samples.apply(lambda values: float(sum(values) / len(values)) if values else float("nan"))
+        metrics["cpu_subhour_std"] = cpu_samples.apply(lambda values: float(pd.Series(values).std(ddof=0)) if values else float("nan"))
+        metrics["cpu_subhour_max"] = cpu_samples.apply(lambda values: float(max(values)) if values else float("nan"))
+        metrics["cpu_subhour_peak_samples"] = cpu_samples.apply(lambda values: int(sum(sample >= 85.0 for sample in values)) if values else 0)
+    if "event_type" in metrics.columns:
+        metrics["event_type_present_int"] = metrics["event_type"].notna().astype(int)
+    metrics["has_metrics_int"] = 1
+    metrics.attrs["metrics_dir"] = str(metrics_path.parent)
+    metrics.attrs["metrics_variant"] = "unified_hourly"
+    metrics.attrs["label_source"] = "metrics.label_hourly_aggregated_daily" if "label" in metrics.columns else "unlabeled"
+    return metrics
+
+
+def load_metrics_for_dir(data_dir: Path) -> pd.DataFrame | None:
+    metrics_dir = resolve_metrics_dir(data_dir)
+    if metrics_dir is not None:
+        return load_local_metrics(metrics_dir)
+    for metrics_path in [data_dir / "new_metrics.csv", data_dir / "metrics.csv"]:
+        if metrics_path.exists():
+            return load_direct_metrics(metrics_path)
+    return None
+
+
+DATASET_DIR = parse_data_dir()
+COST_PATH = resolve_dataset_file(DATASET_DIR, ["cost_explorer_daily.csv", "new_cost_explorer_daily.csv"])
+CUR_PATH = resolve_dataset_file(DATASET_DIR, ["cur_line_items.csv", "new_cur_line_items.csv"])
+LABELS_PATH = resolve_dataset_file(DATASET_DIR, ["anomaly_labels_public.csv", "anomaly_labels_test.csv"])
+RUN_OUTPUT_DIR = OUTPUT_DIR if DATASET_DIR == DATA_DIR else OUTPUT_DIR / DATASET_DIR.name
+
 print(f"San sang voi detector {MODEL_NAME}")
+print(f"Dataset dir: {DATASET_DIR}")
 
 
 # %%
 # Cell 1: Nap du lieu dau vao
-ce = pd.read_csv(DATA_DIR / "cost_explorer_daily.csv")
-cur = pd.read_csv(DATA_DIR / "cur_line_items.csv")
-labels = pd.read_csv(DATA_DIR / "anomaly_labels_public.csv", parse_dates=["start_date", "end_date"])
-metrics = load_local_metrics(METRICS_DIR) if METRICS_DIR is not None else None
+ce = pd.read_csv(COST_PATH)
+cur = pd.read_csv(CUR_PATH)
+labels = pd.read_csv(LABELS_PATH, parse_dates=["start_date", "end_date"])
+metrics = load_metrics_for_dir(DATASET_DIR)
 
 ce["date"] = pd.to_datetime(ce["date"]).dt.normalize()
 cur["line_item_usage_start_date"] = pd.to_datetime(cur["line_item_usage_start_date"])
@@ -60,7 +120,7 @@ print("So dong Cost Explorer:", len(ce))
 print("So dong CUR:", len(cur))
 print("So dong metrics:", 0 if metrics is None else len(metrics))
 print("So dong labels:", len(labels))
-print("Nguon metrics:", "none" if METRICS_DIR is None else METRICS_DIR.name)
+print("Nguon metrics:", "none" if metrics is None else metrics.attrs.get("metrics_variant", "unknown"))
 
 
 # %%
@@ -207,7 +267,9 @@ final_events[
 
 # %%
 # Cell 8: Doi chieu voi public labels
-public_eval = evaluate_public(final_events, DATA_DIR / "anomaly_labels_public.csv")
+public_eval = evaluate_public(final_events, LABELS_PATH)
+label_catalog_validation = validate_label_catalog(cur, LABELS_PATH)
+public_eval["label_catalog_validation"] = label_catalog_validation
 public_eval
 
 
@@ -223,7 +285,10 @@ result["evaluation_context"] = {
 supervised_only_events = final_events.attrs.get("supervised_only_events", pd.DataFrame())
 public_eval_by_method = {
     "hybrid_pipeline": public_eval,
-    "supervised_only": evaluate_public(supervised_only_events, DATA_DIR / "anomaly_labels_public.csv"),
+    "supervised_only": {
+        **evaluate_public(supervised_only_events, LABELS_PATH),
+        "label_catalog_validation": label_catalog_validation,
+    },
 }
 
 print("Model:", MODEL_NAME)
@@ -234,54 +299,54 @@ print("LLM provider:", RCA_GENERATOR.provider)
 
 # %%
 # Cell 10: Luu output ra file
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-(OUTPUT_DIR / "detect_cells_result.json").write_text(
-    json.dumps({"result": result, "public_eval": public_eval, "public_eval_by_method": public_eval_by_method, "model_name": MODEL_NAME}, indent=2, default=str, ensure_ascii=False),
+RUN_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+(RUN_OUTPUT_DIR / "detect_cells_result.json").write_text(
+    json.dumps({"result": result, "public_eval": public_eval, "public_eval_by_method": public_eval_by_method, "model_name": MODEL_NAME, "dataset_dir": str(DATASET_DIR)}, indent=2, default=str, ensure_ascii=False),
     encoding="utf-8",
 )
 if not final_events.empty:
-    final_events.to_csv(OUTPUT_DIR / "detect_cells_events.csv", index=False)
-(OUTPUT_DIR / "detect_cells_eval.json").write_text(
+    final_events.to_csv(RUN_OUTPUT_DIR / "detect_cells_events.csv", index=False)
+(RUN_OUTPUT_DIR / "detect_cells_eval.json").write_text(
     json.dumps(public_eval, indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
-(OUTPUT_DIR / "split_summary.json").write_text(
+(RUN_OUTPUT_DIR / "split_summary.json").write_text(
     json.dumps(evaluation_bundle.get("split_summary", {}), indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
-(OUTPUT_DIR / "cv_summary.json").write_text(
+(RUN_OUTPUT_DIR / "cv_summary.json").write_text(
     json.dumps(evaluation_bundle.get("training_summary_full", {}), indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
-(OUTPUT_DIR / "holdout_test_metrics.json").write_text(
+(RUN_OUTPUT_DIR / "holdout_test_metrics.json").write_text(
     json.dumps(evaluation_bundle.get("holdout_test_metrics", {}), indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
-(OUTPUT_DIR / "method_comparison.json").write_text(
+(RUN_OUTPUT_DIR / "method_comparison.json").write_text(
     json.dumps({"holdout": evaluation_bundle.get("method_comparison", {}), "public": public_eval_by_method}, indent=2, ensure_ascii=False),
     encoding="utf-8",
 )
 cv_fold_metrics = evaluation_bundle.get("cv_fold_metrics", pd.DataFrame())
 if not cv_fold_metrics.empty:
-    cv_fold_metrics.to_csv(OUTPUT_DIR / "fold_metrics.csv", index=False)
+    cv_fold_metrics.to_csv(RUN_OUTPUT_DIR / "fold_metrics.csv", index=False)
 holdout_predictions = evaluation_bundle.get("holdout_predictions", pd.DataFrame())
 if not holdout_predictions.empty:
-    holdout_predictions.to_csv(OUTPUT_DIR / "holdout_predictions.csv", index=False)
+    holdout_predictions.to_csv(RUN_OUTPUT_DIR / "holdout_predictions.csv", index=False)
 cv_oof_predictions = evaluation_bundle.get("cv_oof_predictions", pd.DataFrame())
 if not cv_oof_predictions.empty:
-    cv_oof_predictions.to_csv(OUTPUT_DIR / "cv_oof_predictions.csv", index=False)
+    cv_oof_predictions.to_csv(RUN_OUTPUT_DIR / "cv_oof_predictions.csv", index=False)
 
 print("Da luu:")
-print(OUTPUT_DIR / "detect_cells_result.json")
-print(OUTPUT_DIR / "detect_cells_events.csv")
-print(OUTPUT_DIR / "detect_cells_eval.json")
-print(OUTPUT_DIR / "split_summary.json")
-print(OUTPUT_DIR / "cv_summary.json")
+print(RUN_OUTPUT_DIR / "detect_cells_result.json")
+print(RUN_OUTPUT_DIR / "detect_cells_events.csv")
+print(RUN_OUTPUT_DIR / "detect_cells_eval.json")
+print(RUN_OUTPUT_DIR / "split_summary.json")
+print(RUN_OUTPUT_DIR / "cv_summary.json")
 if not cv_fold_metrics.empty:
-    print(OUTPUT_DIR / "fold_metrics.csv")
-print(OUTPUT_DIR / "holdout_test_metrics.json")
-print(OUTPUT_DIR / "method_comparison.json")
+    print(RUN_OUTPUT_DIR / "fold_metrics.csv")
+print(RUN_OUTPUT_DIR / "holdout_test_metrics.json")
+print(RUN_OUTPUT_DIR / "method_comparison.json")
 if not holdout_predictions.empty:
-    print(OUTPUT_DIR / "holdout_predictions.csv")
+    print(RUN_OUTPUT_DIR / "holdout_predictions.csv")
 if not cv_oof_predictions.empty:
-    print(OUTPUT_DIR / "cv_oof_predictions.csv")
+    print(RUN_OUTPUT_DIR / "cv_oof_predictions.csv")

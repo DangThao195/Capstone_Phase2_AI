@@ -18,6 +18,11 @@ PRECISION_TARGET_MIN = 0.50
 WALK_FORWARD_MAX_FOLDS = 3
 WALK_FORWARD_MIN_TRAIN_DAYS = 21
 WALK_FORWARD_MIN_VALID_DAYS = 7
+MODEL_SHORT_WINDOW_SPIKE_SCORE = 0.90
+COST_ONLY_DEBUG_SPIKE_MIN_DAILY_COST = 600.0
+SEGMENT_THRESHOLD_MIN_ROWS = 40
+SEGMENT_THRESHOLD_MIN_POSITIVES = 4
+SEGMENT_THRESHOLD_MIN_NEGATIVES = 20
 VARIANT_THRESHOLD_FLOOR = {
     "unified_hourly": 0.70,
 }
@@ -405,6 +410,63 @@ def choose_probability_threshold(y_true: pd.Series, probabilities: pd.Series) ->
     return round(float(best_threshold), 4), best_metrics
 
 
+def learn_service_threshold_overrides(
+    train_frame: pd.DataFrame,
+    probabilities: pd.Series,
+    global_threshold: float,
+) -> tuple[dict[str, float], dict[str, dict[str, Any]]]:
+    scoped = train_frame.copy()
+    scoped["train_probability"] = probabilities.reindex(scoped.index).astype(float)
+    overrides: dict[str, float] = {}
+    summaries: dict[str, dict[str, Any]] = {}
+
+    for service_code, group in scoped.groupby("line_item_product_code", dropna=False):
+        positives = int(group["supervised_target"].sum())
+        negatives = int(len(group)) - positives
+        if (
+            len(group) < SEGMENT_THRESHOLD_MIN_ROWS
+            or positives < SEGMENT_THRESHOLD_MIN_POSITIVES
+            or negatives < SEGMENT_THRESHOLD_MIN_NEGATIVES
+        ):
+            continue
+
+        segment_threshold, segment_metrics = choose_probability_threshold(group["supervised_target"], group["train_probability"])
+        global_metrics = summarize_binary_metrics(
+            group["supervised_target"],
+            pd.Series(group["train_probability"] >= global_threshold, index=group.index),
+        )
+        segment_fbeta = fbeta_score_from_metrics(segment_metrics, beta=2.0)
+        global_fbeta = fbeta_score_from_metrics(global_metrics, beta=2.0)
+
+        keep_override = (
+            abs(segment_threshold - global_threshold) >= 0.05
+            and (
+                segment_fbeta > (global_fbeta + 0.02)
+                or segment_metrics["recall"] > global_metrics["recall"]
+                or segment_metrics["fpr"] < global_metrics["fpr"]
+            )
+        )
+        if not keep_override:
+            continue
+
+        key = str(service_code)
+        overrides[key] = round(float(segment_threshold), 4)
+        summaries[key] = {
+            "threshold": round(float(segment_threshold), 4),
+            "rows": int(len(group)),
+            "anomaly_rows": positives,
+            "precision": segment_metrics["precision"],
+            "recall": segment_metrics["recall"],
+            "fpr": segment_metrics["fpr"],
+            "global_threshold_baseline": round(float(global_threshold), 4),
+            "global_precision": global_metrics["precision"],
+            "global_recall": global_metrics["recall"],
+            "global_fpr": global_metrics["fpr"],
+        }
+
+    return overrides, summaries
+
+
 def build_xgb_model(scale_pos_weight: float) -> XGBClassifier:
     return XGBClassifier(
         n_estimators=320,
@@ -506,6 +568,35 @@ def walk_forward_cv(train_frame: pd.DataFrame) -> tuple[list[dict[str, Any]], pd
         )
 
     return fold_metrics, oof_probabilities.dropna()
+
+
+def build_tail_calibration_split(train_frame: pd.DataFrame) -> dict[str, Any] | None:
+    unique_dates = [pd.Timestamp(value) for value in sorted(pd.to_datetime(train_frame["usage_date"]).dt.normalize().unique())]
+    if len(unique_dates) < 14:
+        return None
+    calibration_days = max(3, min(5, int(round(len(unique_dates) * 0.2))))
+    subtrain_days = len(unique_dates) - calibration_days
+    if subtrain_days < 10:
+        return None
+    train_dates = unique_dates[:subtrain_days]
+    calibration_dates = unique_dates[subtrain_days:]
+    return {
+        "train_dates": train_dates,
+        "calibration_dates": calibration_dates,
+        "train_start_date": train_dates[0].date().isoformat(),
+        "train_end_date": train_dates[-1].date().isoformat(),
+        "calibration_start_date": calibration_dates[0].date().isoformat(),
+        "calibration_end_date": calibration_dates[-1].date().isoformat(),
+    }
+
+
+def resolve_threshold_floor(base_floor: float, threshold_source: str, train_frame: pd.DataFrame) -> float:
+    if base_floor <= 0.0:
+        return 0.0
+    train_days = int(pd.to_datetime(train_frame["usage_date"]).dt.normalize().nunique()) if not train_frame.empty else 0
+    if train_days < 24 and threshold_source in {"in_sample_train", "tail_calibration"}:
+        return min(base_floor, 0.60)
+    return base_floor
 
 
 def build_pair_daily(ce: pd.DataFrame) -> pd.DataFrame:
@@ -884,14 +975,57 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
         fold_metrics, oof_prob = walk_forward_cv(train_frame)
         training_summary["cv_folds_completed"] = len(fold_metrics)
         training_summary["cv_fold_metrics"] = fold_metrics
+        training_summary["tail_calibration_summary"] = None
 
         threshold_source = "in_sample_train"
         chosen_threshold_before_floor: float | None = None
+        calibration_frame: pd.DataFrame | None = None
+        calibration_prob: pd.Series | None = None
         if not oof_prob.empty and train_frame.loc[oof_prob.index, "supervised_target"].nunique() == 2:
             cv_threshold, cv_oof_metrics = choose_probability_threshold(train_frame.loc[oof_prob.index, "supervised_target"], oof_prob)
             threshold = cv_threshold
             chosen_threshold_before_floor = cv_threshold
             threshold_source = "walk_forward_oof"
+        else:
+            tail_calibration = build_tail_calibration_split(train_frame)
+            if tail_calibration is not None:
+                calibration_train_mask = train_frame["usage_date"].isin(tail_calibration["train_dates"])
+                calibration_valid_mask = train_frame["usage_date"].isin(tail_calibration["calibration_dates"])
+                calibration_train = train_frame.loc[calibration_train_mask]
+                calibration_valid = train_frame.loc[calibration_valid_mask]
+                if (
+                    not calibration_train.empty
+                    and not calibration_valid.empty
+                    and calibration_train["supervised_target"].nunique() == 2
+                    and calibration_valid["supervised_target"].nunique() == 2
+                ):
+                    calibration_positives = int(calibration_train["supervised_target"].sum())
+                    calibration_negatives = int(len(calibration_train)) - calibration_positives
+                    calibration_model = build_xgb_model(
+                        scale_pos_weight=max(1.0, calibration_negatives / max(calibration_positives, 1))
+                    )
+                    calibration_model.fit(calibration_train[SUPERVISED_FEATURES], calibration_train["supervised_target"])
+                    calibration_prob = pd.Series(
+                        calibration_model.predict_proba(calibration_valid[SUPERVISED_FEATURES])[:, 1],
+                        index=calibration_valid.index,
+                    )
+                    calibration_threshold, calibration_metrics = choose_probability_threshold(
+                        calibration_valid["supervised_target"],
+                        calibration_prob,
+                    )
+                    threshold = calibration_threshold
+                    chosen_threshold_before_floor = calibration_threshold
+                    threshold_source = "tail_calibration"
+                    calibration_frame = calibration_valid
+                    training_summary["tail_calibration_summary"] = {
+                        **tail_calibration,
+                        "train_rows": int(len(calibration_train)),
+                        "calibration_rows": int(len(calibration_valid)),
+                        "train_anomaly_rows": calibration_positives,
+                        "calibration_anomaly_rows": int(calibration_valid["supervised_target"].sum()),
+                        "threshold": calibration_threshold,
+                        **calibration_metrics,
+                    }
 
         positives = int(train_frame["supervised_target"].sum())
         negatives = int(len(train_frame)) - positives
@@ -902,8 +1036,9 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
             threshold, _ = choose_probability_threshold(train_frame["supervised_target"], train_prob)
             chosen_threshold_before_floor = threshold
 
-        if threshold_floor > 0.0 and threshold < threshold_floor:
-            threshold = threshold_floor
+        effective_threshold_floor = resolve_threshold_floor(threshold_floor, threshold_source, train_frame)
+        if effective_threshold_floor > 0.0 and threshold < effective_threshold_floor:
+            threshold = effective_threshold_floor
             threshold_source = f"{threshold_source}_with_variant_floor"
 
         if not oof_prob.empty and train_frame.loc[oof_prob.index, "supervised_target"].nunique() == 2:
@@ -919,24 +1054,42 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
         train_metrics = summarize_binary_metrics(train_frame["supervised_target"], train_pred)
         all_prob = pd.Series(model.predict_proba(rd[SUPERVISED_FEATURES])[:, 1], index=rd.index)
         rd["xgb_score"] = all_prob.round(4)
-        rd["xgb_candidate"] = rd["xgb_score"].ge(threshold)
+        threshold_learning_frame = calibration_frame if calibration_frame is not None else train_frame
+        threshold_learning_prob = calibration_prob if calibration_prob is not None else train_prob
+        service_threshold_overrides, service_threshold_summaries = learn_service_threshold_overrides(
+            threshold_learning_frame,
+            threshold_learning_prob,
+            threshold,
+        )
+        rd["decision_threshold"] = threshold
+        for service_code, service_threshold in service_threshold_overrides.items():
+            rd.loc[rd["line_item_product_code"].eq(service_code), "decision_threshold"] = service_threshold
+        rd["xgb_candidate"] = rd["xgb_score"].ge(rd["decision_threshold"].fillna(threshold))
         training_summary["threshold"] = threshold
         training_summary["threshold_before_variant_floor"] = chosen_threshold_before_floor
-        training_summary["threshold_floor_applied"] = threshold_floor > 0.0 and (chosen_threshold_before_floor or 0.0) < threshold_floor
-        training_summary["threshold_floor_value"] = threshold_floor if threshold_floor > 0.0 else None
+        training_summary["threshold_floor_applied"] = effective_threshold_floor > 0.0 and (chosen_threshold_before_floor or 0.0) < effective_threshold_floor
+        training_summary["threshold_floor_value"] = effective_threshold_floor if effective_threshold_floor > 0.0 else None
         training_summary["threshold_source"] = threshold_source
+        training_summary["service_threshold_overrides"] = service_threshold_summaries
+        training_summary["decision_threshold_strategy"] = "service_aware_override" if service_threshold_summaries else "global_threshold"
         training_summary["train_metrics"] = train_metrics
         if test_mask.any():
             test_prob = rd.loc[test_mask, "xgb_score"]
-            test_pred = pd.Series(test_prob >= threshold, index=test_prob.index)
+            test_threshold = rd.loc[test_mask, "decision_threshold"].fillna(threshold)
+            test_pred = pd.Series(test_prob.to_numpy() >= test_threshold.to_numpy(), index=test_prob.index)
             training_summary["test_model_only_metrics"] = summarize_binary_metrics(rd.loc[test_mask, "supervised_target"], test_pred)
     else:
         training_summary["threshold"] = 0.8
         training_summary["threshold_source"] = "quality_gate_rule_backbone" if not runtime_quality["model_enabled"] else "heuristic_fallback"
+        training_summary["service_threshold_overrides"] = {}
+        training_summary["decision_threshold_strategy"] = "heuristic_fallback"
+        rd["decision_threshold"] = training_summary["threshold"]
         rd["xgb_candidate"] = rd["type_hint_confidence"].ge(0.70)
         training_summary["threshold_before_variant_floor"] = None
         training_summary["threshold_floor_applied"] = False
         training_summary["threshold_floor_value"] = threshold_floor if threshold_floor > 0.0 else None
+    if "decision_threshold" not in rd.columns:
+        rd["decision_threshold"] = training_summary.get("threshold", 0.8)
 
     cost_only_rule_context = rd["has_metrics_int"].le(0.0)
     untagged_rule = (
@@ -964,14 +1117,29 @@ def apply_rule_flags(rd: pd.DataFrame) -> pd.DataFrame:
         & rd["line_item_unblended_cost"].ge(150.0)
         & rd["consecutive_days"].ge(4)
     )
+    cost_only_cloudwatch_debug_rule = (
+        cost_only_rule_context
+        &
+        rd["line_item_product_code"].eq("AmazonCloudWatch")
+        & rd["debug_flag"]
+        & rd["line_item_usage_account_name"].isin(["dev", "sandbox", "ml-research"])
+        & rd["line_item_unblended_cost"].ge(COST_ONLY_DEBUG_SPIKE_MIN_DAILY_COST)
+        & rd[TYPE_SCORE_NAMES["sudden_spike"]].ge(0.38)
+        & rd["consecutive_days"].ge(4)
+    )
     spike_rule = (
         cost_only_rule_context
         &
-        rd[TYPE_SCORE_NAMES["sudden_spike"]].ge(0.62)
-        & (
-            rd["pair_ratio7"].fillna(1.0).ge(1.15)
-            | rd["resource_cost_ratio7"].fillna(1.0).ge(1.15)
-            | debug_spike_rule
+        (
+            (
+                rd[TYPE_SCORE_NAMES["sudden_spike"]].ge(0.62)
+                & (
+                    rd["pair_ratio7"].fillna(1.0).ge(1.15)
+                    | rd["resource_cost_ratio7"].fillna(1.0).ge(1.15)
+                    | debug_spike_rule
+                )
+            )
+            | cost_only_cloudwatch_debug_rule
         )
     )
     drift_rule = pd.Series(False, index=rd.index)
@@ -1045,6 +1213,15 @@ def collapse_supervised_events(rd: pd.DataFrame) -> list[dict[str, Any]]:
         event_type = max(mean_type_scores, key=mean_type_scores.get)
         event_span_days = int((group["usage_date"].max() - group["usage_date"].min()).days + 1)
         candidate_days = int(len(group))
+        short_model_window = (
+            event_type == "gradual_drift"
+            and candidate_days >= EVENT_MIN_DAYS["sudden_spike"]
+            and candidate_days < EVENT_MIN_DAYS["gradual_drift"]
+            and bool(group["xgb_candidate"].any())
+            and float(group["xgb_score"].max()) >= MODEL_SHORT_WINDOW_SPIKE_SCORE
+        )
+        if short_model_window:
+            event_type = "sudden_spike"
         min_days = EVENT_MIN_DAYS[event_type]
         if candidate_days < max(2, math.ceil(min_days * 0.5)) and event_span_days < min_days:
             continue
@@ -1062,6 +1239,8 @@ def collapse_supervised_events(rd: pd.DataFrame) -> list[dict[str, Any]]:
             candidate_sources.insert(0, "xgboost_supervised")
         if bool(group["rule_candidate"].any()):
             candidate_sources.insert(0, "hybrid_rule_backbone")
+        if short_model_window:
+            candidate_sources.insert(0, "model_short_window_reclassify")
         rows.append(
             {
                 "anomaly_type": event_type,
@@ -1396,6 +1575,8 @@ def compact_training_summary(training_summary: dict[str, Any]) -> dict[str, Any]
         "threshold_before_variant_floor": training_summary.get("threshold_before_variant_floor"),
         "threshold_floor_applied": training_summary.get("threshold_floor_applied"),
         "threshold_floor_value": training_summary.get("threshold_floor_value"),
+        "decision_threshold_strategy": training_summary.get("decision_threshold_strategy"),
+        "service_threshold_overrides": training_summary.get("service_threshold_overrides"),
         "cv_oof_metrics": training_summary.get("cv_oof_metrics"),
         "cv_oof_supervised_only_metrics": training_summary.get("cv_oof_supervised_only_metrics"),
         "cv_oof_pipeline_metrics": training_summary.get("cv_oof_pipeline_metrics"),
@@ -1420,6 +1601,7 @@ def build_evaluation_bundle(scored: pd.DataFrame, temporal_split: dict[str, Any]
             "supervised_label",
             "supervised_target",
             "xgb_score",
+            "decision_threshold",
             "supervised_only_prediction",
             "predicted_anomaly",
             "rule_candidate",
@@ -1761,3 +1943,79 @@ def evaluate_public(events: pd.DataFrame, labels_path: Path) -> dict[str, Any]:
         "fp_requirement_passed": public_fp_rate is None or public_fp_rate <= FP_TARGET_MAX,
         "evaluation_note": "This supervised sandbox run uses metrics.label for training; final FP<=10% still needs full backtest disclosure.",
     }
+
+
+def validate_label_catalog(cur: pd.DataFrame, labels_path: Path) -> dict[str, Any]:
+    labels = pd.read_csv(labels_path, parse_dates=["start_date", "end_date"])
+    if cur.empty:
+        return {"issues_found": 0, "issues": []}
+
+    usage_dates = normalize_timestamp(cur["line_item_usage_start_date"]).dt.normalize()
+    catalog = (
+        cur.assign(usage_date=usage_dates)
+        .groupby("line_item_resource_id", dropna=False)
+        .agg(
+            accounts=("line_item_usage_account_name", lambda s: sorted({str(v) for v in s.dropna().astype(str)})),
+            services=("line_item_product_code", lambda s: sorted({str(v) for v in s.dropna().astype(str)})),
+            first_seen=("usage_date", "min"),
+            last_seen=("usage_date", "max"),
+        )
+        .reset_index()
+    )
+    issues: list[dict[str, Any]] = []
+    for _, label in labels.iterrows():
+        rid = str(label["resource_id"])
+        row = catalog.loc[catalog["line_item_resource_id"].astype(str).eq(rid)]
+        if row.empty:
+            issues.append(
+                {
+                    "anomaly_id": label["anomaly_id"],
+                    "resource_id": rid,
+                    "issue_type": "resource_missing_from_cur",
+                }
+            )
+            continue
+        observed = row.iloc[0]
+        expected_service = str(label["service"])
+        expected_account = str(label["linked_account_name"])
+        observed_services = observed["services"]
+        observed_accounts = observed["accounts"]
+        first_seen = pd.to_datetime(observed["first_seen"])
+        last_seen = pd.to_datetime(observed["last_seen"])
+        start_date = pd.to_datetime(label["start_date"])
+        end_date = pd.to_datetime(label["end_date"])
+
+        if expected_service not in observed_services:
+            issues.append(
+                {
+                    "anomaly_id": label["anomaly_id"],
+                    "resource_id": rid,
+                    "issue_type": "service_mismatch",
+                    "expected_service": expected_service,
+                    "observed_services": observed_services,
+                }
+            )
+        if expected_account not in observed_accounts:
+            issues.append(
+                {
+                    "anomaly_id": label["anomaly_id"],
+                    "resource_id": rid,
+                    "issue_type": "account_mismatch",
+                    "expected_account": expected_account,
+                    "observed_accounts": observed_accounts,
+                }
+            )
+        if first_seen > end_date or last_seen < start_date:
+            issues.append(
+                {
+                    "anomaly_id": label["anomaly_id"],
+                    "resource_id": rid,
+                    "issue_type": "date_window_mismatch",
+                    "label_start_date": start_date.date().isoformat(),
+                    "label_end_date": end_date.date().isoformat(),
+                    "resource_first_seen": first_seen.date().isoformat(),
+                    "resource_last_seen": last_seen.date().isoformat(),
+                }
+            )
+
+    return {"issues_found": len(issues), "issues": issues}
