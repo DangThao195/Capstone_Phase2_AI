@@ -27,7 +27,7 @@
 
 ## 3. Feature Engineering
 
-Từ cost daily data, engineer **32 features** theo 3 nhóm:
+Từ cost daily data, engineer **35 features** theo 3 nhóm:
 
 ### 3.1 Temporal / Rolling (trên `unblended_cost` per account-service group)
 
@@ -51,12 +51,26 @@ Từ cost daily data, engineer **32 features** theo 3 nhóm:
 Thay vì `dropna()`, NaN trong lag/rolling được fill bằng **global per-service median**.
 Kết quả: cold-start rows (như CloudWatch A6) vẫn vào model với features có nghĩa.
 
+### 3.4 STL Decomposition Features
+
+STL (Seasonal-Trend decomposition using LOESS) tách time series thành 3 thành phần:
+
+| Feature | Thành phần | Ý nghĩa |
+|---|---|---|
+| `stl_trend` | Trend | Long-term spending direction — organic growth hay runaway cost? |
+| `stl_seasonal` | Seasonal | Weekly pattern — weekday vs weekend spending cycle |
+| `stl_residual` | **Residual** | **Key anomaly signal** — cost sau khi trừ trend+seasonal. Sạch hơn `delta` |
+
+> `stl_residual` > 0 → cost cao hơn expected → spike candidate  
+> `stl_residual` < 0 → cost thấp hơn expected → idle resource candidate  
+> STL tốt hơn `delta` vì rolling mean bị kéo lên bởi chính anomaly; STL trend tính trên toàn series.
+
 
 ---
 
 ## 3b. Những gì model thực sự học — Feature Groups
 
-Model XGBoost nhận vào **32 features** chia làm 3 nhóm, mỗi nhóm mang một loại signal khác nhau:
+Model XGBoost nhận vào **35 features** chia làm 4 nhóm (+ STL sub-group), mỗi nhóm mang một loại signal khác nhau:
 
 ### Nhóm 1 — Cost Trend Features (từ `unblended_cost`)
 *Câu hỏi: chi tiêu đang đi theo xu hướng nào?*
@@ -102,6 +116,17 @@ Model XGBoost nhận vào **32 features** chia làm 3 nhóm, mỗi nhóm mang m�
 > - `coherence >> 1` → cost tăng nhiều hơn metric → **anomaly candidate**
 > - `coherence ≈ 1`  → cost và metric tăng proportional → **likely benign**
 > - `coherence < 1`  → metric tăng nhưng cost không → edge case, khác loại vấn đề
+
+### Nhóm 3b — STL Decomposition Features (từ `statsmodels.STL`)
+*Câu hỏi: cost hiện tại lệch bao nhiêu so với trend + seasonal pattern đã học?*
+
+| Feature | Ý nghĩa cho model |
+|---|---|
+| `stl_trend` | Trend dài hạn — model phân biệt growth bình thường vs cost runaway |
+| `stl_seasonal` | Weekly seasonality — model biết "thứ 6 thường tốn hơn chủ nhật" |
+| `stl_residual` | **Anomaly signal chính** — lệch khỏi trend+seasonal sau khi loại noise |
+
+> Khi STL không đủ data (< 14 ngày history), fallback về rolling mean decomposition.
 
 ### Nhóm 4 — Categorical & Time Features
 `account_encoded`, `service_encoded`, `day_of_week`, `week_of_year`, `is_weekend`
@@ -150,7 +175,7 @@ Timeline:
 Incoming daily cost record
          │
          ├─ Có lịch sử ≥ 7 ngày? ──YES──► XGBoost (supervised)
-         │                                  ├─ 32 features
+         │                                  ├─ 35 features
          │                                  ├─ Optuna 30 trials (TPE sampler)
          │                                  ├─ Threshold = argmax F1 trên val split
          │                                  └─ SHAP waterfall cho explainability
@@ -200,10 +225,10 @@ Trong production, có 3 cách giải quyết:
 
 | Metric | Giá trị | TF2 Gate | Đánh giá |
 |---|---|---|---|
-| Precision | **0.827** | ✅ ≥ 80% | Đạt yêu cầu |
+| Precision | **0.872** | ✅ ≥ 80% | Đạt yêu cầu |
 | Recall | **1.000** | — | Rất tốt (> 90%) |
-| F1-score | **0.905** | — | Rất tốt |
-| FPR | **0.027** | ✅ ≤ 10% | Rất thấp |
+| F1-score | **0.932** | — | Rất tốt |
+| FPR | **0.019** | ✅ ≤ 10% | Rất thấp |
 | ROC-AUC | **1.000** | — | Excellent |
 
 **TF2 Gate: ✅ PASS**
@@ -212,11 +237,11 @@ Trong production, có 3 cách giải quyết:
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.014 |
-| Recall | 0.013 |
-| F1-score | 0.013 |
+| Precision | 0.022 |
+| Recall | 0.019 |
+| F1-score | 0.020 |
 | FPR | 0.111 |
-| ROC-AUC | 0.278 |
+| ROC-AUC | 0.268 |
 
 **TF2 Gate: ❌ FAIL**
 
@@ -224,9 +249,9 @@ Trong production, có 3 cách giải quyết:
 
 | Event | Type | XGBoost | Isolation Forest | Ghi chú |
 |---|---|---|---|---|
-| **A2** | `idle_resource` | ✅ Fully detected (292/292) | ⚠️ Weakly detected (4/292 records) | 292 records (73 ngày × 4 services acct dev) |
+| **A2** | `idle_resource` | ✅ Fully detected (292/292) | ⚠️ Weakly detected (6/292 records) | 292 records (73 ngày × 4 services acct dev) |
 | **A6** | `sudden_spike` | ✅ Fully detected (28/28) | ❌ Missed (0/28 records) | Cold-start → rule-based catches 7/7 days |
-| **B2** | `benign_event` | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 4/18 records falsely flagged | Rule-based có thể FP → cần human review |
+| **B2** | `benign_event` | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 6/18 records falsely flagged | Rule-based có thể FP → cần human review |
 
 ---
 
@@ -244,8 +269,12 @@ Raw Data (cost + metrics + labels)
       rank features, quyết định giữ/loại/tạo mới
     │
     ▼
-[Feature Engineering] 17+ lag/rolling/deviation features,
+[Feature Engineering] lag/rolling/deviation + STL decomposition features,
       impute NaN thay vì drop (cold-start fix)
+    │
+    ▼
+[STL Decomposition] Trend + Seasonal + Residual per (account, service),
+      stl_residual = cleaner anomaly signal than delta
     │
     ▼
 [Walk-Forward Validation] 60d train / 7d val / 7d step,

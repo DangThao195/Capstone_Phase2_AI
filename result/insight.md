@@ -30,6 +30,9 @@
 | `rate_of_change` | Bắt sudden spike | ✅ Giữ |
 | `delta` | Độ lệch khỏi baseline | ✅ Giữ |
 | `account_encoded` | Pattern chi tiêu theo account | ✅ Giữ |
+| `stl_residual` | Anomaly signal sau khi tách trend+seasonal (STL) | ✅ Giữ |
+| `stl_trend` | Long-term cost direction | ✅ Giữ |
+| `stl_seasonal` | Weekly seasonality component | ✅ Giữ |
 | `day_of_month` | SHAP thấp, noisy — không thêm signal | ❌ Loại bỏ |
 | `month` | Chỉ 3 tháng data — variance quá thấp | ❌ Loại bỏ |
 
@@ -43,10 +46,10 @@
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.827 |
+| Precision | 0.872 |
 | Recall | 1.000 |
-| F1 | 0.905 |
-| FPR | 0.027 |
+| F1 | 0.932 |
+| FPR | 0.019 |
 | ROC-AUC | 1.000 |
 
 > **Ghi chú đánh giá:** Recall = 1.000 được tính ở record level. 1 record = 1 ngày × 1 account × 1 service_code (cost_explorer_daily có 30 rows/ngày). A2 có 292 records (73 ngày × 4 services trong account staging) — chỉ AmazonRDS là anomaly thật, 3 services còn lại bị label nhầm do _build_label match theo account, không filter service. A6 có 28 records (7 ngày × 4 services trong account dev). Recall cao vì model bắt đúng tất cả labeled rows, kể cả mislabeled ones.
@@ -54,6 +57,7 @@
 - Optuna (30 trials, TPE sampler) tối ưu 9 hyperparameter.
 - Walk-forward validation (60d train / 7d val / 7d step) — không có look-ahead bias.
 - Recall floor ≥ 50% trong Optuna objective tránh bias về phía conservative params.
+- **STL features**: `stl_residual` cung cấp anomaly signal sạch hơn `delta` vì loại bỏ cả trend lẫn weekly seasonality trước khi tính residual.
 - **Cold-start limitation:** A6 (AmazonCloudWatch, account dev) chỉ xuất hiện đúng 7 ngày spike — không có lịch sử trước đó → lag/rolling features là NaN → bị drop trước khi vào model. XGBoost không thể phát hiện service chưa từng có trong billing history.
 - **Cold-start handling:** Rows không có lịch sử billing (lag = NaN) được impute bằng global per-service median thay vì drop. XGBoost thấy `rate_of_change` và `delta` lớn → tự detect cold-start spike mà không cần rule riêng.
 
@@ -63,11 +67,11 @@
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.014 |
-| Recall | 0.013 |
-| F1 | 0.013 |
+| Precision | 0.022 |
+| Recall | 0.019 |
+| F1 | 0.020 |
 | FPR | 0.111 |
-| ROC-AUC | 0.278 |
+| ROC-AUC | 0.268 |
 
 - Không cần nhãn — áp dụng ngay cho account/service mới.
 - Contamination tối ưu: 3–5%. Tốc độ train nhanh (~0.1–0.5s).
@@ -80,8 +84,8 @@
 
 | Model | Precision | Precision ≥ 80% | FPR | FPR ≤ 10% | Overall |
 |---|---|---|---|---|---|
-| XGBoost (Optuna) | 0.827 | ✅ PASS | 0.027 | ✅ PASS | ✅ PASS |
-| Isolation Forest | 0.014 | ❌ FAIL | 0.111 | ❌ FAIL | ❌ FAIL |
+| XGBoost (Optuna) | 0.872 | ✅ PASS | 0.019 | ✅ PASS | ✅ PASS |
+| Isolation Forest | 0.022 | ❌ FAIL | 0.111 | ❌ FAIL | ❌ FAIL |
 
 ---
 
@@ -89,7 +93,7 @@
 
 **Model chính: XGBoost (Optuna-tuned)**
 
-XGBoost đạt Precision = 0.827, Recall = 1.000 và F1-score = 0.905, cho thấy mô hình cân bằng tốt giữa khả năng phát hiện anomaly và kiểm soát cảnh báo giả. Kết hợp với SHAP explainability và Walk-Forward Validation, mô hình phù hợp để triển khai làm supervised detector trong hệ thống FinOps Watch.
+XGBoost đạt Precision = 0.872, Recall = 1.000 và F1-score = 0.932, cho thấy mô hình cân bằng tốt giữa khả năng phát hiện anomaly và kiểm soát cảnh báo giả. Kết hợp với SHAP explainability và Walk-Forward Validation, mô hình phù hợp để triển khai làm supervised detector trong hệ thống FinOps Watch.
 
 **Model phụ: Isolation Forest**
 - Chạy song song như unsupervised signal cho account/service chưa có anomaly history.
@@ -105,15 +109,15 @@ XGBoost đạt Precision = 0.827, Recall = 1.000 và F1-score = 0.905, cho thấ
 
 ## 7. Detection Coverage vs Labelled Events
 
-> Đánh giá ở **record level** (mỗi ngày × account = 1 record).  
+> Đánh giá ở **record level** (1 record = 1 ngày × 1 account × 1 service_code).  
 > Recall tổng thể = TP records / (TP + FN records) trên toàn bộ A2 + A6.  
 > "Partially detected" = model bắt được 1 phần records trong window — vẫn đóng góp TP vào Recall tổng.
 
 | Event ID | Type | Window | Records | XGBoost | Isolation Forest |
 |---|---|---|---|---|---|
-| A2 | `idle_resource` | Mar 20 – May 31 (~73 days) | ~73 | ✅ Fully detected (292/292) | ⚠️ Weakly detected (4/292 records) |
+| A2 | `idle_resource` | Mar 20 – May 31 (~73 days) | ~73 | ✅ Fully detected (292/292) | ⚠️ Weakly detected (6/292 records) |
 | A6 | `sudden_spike` | Apr 28 – May 4 (7 days) | ~7 | ✅ Fully detected (28/28) | ❌ Missed (0/28 records) |
-| B2 | `benign_event` | Mar 28 – Mar 30 (3 days) | ~3 | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 4/18 records falsely flagged |
+| B2 | `benign_event` | Mar 28 – Mar 30 (3 days) | ~3 | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 6/18 records falsely flagged |
 
 > **B2 là benign** — model không nên báo. Nếu báo = False Positive, ảnh hưởng FPR.
 >

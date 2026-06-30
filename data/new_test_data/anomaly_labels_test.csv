@@ -1,0 +1,4 @@
+anomaly_id,label,anomaly_type,linked_account_id,linked_account_name,service,resource_id,start_date,end_date,approx_daily_cost,approx_total_cost,description
+E1,benign,batch_etl,200000000010,prod-core,AmazonRDS,arn:aws:rds:us-east-1:acct:db:db-1025,2026-06-18,2026-06-24,95.48,668.36,Weekly batch ETL pipeline run for analytics ingestion.
+E2,anomaly,disk_bottleneck,200000000013,dev,AmazonRDS,arn:aws:rds:us-east-1:acct:db:db-1215,2026-06-05,2026-06-09,15.04,75.21,Disk I/O bottleneck causing write delay on database storage volume.
+E3,anomaly,memory_leak,200000000012,staging,AmazonRDS,arn:aws:rds:us-east-1:acct:db:db-1159,2026-06-06,2026-06-10,16.3,81.49,Gradual memory leak in RDS instance leading to resource exhaustion.
