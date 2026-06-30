@@ -1,0 +1,993 @@
+date,linked_account_id,linked_account_name,service,service_code,region,unblended_cost,is_estimated
+2026-07-01,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,567.74,False
+2026-07-02,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,462.8,False
+2026-07-03,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,533.33,False
+2026-07-04,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,561.02,False
+2026-07-05,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,572.54,False
+2026-07-06,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,575.18,False
+2026-07-07,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,632.46,False
+2026-07-08,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,551.04,False
+2026-07-09,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,591.47,False
+2026-07-10,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,546.34,False
+2026-07-11,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,536.22,False
+2026-07-12,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,1052.15,False
+2026-07-13,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,536.34,False
+2026-07-14,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,573.64,False
+2026-07-15,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,636.49,False
+2026-07-16,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,601.51,False
+2026-07-17,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,515.34,False
+2026-07-18,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,543.23,False
+2026-07-19,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,643.15,False
+2026-07-20,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,540.05,False
+2026-07-21,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,436.77,False
+2026-07-22,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,427.45,False
+2026-07-23,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,526.84,False
+2026-07-24,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,504.05,False
+2026-07-25,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,598.99,False
+2026-07-26,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,1087.01,False
+2026-07-27,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,446.72,False
+2026-07-28,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,647.35,False
+2026-07-29,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,581.87,False
+2026-07-30,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,558.86,False
+2026-07-31,200000000010,prod-core,AWS Data Transfer,AWSDataTransfer,us-east-1,440.21,False
+2026-07-01,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,26.27,False
+2026-07-02,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,36.51,False
+2026-07-03,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,32.13,False
+2026-07-04,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,33.22,False
+2026-07-05,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.89,False
+2026-07-06,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,27.6,False
+2026-07-07,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,27.62,False
+2026-07-08,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,25.79,False
+2026-07-09,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,30.22,False
+2026-07-10,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,31.98,False
+2026-07-11,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,27.15,False
+2026-07-12,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,26.21,False
+2026-07-13,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,32.89,False
+2026-07-14,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,30.89,False
+2026-07-15,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,31.05,False
+2026-07-16,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,25.96,False
+2026-07-17,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,28.74,False
+2026-07-18,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,30.26,False
+2026-07-19,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,34.86,False
+2026-07-20,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,35.18,False
+2026-07-21,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,33.6,False
+2026-07-22,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,38.2,False
+2026-07-23,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,30.07,False
+2026-07-24,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,35.43,False
+2026-07-25,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,26.77,False
+2026-07-26,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,26.58,False
+2026-07-27,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,32.75,False
+2026-07-28,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,30.19,False
+2026-07-29,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,25.13,False
+2026-07-30,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,25.66,False
+2026-07-31,200000000010,prod-core,Amazon Elastic Load Balancing,AWSELB,us-east-1,35.62,False
+2026-07-01,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,315.02,False
+2026-07-02,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,421.57,False
+2026-07-03,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,371.56,False
+2026-07-04,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,404.65,False
+2026-07-05,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,366.55,False
+2026-07-06,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,353.72,False
+2026-07-07,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,312.84,False
+2026-07-08,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,314.81,False
+2026-07-09,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,340.9,False
+2026-07-10,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,381.96,False
+2026-07-11,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,261.96,False
+2026-07-12,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,384.25,False
+2026-07-13,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,374.53,False
+2026-07-14,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,314.59,False
+2026-07-15,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,326.59,False
+2026-07-16,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,387.37,False
+2026-07-17,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,278.01,False
+2026-07-18,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,426.96,False
+2026-07-19,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,374.93,False
+2026-07-20,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,388.6,False
+2026-07-21,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,359.2,False
+2026-07-22,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,279.11,False
+2026-07-23,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,386.77,False
+2026-07-24,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,345.88,False
+2026-07-25,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,341.02,False
+2026-07-26,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,325.31,False
+2026-07-27,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,341.3,False
+2026-07-28,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,377.81,False
+2026-07-29,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,368.09,False
+2026-07-30,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,294.16,False
+2026-07-31,200000000010,prod-core,AmazonCloudWatch,AmazonCloudWatch,us-east-1,405.95,False
+2026-07-01,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,606.67,False
+2026-07-02,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,574.8,False
+2026-07-03,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,581.01,False
+2026-07-04,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,491.46,False
+2026-07-05,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,578.36,False
+2026-07-06,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,561.58,False
+2026-07-07,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,588.5,False
+2026-07-08,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,570.2,False
+2026-07-09,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,529.34,False
+2026-07-10,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,476.22,False
+2026-07-11,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,648.04,False
+2026-07-12,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,476.98,False
+2026-07-13,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,665.6,False
+2026-07-14,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,668.54,False
+2026-07-15,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,666.65,False
+2026-07-16,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,667.18,False
+2026-07-17,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,617.1,False
+2026-07-18,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,636.88,False
+2026-07-19,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,614.27,False
+2026-07-20,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,512.73,False
+2026-07-21,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,601.14,False
+2026-07-22,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,601.61,False
+2026-07-23,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,548.52,False
+2026-07-24,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,486.62,False
+2026-07-25,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,610.08,False
+2026-07-26,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,591.82,False
+2026-07-27,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,621.24,False
+2026-07-28,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,608.07,False
+2026-07-29,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,634.73,False
+2026-07-30,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,605.4,False
+2026-07-31,200000000010,prod-core,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,605.73,False
+2026-07-01,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.68,False
+2026-07-02,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,26.14,False
+2026-07-03,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.76,False
+2026-07-04,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.39,False
+2026-07-05,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.6,False
+2026-07-06,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.22,False
+2026-07-07,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.54,False
+2026-07-08,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.75,False
+2026-07-09,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.0,False
+2026-07-10,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.41,False
+2026-07-11,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.47,False
+2026-07-12,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.72,False
+2026-07-13,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.1,False
+2026-07-14,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.89,False
+2026-07-15,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.59,False
+2026-07-16,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.22,False
+2026-07-17,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.01,False
+2026-07-18,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,19.93,False
+2026-07-19,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.96,False
+2026-07-20,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.67,False
+2026-07-21,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,17.03,False
+2026-07-22,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,18.13,False
+2026-07-23,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,21.47,False
+2026-07-24,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.77,False
+2026-07-25,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,25.08,False
+2026-07-26,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.39,False
+2026-07-27,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,24.03,False
+2026-07-28,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,23.12,False
+2026-07-29,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,26.33,False
+2026-07-30,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,18.98,False
+2026-07-31,200000000010,prod-core,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,22.05,False
+2026-07-01,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,86.98,False
+2026-07-02,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,91.92,False
+2026-07-03,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,70.4,False
+2026-07-04,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,82.57,False
+2026-07-05,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,97.08,False
+2026-07-06,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,97.16,False
+2026-07-07,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,87.19,False
+2026-07-08,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,71.42,False
+2026-07-09,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,90.37,False
+2026-07-10,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,79.29,False
+2026-07-11,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,71.36,False
+2026-07-12,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,91.34,False
+2026-07-13,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,84.78,False
+2026-07-14,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,81.88,False
+2026-07-15,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,83.29,False
+2026-07-16,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,100.06,False
+2026-07-17,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,63.68,False
+2026-07-18,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,90.46,False
+2026-07-19,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,89.55,False
+2026-07-20,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,83.02,False
+2026-07-21,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,79.45,False
+2026-07-22,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,73.51,False
+2026-07-23,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,80.27,False
+2026-07-24,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,102.56,False
+2026-07-25,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,99.28,False
+2026-07-26,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,92.35,False
+2026-07-27,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,104.62,False
+2026-07-28,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,82.03,False
+2026-07-29,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,78.38,False
+2026-07-30,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,96.57,False
+2026-07-31,200000000010,prod-core,Amazon ElastiCache,AmazonElastiCache,us-east-1,89.75,False
+2026-07-01,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,297.08,False
+2026-07-02,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,264.77,False
+2026-07-03,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,302.84,False
+2026-07-04,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,234.29,False
+2026-07-05,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,308.94,False
+2026-07-06,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,304.36,False
+2026-07-07,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,316.27,False
+2026-07-08,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,286.67,False
+2026-07-09,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,257.65,False
+2026-07-10,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,268.79,False
+2026-07-11,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,237.64,False
+2026-07-12,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,348.11,False
+2026-07-13,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,281.53,False
+2026-07-14,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,309.06,False
+2026-07-15,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,232.97,False
+2026-07-16,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,268.26,False
+2026-07-17,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,288.72,False
+2026-07-18,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,306.05,False
+2026-07-19,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,349.39,False
+2026-07-20,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,324.42,False
+2026-07-21,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,312.61,False
+2026-07-22,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,225.17,False
+2026-07-23,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,325.51,False
+2026-07-24,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,310.69,False
+2026-07-25,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,296.13,False
+2026-07-26,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,308.41,False
+2026-07-27,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,319.56,False
+2026-07-28,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,282.73,False
+2026-07-29,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,226.41,False
+2026-07-30,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,297.49,False
+2026-07-31,200000000010,prod-core,Amazon Relational Database Service,AmazonRDS,us-east-1,305.03,False
+2026-07-01,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,502.66,False
+2026-07-02,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,363.33,False
+2026-07-03,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,519.54,False
+2026-07-04,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,495.35,False
+2026-07-05,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,467.31,False
+2026-07-06,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,422.2,False
+2026-07-07,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,518.09,False
+2026-07-08,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,422.87,False
+2026-07-09,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,527.58,False
+2026-07-10,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,499.39,False
+2026-07-11,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,365.94,False
+2026-07-12,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,504.77,False
+2026-07-13,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,607.09,False
+2026-07-14,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,505.57,False
+2026-07-15,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,486.41,False
+2026-07-16,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,601.57,False
+2026-07-17,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,460.59,False
+2026-07-18,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,436.93,False
+2026-07-19,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,562.02,False
+2026-07-20,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,504.1,False
+2026-07-21,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,462.05,False
+2026-07-22,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,451.74,False
+2026-07-23,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,488.59,False
+2026-07-24,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,497.14,False
+2026-07-25,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,521.02,False
+2026-07-26,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,420.66,False
+2026-07-27,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,559.79,False
+2026-07-28,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,453.88,False
+2026-07-29,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,523.65,False
+2026-07-30,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,527.58,False
+2026-07-31,200000000010,prod-core,Amazon Simple Storage Service,AmazonS3,us-east-1,544.65,False
+2026-07-01,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,13.51,False
+2026-07-02,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,15.46,False
+2026-07-03,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.91,False
+2026-07-04,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.31,False
+2026-07-05,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.16,False
+2026-07-06,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,12.61,False
+2026-07-07,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.02,False
+2026-07-08,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.47,False
+2026-07-09,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.86,False
+2026-07-10,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,14.6,False
+2026-07-11,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.25,False
+2026-07-12,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.18,False
+2026-07-13,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.52,False
+2026-07-14,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.28,False
+2026-07-15,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,15.62,False
+2026-07-16,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.56,False
+2026-07-17,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.34,False
+2026-07-18,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,15.81,False
+2026-07-19,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.67,False
+2026-07-20,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.73,False
+2026-07-21,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.99,False
+2026-07-22,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.49,False
+2026-07-23,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.66,False
+2026-07-24,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,14.1,False
+2026-07-25,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,16.43,False
+2026-07-26,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.32,False
+2026-07-27,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,18.25,False
+2026-07-28,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.3,False
+2026-07-29,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,17.81,False
+2026-07-30,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,19.65,False
+2026-07-31,200000000010,prod-core,Amazon Virtual Private Cloud,AmazonVPC,us-east-1,20.85,False
+2026-07-01,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,251.84,False
+2026-07-02,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,200.74,False
+2026-07-03,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,274.82,False
+2026-07-04,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,225.8,False
+2026-07-05,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,257.02,False
+2026-07-06,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,175.85,False
+2026-07-07,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,238.37,False
+2026-07-08,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,251.68,False
+2026-07-09,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,200.71,False
+2026-07-10,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,187.92,False
+2026-07-11,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,184.3,False
+2026-07-12,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,252.1,False
+2026-07-13,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,253.8,False
+2026-07-14,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,222.04,False
+2026-07-15,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,277.45,False
+2026-07-16,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,197.95,False
+2026-07-17,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,236.7,False
+2026-07-18,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,291.19,False
+2026-07-19,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,268.43,False
+2026-07-20,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,189.42,False
+2026-07-21,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,273.63,False
+2026-07-22,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,250.48,False
+2026-07-23,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,228.78,False
+2026-07-24,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,254.5,False
+2026-07-25,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,186.35,False
+2026-07-26,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,223.74,False
+2026-07-27,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,255.06,False
+2026-07-28,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,241.43,False
+2026-07-29,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,278.25,False
+2026-07-30,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,251.19,False
+2026-07-31,200000000011,prod-payments,AWS Data Transfer,AWSDataTransfer,us-east-1,280.97,False
+2026-07-01,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,310.35,False
+2026-07-02,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,408.32,False
+2026-07-03,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,454.03,False
+2026-07-04,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,364.8,False
+2026-07-05,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,389.37,False
+2026-07-06,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,375.29,False
+2026-07-07,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,423.92,False
+2026-07-08,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,434.87,False
+2026-07-09,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,316.42,False
+2026-07-10,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,329.77,False
+2026-07-11,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,343.94,False
+2026-07-12,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,348.64,False
+2026-07-13,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,312.75,False
+2026-07-14,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,440.71,False
+2026-07-15,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,410.06,False
+2026-07-16,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,318.18,False
+2026-07-17,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,378.57,False
+2026-07-18,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,421.61,False
+2026-07-19,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,442.3,False
+2026-07-20,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,336.45,False
+2026-07-21,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,314.74,False
+2026-07-22,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,402.65,False
+2026-07-23,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,408.23,False
+2026-07-24,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,444.04,False
+2026-07-25,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,375.13,False
+2026-07-26,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,427.52,False
+2026-07-27,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,405.17,False
+2026-07-28,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,435.98,False
+2026-07-29,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,425.27,False
+2026-07-30,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,431.68,False
+2026-07-31,200000000011,prod-payments,Amazon DynamoDB,AmazonDynamoDB,us-east-1,459.7,False
+2026-07-01,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,540.3,False
+2026-07-02,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,523.72,False
+2026-07-03,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,435.55,False
+2026-07-04,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,1481.07,False
+2026-07-05,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,517.28,False
+2026-07-06,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,515.23,False
+2026-07-07,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,436.94,False
+2026-07-08,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,552.08,False
+2026-07-09,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,543.76,False
+2026-07-10,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,582.25,False
+2026-07-11,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,526.73,False
+2026-07-12,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,544.91,False
+2026-07-13,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,551.15,False
+2026-07-14,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,524.85,False
+2026-07-15,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,485.19,False
+2026-07-16,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,566.18,False
+2026-07-17,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,545.22,False
+2026-07-18,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,561.92,False
+2026-07-19,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,425.91,False
+2026-07-20,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,457.76,False
+2026-07-21,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,541.47,False
+2026-07-22,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,481.81,False
+2026-07-23,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,540.79,False
+2026-07-24,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,471.45,False
+2026-07-25,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,572.71,False
+2026-07-26,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,535.93,False
+2026-07-27,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,551.84,False
+2026-07-28,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,1509.43,False
+2026-07-29,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,448.94,False
+2026-07-30,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,537.67,False
+2026-07-31,200000000011,prod-payments,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,480.63,False
+2026-07-01,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.95,False
+2026-07-02,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.87,False
+2026-07-03,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,34.69,False
+2026-07-04,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.61,False
+2026-07-05,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,29.38,False
+2026-07-06,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.34,False
+2026-07-07,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.45,False
+2026-07-08,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,25.75,False
+2026-07-09,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,27.76,False
+2026-07-10,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,25.01,False
+2026-07-11,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.4,False
+2026-07-12,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,35.44,False
+2026-07-13,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.39,False
+2026-07-14,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,29.59,False
+2026-07-15,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,34.86,False
+2026-07-16,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.79,False
+2026-07-17,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,24.3,False
+2026-07-18,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,35.1,False
+2026-07-19,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.6,False
+2026-07-20,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,33.2,False
+2026-07-21,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,32.62,False
+2026-07-22,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,24.45,False
+2026-07-23,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,31.16,False
+2026-07-24,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,25.82,False
+2026-07-25,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,32.03,False
+2026-07-26,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.43,False
+2026-07-27,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,30.25,False
+2026-07-28,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,28.18,False
+2026-07-29,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,26.18,False
+2026-07-30,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,26.2,False
+2026-07-31,200000000011,prod-payments,Amazon Kinesis,AmazonKinesis,us-east-1,31.95,False
+2026-07-01,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,256.29,False
+2026-07-02,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,275.83,False
+2026-07-03,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,252.11,False
+2026-07-04,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,204.78,False
+2026-07-05,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,269.84,False
+2026-07-06,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,300.38,False
+2026-07-07,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,266.77,False
+2026-07-08,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,256.02,False
+2026-07-09,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,254.09,False
+2026-07-10,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,194.88,False
+2026-07-11,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,296.39,False
+2026-07-12,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,265.79,False
+2026-07-13,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,272.23,False
+2026-07-14,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,262.84,False
+2026-07-15,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,239.44,False
+2026-07-16,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,274.73,False
+2026-07-17,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,212.92,False
+2026-07-18,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,218.89,False
+2026-07-19,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,230.98,False
+2026-07-20,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,240.39,False
+2026-07-21,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,216.2,False
+2026-07-22,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,241.4,False
+2026-07-23,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,269.84,False
+2026-07-24,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,244.94,False
+2026-07-25,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,286.48,False
+2026-07-26,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,245.03,False
+2026-07-27,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,280.25,False
+2026-07-28,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,289.26,False
+2026-07-29,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,303.46,False
+2026-07-30,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,197.97,False
+2026-07-31,200000000011,prod-payments,Amazon Relational Database Service,AmazonRDS,us-east-1,253.74,False
+2026-07-01,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,2.95,False
+2026-07-02,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,2.76,False
+2026-07-03,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.31,False
+2026-07-04,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.88,False
+2026-07-05,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.52,False
+2026-07-06,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.91,False
+2026-07-07,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.94,False
+2026-07-08,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.71,False
+2026-07-09,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.28,False
+2026-07-10,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,2.78,False
+2026-07-11,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.54,False
+2026-07-12,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.04,False
+2026-07-13,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.13,False
+2026-07-14,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.56,False
+2026-07-15,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.54,False
+2026-07-16,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.12,False
+2026-07-17,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.92,False
+2026-07-18,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.85,False
+2026-07-19,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.93,False
+2026-07-20,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.11,False
+2026-07-21,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.78,False
+2026-07-22,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.68,False
+2026-07-23,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.07,False
+2026-07-24,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.33,False
+2026-07-25,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.88,False
+2026-07-26,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.18,False
+2026-07-27,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.73,False
+2026-07-28,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.0,False
+2026-07-29,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.43,False
+2026-07-30,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,3.06,False
+2026-07-31,200000000011,prod-payments,AWS Key Management Service,awskms,us-east-1,4.38,False
+2026-07-01,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,132.46,False
+2026-07-02,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,105.26,False
+2026-07-03,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,139.92,False
+2026-07-04,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,117.56,False
+2026-07-05,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,136.78,False
+2026-07-06,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,131.33,False
+2026-07-07,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,145.43,False
+2026-07-08,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,121.13,False
+2026-07-09,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,121.23,False
+2026-07-10,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,155.16,False
+2026-07-11,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,139.37,False
+2026-07-12,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,113.2,False
+2026-07-13,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,129.38,False
+2026-07-14,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,116.97,False
+2026-07-15,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,139.59,False
+2026-07-16,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,141.34,False
+2026-07-17,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,122.44,False
+2026-07-18,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,141.69,False
+2026-07-19,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,122.76,False
+2026-07-20,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,143.07,False
+2026-07-21,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,147.06,False
+2026-07-22,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,133.01,False
+2026-07-23,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,109.96,False
+2026-07-24,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,124.16,False
+2026-07-25,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,127.42,False
+2026-07-26,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,128.8,False
+2026-07-27,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,132.52,False
+2026-07-28,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,117.27,False
+2026-07-29,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,142.55,False
+2026-07-30,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,97.29,False
+2026-07-31,200000000012,staging,AmazonCloudWatch,AmazonCloudWatch,us-east-1,140.99,False
+2026-07-01,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,132.83,False
+2026-07-02,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,55.74,False
+2026-07-03,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,126.51,False
+2026-07-04,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,125.63,False
+2026-07-05,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,144.02,False
+2026-07-06,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,128.11,False
+2026-07-07,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,47.81,False
+2026-07-08,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,126.38,False
+2026-07-09,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,132.89,False
+2026-07-10,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,140.5,False
+2026-07-11,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,128.13,False
+2026-07-12,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,127.42,False
+2026-07-13,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,49.66,False
+2026-07-14,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,130.78,False
+2026-07-15,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,49.74,False
+2026-07-16,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,122.39,False
+2026-07-17,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,117.96,False
+2026-07-18,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,627.99,False
+2026-07-19,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,58.35,False
+2026-07-20,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,56.52,False
+2026-07-21,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,46.62,False
+2026-07-22,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,127.44,False
+2026-07-23,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,118.25,False
+2026-07-24,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,125.5,False
+2026-07-25,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,142.18,False
+2026-07-26,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,119.63,False
+2026-07-27,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,45.22,False
+2026-07-28,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,128.04,False
+2026-07-29,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,618.93,False
+2026-07-30,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,130.06,False
+2026-07-31,200000000012,staging,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,126.07,False
+2026-07-01,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.03,False
+2026-07-02,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,11.04,False
+2026-07-03,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.37,False
+2026-07-04,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.02,False
+2026-07-05,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.33,False
+2026-07-06,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.62,False
+2026-07-07,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.16,False
+2026-07-08,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.26,False
+2026-07-09,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,11.16,False
+2026-07-10,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.16,False
+2026-07-11,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.23,False
+2026-07-12,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.34,False
+2026-07-13,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.26,False
+2026-07-14,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.29,False
+2026-07-15,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,16.11,False
+2026-07-16,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.06,False
+2026-07-17,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.46,False
+2026-07-18,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.55,False
+2026-07-19,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.52,False
+2026-07-20,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.78,False
+2026-07-21,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,11.27,False
+2026-07-22,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.21,False
+2026-07-23,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.71,False
+2026-07-24,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.44,False
+2026-07-25,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,12.08,False
+2026-07-26,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.7,False
+2026-07-27,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.66,False
+2026-07-28,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.66,False
+2026-07-29,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,14.96,False
+2026-07-30,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,13.84,False
+2026-07-31,200000000012,staging,Amazon Elastic Kubernetes Service,AmazonEKS,us-east-1,15.16,False
+2026-07-01,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,82.3,False
+2026-07-02,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,56.23,False
+2026-07-03,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,87.82,False
+2026-07-04,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,88.95,False
+2026-07-05,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,59.39,False
+2026-07-06,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,91.39,False
+2026-07-07,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,57.88,False
+2026-07-08,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,82.76,False
+2026-07-09,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,91.2,False
+2026-07-10,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,93.09,False
+2026-07-11,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,84.49,False
+2026-07-12,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,80.39,False
+2026-07-13,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,58.79,False
+2026-07-14,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,88.37,False
+2026-07-15,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,80.05,False
+2026-07-16,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,89.5,False
+2026-07-17,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,86.08,False
+2026-07-18,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,89.95,False
+2026-07-19,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,75.24,False
+2026-07-20,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,88.36,False
+2026-07-21,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,83.74,False
+2026-07-22,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,77.22,False
+2026-07-23,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,92.9,False
+2026-07-24,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,57.22,False
+2026-07-25,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,86.87,False
+2026-07-26,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,47.88,False
+2026-07-27,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,92.4,False
+2026-07-28,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,57.04,False
+2026-07-29,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,81.48,False
+2026-07-30,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,78.64,False
+2026-07-31,200000000012,staging,Amazon Relational Database Service,AmazonRDS,us-east-1,99.47,False
+2026-07-01,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,166.98,False
+2026-07-02,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,168.1,False
+2026-07-03,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,131.15,False
+2026-07-04,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,173.16,False
+2026-07-05,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,147.52,False
+2026-07-06,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,166.88,False
+2026-07-07,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,162.22,False
+2026-07-08,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,139.0,False
+2026-07-09,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,155.46,False
+2026-07-10,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,156.72,False
+2026-07-11,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,152.28,False
+2026-07-12,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,153.68,False
+2026-07-13,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,159.37,False
+2026-07-14,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,162.65,False
+2026-07-15,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,149.29,False
+2026-07-16,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,158.43,False
+2026-07-17,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,158.62,False
+2026-07-18,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,169.25,False
+2026-07-19,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,149.41,False
+2026-07-20,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,141.66,False
+2026-07-21,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,125.12,False
+2026-07-22,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,149.83,False
+2026-07-23,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,133.24,False
+2026-07-24,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,154.35,False
+2026-07-25,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,147.12,False
+2026-07-26,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,158.71,False
+2026-07-27,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,142.72,False
+2026-07-28,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,174.5,False
+2026-07-29,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,152.91,False
+2026-07-30,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,122.9,False
+2026-07-31,200000000013,dev,AWS Lambda,AWSLambda,us-east-1,174.91,False
+2026-07-01,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,167.79,False
+2026-07-02,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,159.38,False
+2026-07-03,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,151.66,False
+2026-07-04,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,151.14,False
+2026-07-05,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,154.72,False
+2026-07-06,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,78.61,False
+2026-07-07,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,70.06,False
+2026-07-08,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,153.24,False
+2026-07-09,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,64.19,False
+2026-07-10,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,172.85,False
+2026-07-11,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,77.73,False
+2026-07-12,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,68.86,False
+2026-07-13,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,168.39,False
+2026-07-14,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,71.61,False
+2026-07-15,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,79.14,False
+2026-07-16,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,154.12,False
+2026-07-17,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,161.29,False
+2026-07-18,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,72.99,False
+2026-07-19,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,151.54,False
+2026-07-20,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,79.49,False
+2026-07-21,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,70.85,False
+2026-07-22,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,175.39,False
+2026-07-23,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,67.0,False
+2026-07-24,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,173.38,False
+2026-07-25,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,65.37,False
+2026-07-26,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,171.18,False
+2026-07-27,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,170.26,False
+2026-07-28,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,72.83,False
+2026-07-29,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,185.57,False
+2026-07-30,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,73.68,False
+2026-07-31,200000000013,dev,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,165.79,False
+2026-07-01,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,66.3,False
+2026-07-02,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,57.88,False
+2026-07-03,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,72.54,False
+2026-07-04,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,47.61,False
+2026-07-05,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,48.95,False
+2026-07-06,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,72.09,False
+2026-07-07,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,59.8,False
+2026-07-08,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,65.11,False
+2026-07-09,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,63.84,False
+2026-07-10,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,54.95,False
+2026-07-11,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,64.71,False
+2026-07-12,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,64.79,False
+2026-07-13,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,70.79,False
+2026-07-14,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,61.65,False
+2026-07-15,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,66.53,False
+2026-07-16,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,61.75,False
+2026-07-17,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,72.98,False
+2026-07-18,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,58.13,False
+2026-07-19,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,53.12,False
+2026-07-20,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,71.08,False
+2026-07-21,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,73.58,False
+2026-07-22,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,64.9,False
+2026-07-23,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,59.77,False
+2026-07-24,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,48.37,False
+2026-07-25,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,69.91,False
+2026-07-26,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,72.11,False
+2026-07-27,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,61.8,False
+2026-07-28,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,58.42,False
+2026-07-29,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,62.65,False
+2026-07-30,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,68.42,False
+2026-07-31,200000000013,dev,Amazon Relational Database Service,AmazonRDS,us-east-1,62.67,False
+2026-07-01,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,97.75,False
+2026-07-02,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,62.6,False
+2026-07-03,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,82.77,False
+2026-07-04,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,69.06,False
+2026-07-05,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,92.72,False
+2026-07-06,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,86.5,False
+2026-07-07,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,83.04,False
+2026-07-08,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,80.59,False
+2026-07-09,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,97.69,False
+2026-07-10,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,67.26,False
+2026-07-11,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,83.86,False
+2026-07-12,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,78.27,False
+2026-07-13,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,83.43,False
+2026-07-14,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,81.32,False
+2026-07-15,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,98.62,False
+2026-07-16,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,72.11,False
+2026-07-17,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,82.05,False
+2026-07-18,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,89.7,False
+2026-07-19,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,63.63,False
+2026-07-20,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,92.32,False
+2026-07-21,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,80.55,False
+2026-07-22,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,96.3,False
+2026-07-23,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,78.31,False
+2026-07-24,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,99.55,False
+2026-07-25,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,84.53,False
+2026-07-26,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,64.02,False
+2026-07-27,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,78.48,False
+2026-07-28,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,85.17,False
+2026-07-29,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,94.98,False
+2026-07-30,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,93.75,False
+2026-07-31,200000000014,data-analytics,Amazon Athena,AmazonAthena,us-east-1,93.13,False
+2026-07-01,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,271.5,False
+2026-07-02,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,605.9,False
+2026-07-03,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,675.14,False
+2026-07-04,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,607.47,False
+2026-07-05,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,317.43,False
+2026-07-06,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,294.61,False
+2026-07-07,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,444.62,False
+2026-07-08,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,385.35,False
+2026-07-09,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,325.41,False
+2026-07-10,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,581.17,False
+2026-07-11,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,570.0,False
+2026-07-12,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,564.54,False
+2026-07-13,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,291.95,False
+2026-07-14,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,247.23,False
+2026-07-15,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,616.24,False
+2026-07-16,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,274.67,False
+2026-07-17,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,297.69,False
+2026-07-18,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,602.5,False
+2026-07-19,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,233.01,False
+2026-07-20,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,615.35,False
+2026-07-21,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,305.79,False
+2026-07-22,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,449.93,False
+2026-07-23,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,289.7,False
+2026-07-24,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,450.64,False
+2026-07-25,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,567.43,False
+2026-07-26,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,617.53,False
+2026-07-27,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,577.24,False
+2026-07-28,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,385.19,False
+2026-07-29,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,286.55,False
+2026-07-30,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,323.76,False
+2026-07-31,200000000014,data-analytics,Amazon DynamoDB,AmazonDynamoDB,us-east-1,300.48,False
+2026-07-01,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,120.76,False
+2026-07-02,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,108.76,False
+2026-07-03,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,120.95,False
+2026-07-04,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,111.65,False
+2026-07-05,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,127.59,False
+2026-07-06,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,111.26,False
+2026-07-07,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,112.51,False
+2026-07-08,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,113.76,False
+2026-07-09,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,121.53,False
+2026-07-10,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,125.9,False
+2026-07-11,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,109.44,False
+2026-07-12,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,114.98,False
+2026-07-13,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,111.11,False
+2026-07-14,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,117.57,False
+2026-07-15,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,119.06,False
+2026-07-16,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,132.84,False
+2026-07-17,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,88.37,False
+2026-07-18,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,116.46,False
+2026-07-19,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,108.75,False
+2026-07-20,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,119.53,False
+2026-07-21,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,128.95,False
+2026-07-22,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,130.0,False
+2026-07-23,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,86.06,False
+2026-07-24,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,115.21,False
+2026-07-25,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,122.02,False
+2026-07-26,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,133.89,False
+2026-07-27,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,87.85,False
+2026-07-28,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,113.26,False
+2026-07-29,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,128.15,False
+2026-07-30,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,114.2,False
+2026-07-31,200000000014,data-analytics,Amazon OpenSearch Service,AmazonES,us-west-2,110.05,False
+2026-07-01,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,112.41,False
+2026-07-02,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,127.71,False
+2026-07-03,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,134.55,False
+2026-07-04,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,136.76,False
+2026-07-05,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,154.64,False
+2026-07-06,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,97.99,False
+2026-07-07,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,155.37,False
+2026-07-08,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,123.2,False
+2026-07-09,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,148.58,False
+2026-07-10,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,155.74,False
+2026-07-11,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,154.58,False
+2026-07-12,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,124.34,False
+2026-07-13,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,111.09,False
+2026-07-14,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,103.75,False
+2026-07-15,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,137.57,False
+2026-07-16,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,119.26,False
+2026-07-17,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,98.71,False
+2026-07-18,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,110.67,False
+2026-07-19,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,139.08,False
+2026-07-20,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,153.42,False
+2026-07-21,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,131.42,False
+2026-07-22,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,135.28,False
+2026-07-23,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,124.89,False
+2026-07-24,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,132.47,False
+2026-07-25,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,127.45,False
+2026-07-26,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,129.13,False
+2026-07-27,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,132.79,False
+2026-07-28,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,140.02,False
+2026-07-29,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,104.98,False
+2026-07-30,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,140.29,False
+2026-07-31,200000000014,data-analytics,Amazon Managed Streaming for Apache Kafka,AmazonMSK,us-east-1,128.05,False
+2026-07-01,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,595.03,False
+2026-07-02,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,607.3,False
+2026-07-03,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,639.09,False
+2026-07-04,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,608.31,False
+2026-07-05,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,541.99,False
+2026-07-06,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,489.91,False
+2026-07-07,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,627.35,False
+2026-07-08,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,598.17,False
+2026-07-09,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,499.84,False
+2026-07-10,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,569.04,False
+2026-07-11,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,687.24,False
+2026-07-12,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,609.68,False
+2026-07-13,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,600.55,False
+2026-07-14,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,493.03,False
+2026-07-15,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,645.37,False
+2026-07-16,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,502.62,False
+2026-07-17,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,645.91,False
+2026-07-18,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,626.28,False
+2026-07-19,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,613.06,False
+2026-07-20,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,630.25,False
+2026-07-21,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,630.26,False
+2026-07-22,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,649.6,False
+2026-07-23,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,513.97,False
+2026-07-24,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,577.17,False
+2026-07-25,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,635.36,False
+2026-07-26,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,648.32,False
+2026-07-27,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,633.72,False
+2026-07-28,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,548.35,False
+2026-07-29,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,697.06,False
+2026-07-30,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,558.84,False
+2026-07-31,200000000014,data-analytics,Amazon Simple Storage Service,AmazonS3,us-east-1,494.36,False
+2026-07-01,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,83.99,False
+2026-07-02,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,211.45,False
+2026-07-03,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,237.19,False
+2026-07-04,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,559.05,False
+2026-07-05,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,232.22,False
+2026-07-06,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,577.08,False
+2026-07-07,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,586.56,False
+2026-07-08,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,84.46,False
+2026-07-09,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,203.75,False
+2026-07-10,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,76.31,False
+2026-07-11,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,76.61,False
+2026-07-12,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,88.88,False
+2026-07-13,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,584.35,False
+2026-07-14,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,239.27,False
+2026-07-15,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,572.56,False
+2026-07-16,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,226.06,False
+2026-07-17,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,221.13,False
+2026-07-18,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,101.39,False
+2026-07-19,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,82.36,False
+2026-07-20,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,222.62,False
+2026-07-21,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,210.46,False
+2026-07-22,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,205.0,False
+2026-07-23,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,580.0,False
+2026-07-24,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,470.1,False
+2026-07-25,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,86.1,False
+2026-07-26,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,220.48,False
+2026-07-27,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,223.23,False
+2026-07-28,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,582.28,False
+2026-07-29,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,570.2,False
+2026-07-30,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,609.37,False
+2026-07-31,200000000015,ml-research,Amazon Elastic Compute Cloud - Compute,AmazonEC2,us-east-1,218.41,False
+2026-07-01,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,176.52,False
+2026-07-02,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,199.3,False
+2026-07-03,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,225.56,False
+2026-07-04,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,183.73,False
+2026-07-05,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,223.14,False
+2026-07-06,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,250.82,False
+2026-07-07,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,201.53,False
+2026-07-08,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,198.66,False
+2026-07-09,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,207.3,False
+2026-07-10,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,217.22,False
+2026-07-11,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,230.16,False
+2026-07-12,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,203.18,False
+2026-07-13,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,224.62,False
+2026-07-14,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,210.0,False
+2026-07-15,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,215.23,False
+2026-07-16,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,182.92,False
+2026-07-17,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,230.57,False
+2026-07-18,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,195.74,False
+2026-07-19,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,233.9,False
+2026-07-20,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,191.73,False
+2026-07-21,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,211.72,False
+2026-07-22,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,221.95,False
+2026-07-23,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,174.99,False
+2026-07-24,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,222.0,False
+2026-07-25,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,227.01,False
+2026-07-26,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,217.11,False
+2026-07-27,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,205.6,False
+2026-07-28,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,210.89,False
+2026-07-29,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,232.76,False
+2026-07-30,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,191.5,False
+2026-07-31,200000000015,ml-research,Amazon Simple Storage Service,AmazonS3,us-east-1,251.02,False
+2026-07-01,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,45.28,False
+2026-07-02,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,42.49,False
+2026-07-03,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,41.8,False
+2026-07-04,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,33.27,False
+2026-07-05,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,35.38,False
+2026-07-06,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,40.1,False
+2026-07-07,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,39.44,False
+2026-07-08,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,33.48,False
+2026-07-09,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,42.66,False
+2026-07-10,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,44.08,False
+2026-07-11,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,41.03,False
+2026-07-12,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,33.09,False
+2026-07-13,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,46.36,False
+2026-07-14,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,45.46,False
+2026-07-15,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.03,False
+2026-07-16,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,34.75,False
+2026-07-17,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.97,False
+2026-07-18,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.13,False
+2026-07-19,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,41.56,False
+2026-07-20,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.11,False
+2026-07-21,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.44,False
+2026-07-22,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,41.52,False
+2026-07-23,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,39.11,False
+2026-07-24,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,46.1,False
+2026-07-25,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,44.6,False
+2026-07-26,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,43.4,False
+2026-07-27,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,38.6,False
+2026-07-28,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,48.0,False
+2026-07-29,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,46.28,False
+2026-07-30,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,44.62,False
+2026-07-31,200000000015,ml-research,Amazon SageMaker,AmazonSageMaker,us-east-1,33.69,False
+2026-07-01,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,660.08,False
+2026-07-02,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,630.95,False
+2026-07-03,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,671.4,False
+2026-07-04,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,671.94,False
+2026-07-05,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,632.47,False
+2026-07-06,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,673.01,False
+2026-07-07,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,633.48,False
+2026-07-08,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,663.78,False
+2026-07-09,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,664.3,False
+2026-07-10,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,634.99,False
+2026-07-11,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,665.36,False
+2026-07-12,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,636.0,False
+2026-07-13,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,676.77,False
+2026-07-14,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,637.01,False
+2026-07-15,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,667.47,False
+2026-07-16,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,638.02,False
+2026-07-17,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,668.53,False
+2026-07-18,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,639.02,False
+2026-07-19,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,679.98,False
+2026-07-20,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,670.11,False
+2026-07-21,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,681.06,False
+2026-07-22,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,671.17,False
+2026-07-23,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,641.55,False
+2026-07-24,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,642.05,False
+2026-07-25,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,642.55,False
+2026-07-26,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,683.74,False
+2026-07-27,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,643.56,False
+2026-07-28,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,674.34,False
+2026-07-29,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,685.35,False
+2026-07-30,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,685.88,False
+2026-07-31,200000000014,data-analytics,AWS Data Transfer,AWSDataTransfer,us-east-1,675.92,False
+2026-07-01,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,914.98,False
+2026-07-02,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1329.66,False
+2026-07-03,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1358.27,False
+2026-07-04,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1246.66,False
+2026-07-05,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1360.44,False
+2026-07-06,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1387.92,False
+2026-07-07,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1046.66,False
+2026-07-08,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1059.71,False
+2026-07-09,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1103.49,False
+2026-07-10,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1083.36,False
+2026-07-11,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,1062.24,False
+2026-07-12,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,722.58,False
+2026-07-13,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,253.51,False
+2026-07-14,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,266.52,False
+2026-07-15,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,277.53,False
+2026-07-16,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,249.88,False
+2026-07-17,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,264.08,False
+2026-07-18,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,276.45,False
+2026-07-19,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,264.49,False
+2026-07-20,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,254.92,False
+2026-07-21,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,250.87,False
+2026-07-22,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,273.76,False
+2026-07-23,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,255.52,False
+2026-07-24,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,251.46,False
+2026-07-25,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,277.98,False
+2026-07-26,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,274.62,False
+2026-07-27,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,256.32,False
+2026-07-28,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,275.06,False
+2026-07-29,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,269.69,False
+2026-07-30,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,256.93,False
+2026-07-31,200000000013,dev,AmazonCloudWatch,AmazonCloudWatch,us-east-1,270.11,False

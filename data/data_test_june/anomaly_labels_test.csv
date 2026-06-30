@@ -1,0 +1,4 @@
+anomaly_id,label,anomaly_type,linked_account_id,linked_account_name,service,resource_id,start_date,end_date,approx_daily_cost,approx_total_cost,description
+T1,benign,scheduled_backup,200000000012,staging,AmazonRDS,arn:aws:rds:us-east-1:acct:db:db-staging-orphan-01,2026-06-02,2026-06-05,452.61,1357.83,"benign scheduled_backup on AmazonRDS; duration 3d; validated legitimate operation, no alert."
+T2,anomaly,db_saturation,200000000011,prod-payments,AmazonRDS,arn:aws:rds:us-east-1:acct:db:db-1066,2026-06-07,2026-06-14,391.25,2738.75,anomaly db_saturation on AmazonRDS; duration 7d; alert raised 2026-06-08 10:00 (24h delay).
+T3,benign,scheduled_backup,200000000011,prod-payments,AmazonRDS,arn:aws:rds:us-east-1:acct:db:db-1066,2026-06-17,2026-06-24,238.88,1672.16,"benign scheduled_backup on AmazonRDS; duration 7d; validated legitimate operation, no alert."

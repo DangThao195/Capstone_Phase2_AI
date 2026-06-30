@@ -1,0 +1,430 @@
+# ============================================================================
+# Cloud Metrics Generator Configuration
+# ============================================================================
+# This config drives generate_metrics.py to produce realistic cloud
+# infrastructure metrics correlated with AWS cost data.
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# Global settings
+# ---------------------------------------------------------------------------
+global:
+  seed: 42
+  time_range:
+    start: "2026-03-01"
+    end: "2026-05-31"
+  granularity: "hourly"  # hourly | daily
+  total_hours: 2208       # 92 days × 24 hours
+
+# ---------------------------------------------------------------------------
+# Input file paths (relative to data/tf2-finops/)
+# ---------------------------------------------------------------------------
+input_files:
+  anomaly_labels: "../tf2-finops/anomaly_labels_public.csv"
+  cost_explorer:  "../tf2-finops/cost_explorer_daily.csv"
+  cur_line_items: "../tf2-finops/cur_line_items.csv"
+
+# ---------------------------------------------------------------------------
+# Output file paths (relative to metrics_data/)
+# ---------------------------------------------------------------------------
+output_files:
+  metrics_csv: "metrics.csv"
+  metrics_schema: "metrics_schema.json"
+
+# ---------------------------------------------------------------------------
+# Resource type classification rules
+# Maps CUR product_code + usage_type patterns to resource categories.
+# Each category determines which metrics are applicable.
+# ---------------------------------------------------------------------------
+resource_classification:
+  compute:
+    product_codes: ["AmazonEC2"]
+    usage_patterns: ["BoxUsage"]
+    metrics: ["cpu_percent", "memory_mib", "network_in_bytes", "network_out_bytes", "disk_io_ops"]
+  database:
+    product_codes: ["AmazonRDS"]
+    usage_patterns: ["InstanceUsage"]
+    metrics: ["cpu_percent", "memory_mib", "network_in_bytes", "network_out_bytes", "disk_io_ops", "database_connections"]
+  gpu_compute:
+    product_codes: ["AmazonEC2"]
+    instance_types: ["p3.2xlarge", "p3.8xlarge", "p4d.24xlarge", "g4dn"]
+    metrics: ["cpu_percent", "memory_mib", "network_in_bytes", "network_out_bytes", "disk_io_ops", "gpu_utilization"]
+  container:
+    product_codes: ["AmazonEKS", "AmazonECS"]
+    metrics: ["cpu_percent", "memory_mib", "network_in_bytes", "network_out_bytes"]
+  cache:
+    product_codes: ["AmazonElastiCache"]
+    metrics: ["cpu_percent", "memory_mib", "network_in_bytes", "network_out_bytes", "database_connections"]
+  storage:
+    product_codes: ["AmazonS3"]
+    metrics: ["disk_io_ops", "network_in_bytes", "network_out_bytes"]
+
+# ---------------------------------------------------------------------------
+# Resource selection: which resources from CUR to generate metrics for.
+# We pick a representative subset (not all 276) to keep data manageable.
+# ---------------------------------------------------------------------------
+resource_selection:
+  # max resources per category to include
+  max_compute: 30        # from 118 EC2 instances
+  max_database: 12       # from 17 RDS instances
+  max_gpu: 5             # all 5 p3 instances
+  max_container: 5       # from EKS clusters
+  max_cache: 6           # all 6 ElastiCache nodes
+  max_storage: 3         # all 3 S3 buckets
+
+# ---------------------------------------------------------------------------
+# Stochastic process parameters per metric
+# ---------------------------------------------------------------------------
+stochastic_processes:
+  # Ornstein-Uhlenbeck: dX = theta*(mu - X)*dt + sigma*dW
+  cpu_percent:
+    process: "ornstein_uhlenbeck"
+    theta: 0.5            # mean-reversion speed
+    sigma: 8.0            # volatility
+    # mu is derived from cost data per resource
+    clip_min: 1.0
+    clip_max: 100.0
+  
+  memory_mib:
+    process: "ornstein_uhlenbeck"
+    theta: 0.3            # slower mean-reversion (memory is stickier)
+    sigma: 200.0
+    clip_min: 256.0
+    # clip_max derived from instance type
+  
+  database_connections:
+    process: "ornstein_uhlenbeck"
+    theta: 0.4
+    sigma: 15.0
+    clip_min: 0.0
+    clip_max: 500.0
+  
+  # Geometric Brownian Motion: dX = mu*X*dt + sigma*X*dW
+  network_in_bytes:
+    process: "geometric_brownian"
+    mu_drift: 0.0001      # slight upward drift
+    sigma: 0.15
+    clip_min: 1024.0      # 1 KB minimum
+  
+  network_out_bytes:
+    process: "geometric_brownian"
+    mu_drift: 0.0001
+    sigma: 0.18
+    clip_min: 1024.0
+  
+  disk_io_ops:
+    process: "geometric_brownian"
+    mu_drift: 0.00005
+    sigma: 0.12
+    clip_min: 10.0
+  
+  gpu_utilization:
+    process: "ornstein_uhlenbeck"
+    theta: 0.2            # GPU workloads are bursty
+    sigma: 15.0
+    clip_min: 0.0
+    clip_max: 100.0
+
+# ---------------------------------------------------------------------------
+# Seasonality parameters
+# ---------------------------------------------------------------------------
+seasonality:
+  daily:
+    # Hour-of-day multiplier profile (0-23)
+    # Represents typical business-hour patterns
+    business_peak_hours: [9, 10, 11, 12, 13, 14, 15, 16, 17]
+    peak_multiplier: 1.3
+    night_hours: [0, 1, 2, 3, 4, 5]
+    night_multiplier: 0.6
+    transition_hours: [6, 7, 8, 18, 19, 20, 21, 22, 23]
+    transition_multiplier: 0.85
+  
+  weekly:
+    # Day-of-week multiplier (0=Monday, 6=Sunday)
+    weekday_multiplier: 1.0
+    saturday_multiplier: 0.65
+    sunday_multiplier: 0.55
+
+  # Resource-type overrides (some resources don't follow business patterns)
+  overrides:
+    database:
+      # Databases run 24/7 with less variation
+      peak_multiplier: 1.1
+      night_multiplier: 0.85
+      saturday_multiplier: 0.9
+      sunday_multiplier: 0.85
+    gpu_compute:
+      # ML training can run any time
+      peak_multiplier: 1.05
+      night_multiplier: 0.95
+      saturday_multiplier: 0.95
+      sunday_multiplier: 0.9
+    storage:
+      # Storage is very flat
+      peak_multiplier: 1.05
+      night_multiplier: 0.9
+      saturday_multiplier: 0.95
+      sunday_multiplier: 0.9
+
+# ---------------------------------------------------------------------------
+# Trend parameters
+# ---------------------------------------------------------------------------
+trend:
+  # Global organic growth rate per day
+  global_growth_rate: 0.0008  # ~0.08% per day ≈ ~7.5% over 92 days
+  
+  # Per-account growth modifiers
+  account_growth:
+    prod-core: 1.0
+    prod-payments: 1.2
+    staging: 0.5
+    dev: 0.7
+    data-analytics: 1.5
+    ml-research: 1.3
+
+# ---------------------------------------------------------------------------
+# Cross-metric correlation structure
+# ---------------------------------------------------------------------------
+correlations:
+  # Base correlation matrix (Cholesky decomposition applied)
+  cpu_memory: 0.65         # CPU ↑ → Memory ↑
+  cpu_network_in: 0.45     # CPU ↑ → Network ↑ (processing requests)
+  cpu_network_out: 0.50    # CPU ↑ → Network out ↑ (responses)
+  cpu_disk_io: 0.35        # CPU ↑ → Disk IO ↑ (some workloads)
+  memory_disk_io: 0.30     # Memory ↑ → Disk IO ↑ (swapping, caching)
+  network_in_network_out: 0.60  # Request-response pattern
+  db_connections_cpu: 0.55  # More connections → more CPU
+  db_connections_memory: 0.50
+  gpu_cpu: 0.40            # GPU work requires CPU orchestration
+  gpu_memory: 0.55         # GPU training → memory for data loading
+
+# ---------------------------------------------------------------------------
+# Anomaly event definitions
+# These define realistic failure mechanisms. Anomalies are generated
+# as perturbations to the natural time series, NOT from labels.
+# ---------------------------------------------------------------------------
+anomaly_events:
+  # Memory leak: gradual increase over days
+  memory_leak:
+    target_metric: "memory_mib"
+    mechanism: "linear_ramp"
+    ramp_rate_per_hour: 15.0     # MiB/hour increase
+    duration_hours_range: [48, 168]  # 2-7 days
+    secondary_effects:
+      cpu_percent:
+        increase_factor: 1.15     # GC pressure
+      disk_io_ops:
+        increase_factor: 1.3      # swapping
+    applicable_types: ["compute", "database", "container"]
+  
+  # DDoS-like: sudden network spike
+  ddos_spike:
+    target_metric: "network_in_bytes"
+    mechanism: "exponential_spike"
+    spike_factor_range: [3.0, 8.0]
+    onset_hours: 2
+    duration_hours_range: [6, 48]
+    recovery_hours: 4
+    secondary_effects:
+      cpu_percent:
+        increase_factor: 1.8
+      network_out_bytes:
+        increase_factor: 1.5
+      memory_mib:
+        increase_factor: 1.2
+    applicable_types: ["compute", "container"]
+  
+  # Database saturation: connections spike
+  db_saturation:
+    target_metric: "database_connections"
+    mechanism: "step_increase"
+    step_factor_range: [2.5, 5.0]
+    duration_hours_range: [12, 72]
+    secondary_effects:
+      cpu_percent:
+        increase_factor: 1.6
+      memory_mib:
+        increase_factor: 1.3
+    applicable_types: ["database", "cache"]
+  
+  # Disk bottleneck
+  disk_bottleneck:
+    target_metric: "disk_io_ops"
+    mechanism: "saturation_plateau"
+    saturation_level_range: [0.85, 0.98]  # fraction of max
+    duration_hours_range: [24, 120]
+    secondary_effects:
+      cpu_percent:
+        increase_factor: 1.4       # IO wait
+      memory_mib:
+        increase_factor: 1.15      # buffering
+    applicable_types: ["compute", "database", "storage"]
+  
+  # GPU runaway: stuck at high utilization
+  gpu_runaway:
+    target_metric: "gpu_utilization"
+    mechanism: "saturation_plateau"
+    saturation_level_range: [92.0, 99.5]
+    duration_hours_range: [48, 240]  # 2-10 days
+    secondary_effects:
+      cpu_percent:
+        increase_factor: 1.2
+      memory_mib:
+        increase_factor: 1.4
+    applicable_types: ["gpu_compute"]
+  
+  # Idle resource: very low utilization despite being provisioned
+  idle_resource:
+    target_metric: "cpu_percent"
+    mechanism: "suppression"
+    suppression_level_range: [0.5, 3.0]  # near-zero CPU
+    duration_hours_range: [480, 1700]  # weeks to months
+    secondary_effects:
+      memory_mib:
+        factor: 0.15              # minimal memory use
+      network_in_bytes:
+        factor: 0.05
+      network_out_bytes:
+        factor: 0.05
+      database_connections:
+        level_range: [0, 2]       # near-zero connections
+    applicable_types: ["database", "compute"]
+
+# ---------------------------------------------------------------------------
+# Benign event definitions
+# These produce metric changes similar to anomalies but are legitimate.
+# ---------------------------------------------------------------------------
+benign_events:
+  # Autoscaling event
+  autoscaling:
+    mechanism: "periodic_burst"
+    affected_metrics: ["cpu_percent", "memory_mib", "network_in_bytes"]
+    burst_factor: 1.6
+    duration_hours: 2
+    recovery_hours: 1
+    periodicity: "daily"  # happens predictably
+    applicable_types: ["compute", "container"]
+  
+  # Scheduled backup
+  scheduled_backup:
+    mechanism: "periodic_burst"
+    affected_metrics: ["disk_io_ops", "network_out_bytes", "cpu_percent"]
+    burst_factor: 2.5
+    duration_hours: 3
+    recovery_hours: 1
+    periodicity: "daily"     # same time each day
+    time_of_day_hour: 2      # 2 AM
+    applicable_types: ["database", "storage"]
+  
+  # Batch ETL job
+  batch_etl:
+    mechanism: "scheduled_window"
+    affected_metrics: ["cpu_percent", "memory_mib", "disk_io_ops", "network_in_bytes"]
+    increase_factor: 2.0
+    duration_hours: 4
+    periodicity: "weekly"
+    day_of_week: 0           # Monday
+    time_of_day_hour: 22     # 10 PM
+    applicable_types: ["compute", "database", "container"]
+  
+  # ML training job (legitimate GPU usage)
+  ml_training:
+    mechanism: "scheduled_window"
+    affected_metrics: ["gpu_utilization", "cpu_percent", "memory_mib"]
+    increase_factor: 1.8
+    gpu_target_range: [70.0, 95.0]
+    duration_hours_range: [8, 24]
+    periodicity: "weekly"
+    applicable_types: ["gpu_compute"]
+  
+  # One-time data migration (matches B2 label)
+  data_migration:
+    mechanism: "one_time_burst"
+    affected_metrics: ["network_out_bytes", "network_in_bytes", "disk_io_ops"]
+    burst_factor: 4.0
+    start_date: "2026-03-28"
+    end_date: "2026-03-30"
+    applicable_types: ["compute", "storage"]
+  
+  # Deployment spike
+  deployment:
+    mechanism: "periodic_burst"
+    affected_metrics: ["cpu_percent", "memory_mib", "network_in_bytes"]
+    burst_factor: 1.4
+    duration_hours: 1
+    recovery_hours: 0.5
+    periodicity: "biweekly"  # sprint deploys
+    applicable_types: ["compute", "container"]
+
+# ---------------------------------------------------------------------------
+# Label distribution targets
+# ---------------------------------------------------------------------------
+label_distribution:
+  normal: 0.87
+  benign: 0.07
+  anomaly: 0.06
+  # Tolerance: ±2% each
+
+# ---------------------------------------------------------------------------
+# Leakage prevention settings
+# ---------------------------------------------------------------------------
+leakage_prevention:
+  # Add random noise to ALL metric values
+  noise_floor_fraction: 0.03   # 3% of value as Gaussian noise
+  
+  # Randomly inject spikes in normal data
+  normal_spike_probability: 0.005  # 0.5% of normal hours get random spikes
+  normal_spike_factor_range: [1.5, 2.5]
+  
+  # Make some anomalies subtle
+  subtle_anomaly_fraction: 0.3   # 30% of anomalies are subtle (small deviations)
+  subtle_anomaly_dampening: 0.4  # reduce anomaly effect by 60%
+  
+  # Make some benign events extreme
+  extreme_benign_fraction: 0.2   # 20% of benign events are large
+  extreme_benign_amplification: 1.8
+
+# ---------------------------------------------------------------------------
+# Cost-to-metric mapping baselines
+# These map daily unblended cost to approximate baseline metric values.
+# The mapping is noisy and probabilistic, not deterministic.
+# ---------------------------------------------------------------------------
+cost_metric_baselines:
+  # Compute cost → CPU baseline
+  # $20/day for m5.2xlarge ≈ 40-60% avg CPU
+  compute_cost_to_cpu:
+    slope: 2.5              # cpu% per $ daily cost
+    intercept: 15.0
+    noise_std: 8.0
+  
+  # Compute cost → Memory baseline
+  # m5.2xlarge = 32 GiB, at $20/day usage implies ~60% memory
+  compute_cost_to_memory_mib:
+    slope: 800.0            # MiB per $ daily cost
+    intercept: 4096.0
+    noise_std: 2000.0
+  
+  # Data transfer cost → Network baseline
+  # $400/day transfer ≈ 4700 GB ≈ 5.6 GB/hr
+  transfer_cost_to_network:
+    slope: 50000000.0       # bytes per $ daily cost (50 MB per $)
+    intercept: 1000000.0
+    noise_std: 20000000.0
+  
+  # Storage cost → Disk IO
+  storage_cost_to_disk_io:
+    slope: 5.0              # ops per $ daily cost
+    intercept: 100.0
+    noise_std: 50.0
+  
+  # Database cost → Connections
+  database_cost_to_connections:
+    slope: 0.8              # connections per $ daily cost
+    intercept: 10.0
+    noise_std: 8.0
+  
+  # GPU cost → GPU utilization
+  gpu_cost_to_utilization:
+    slope: 0.5
+    intercept: 20.0
+    noise_std: 15.0
