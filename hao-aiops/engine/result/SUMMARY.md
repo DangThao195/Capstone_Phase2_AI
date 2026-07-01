@@ -27,7 +27,7 @@
 
 ## 3. Feature Engineering
 
-Từ cost daily data, engineer **35 features** theo 3 nhóm:
+Từ cost daily data, engineer **44 features** theo 3 nhóm:
 
 ### 3.1 Temporal / Rolling (trên `unblended_cost` per account-service group)
 
@@ -70,7 +70,7 @@ STL (Seasonal-Trend decomposition using LOESS) tách time series thành 3 thành
 
 ## 3b. Những gì model thực sự học — Feature Groups
 
-Model XGBoost nhận vào **35 features** chia làm 4 nhóm (+ STL sub-group), mỗi nhóm mang một loại signal khác nhau:
+Model XGBoost nhận vào **44 features** chia làm 4 nhóm (+ STL sub-group), mỗi nhóm mang một loại signal khác nhau:
 
 ### Nhóm 1 — Cost Trend Features (từ `unblended_cost`)
 *Câu hỏi: chi tiêu đang đi theo xu hướng nào?*
@@ -175,7 +175,7 @@ Timeline:
 Incoming daily cost record
          │
          ├─ Có lịch sử ≥ 7 ngày? ──YES──► XGBoost (supervised)
-         │                                  ├─ 35 features
+         │                                  ├─ 44 features
          │                                  ├─ Optuna 30 trials (TPE sampler)
          │                                  ├─ Threshold = argmax F1 trên val split
          │                                  └─ SHAP waterfall cho explainability
@@ -225,10 +225,10 @@ Trong production, có 3 cách giải quyết:
 
 | Metric | Giá trị | TF2 Gate | Đánh giá |
 |---|---|---|---|
-| Precision | **0.872** | ✅ ≥ 80% | Đạt yêu cầu |
+| Precision | **0.851** | ✅ ≥ 80% | Đạt yêu cầu |
 | Recall | **1.000** | — | Rất tốt (> 90%) |
-| F1-score | **0.932** | — | Rất tốt |
-| FPR | **0.019** | ✅ ≤ 10% | Rất thấp |
+| F1-score | **0.919** | — | Rất tốt |
+| FPR | **0.005** | ✅ ≤ 10% | Rất thấp |
 | ROC-AUC | **1.000** | — | Excellent |
 
 **TF2 Gate: ✅ PASS**
@@ -237,11 +237,11 @@ Trong production, có 3 cách giải quyết:
 
 | Metric | Giá trị |
 |---|---|
-| Precision | 0.022 |
-| Recall | 0.019 |
-| F1-score | 0.020 |
-| FPR | 0.111 |
-| ROC-AUC | 0.268 |
+| Precision | 0.000 |
+| Recall | 0.000 |
+| F1-score | 0.000 |
+| FPR | 0.010 |
+| ROC-AUC | 0.214 |
 
 **TF2 Gate: ❌ FAIL**
 
@@ -249,9 +249,9 @@ Trong production, có 3 cách giải quyết:
 
 | Event | Type | XGBoost | Isolation Forest | Ghi chú |
 |---|---|---|---|---|
-| **A2** | `idle_resource` | ✅ Fully detected (292/292) | ⚠️ Weakly detected (6/292 records) | 292 records (73 ngày × 4 services acct dev) |
-| **A6** | `sudden_spike` | ✅ Fully detected (28/28) | ❌ Missed (0/28 records) | Cold-start → rule-based catches 7/7 days |
-| **B2** | `benign_event` | ✅ TN — correctly suppressed (0/18 flagged) | ⚠️ FP — 6/18 records falsely flagged | Rule-based có thể FP → cần human review |
+| **A2** | `idle_resource` | ⚠️ Weakly detected (73/292 records) | ❌ Missed (0/292 records) | 292 records (73 ngày × 4 services acct dev) |
+| **A6** | `sudden_spike` | ⚠️ Weakly detected (5/28 records) | ❌ Missed (0/28 records) | Cold-start → rule-based catches 7/7 days |
+| **B2** | `benign_event` | ✅ TN — correctly suppressed (0/18 flagged) | ✅ TN — correctly suppressed (0/18 flagged) | Rule-based có thể FP → cần human review |
 
 ---
 
