@@ -5,7 +5,9 @@
 ║           Hybrid Statistical + Supervised ML, 24h-cadence                    ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
+
 LAYER 0 — DATA INGESTION
+
 ┌─────────────────────────────────────────────────────────────┐
 │  cost_explorer_daily.csv  ──┐                               │
 │  cur_line_items.csv        ─┼──► Raw DataFrames             │
@@ -14,9 +16,12 @@ LAYER 0 — DATA INGESTION
 │  Tech: pandas read_csv, parse_dates, low_memory             │
 │  Fix:  is_estimated flag aware (CUR 2-day lag)              │
 └─────────────────────────────────────────────────────────────┘
+
                           │
                           ▼
+                          
 LAYER 1 — FEATURE ENGINEERING (dynamics-only, no identity)
+
 ┌──────────────────────────────────────────────────────────────┐
 │  daily_metrics_agg()    → met_cpu/mem/net/disk/gpu (mean+max)│
 │  cur_daily_agg()        → top_resource_share, n_resources,   │
