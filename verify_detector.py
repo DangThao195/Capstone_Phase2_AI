@@ -10,7 +10,7 @@ try:
 except Exception:
     HAS_SKLEARN = False
 
-ROOT = Path(r"h:/Capstone_Phase2_AI")
+ROOT = Path(__file__).parent
 LINE_ITEMS_PATH = ROOT / "data" / "cur_line_items.csv"
 LABELS_PATH = ROOT / "anomaly_labels_full.csv"
 SCENARIO_PATH = ROOT / "scenario" / "scenarios.csv"
@@ -31,43 +31,14 @@ labels_df = pd.read_csv(LABELS_PATH)
 labels_df["start_date"] = pd.to_datetime(labels_df["start_date"]).dt.normalize()
 labels_df["end_date"] = pd.to_datetime(labels_df["end_date"]).dt.normalize()
 
-BENIGN_RESOURCE_PATTERNS = ("loadtest", "flashsale", "autoscale", "sandbox")
-
-if SCENARIO_PATH.exists():
-    scenario_df = pd.read_csv(SCENARIO_PATH)
-    scenario_df["resource_id"] = scenario_df["resource_id"].fillna("").astype(str)
-    scenario_df["expected_label"] = scenario_df["expected_label"].fillna("").astype(str)
-    scenario_df["start_date"] = pd.to_datetime(scenario_df["start_date"], errors="coerce").dt.normalize()
-    scenario_df["end_date"] = pd.to_datetime(scenario_df["end_date"], errors="coerce").dt.normalize()
-    BENIGN_SCENARIO_WINDOWS = [
-        (str(row.resource_id).strip().lower(), row.start_date, row.end_date)
-        for _, row in scenario_df.loc[scenario_df["expected_label"].str.lower() == "benign"].iterrows()
-        if str(row.resource_id).strip()
-    ]
-else:
-    BENIGN_SCENARIO_WINDOWS = []
-
+BENIGN_RESOURCE_PATTERNS = ("loadtest", "flashsale", "autoscale", "sandbox", "migration")
 
 def is_benign_resource(resource_id: object, service: object, date: object | None = None) -> bool:
-    resource_id_text = str(resource_id).strip().lower()
-
-    # Kiểm tra scenario windows trước — nếu resource có window cụ thể thì dùng window đó
-    for known_resource, start_date, end_date in BENIGN_SCENARIO_WINDOWS:
-        if known_resource and known_resource == resource_id_text:
-            if date is None:
-                return True
-            if pd.notna(start_date) and pd.notna(end_date):
-                date_norm = pd.Timestamp(date).tz_localize(None) if pd.Timestamp(date).tzinfo is not None else pd.Timestamp(date)
-                date_norm = date_norm.normalize()
-                if start_date.normalize() <= date_norm <= end_date.normalize():
-                    return True
-                return False
-
-    # Keyword patterns: chỉ áp dụng cho resource KHÔNG có scenario window
+    # Quyết định hoàn toàn dựa trên metadata của resource (tên/tag/service)
+    # Không "nhìn trộm" lịch kịch bản từ file scenarios.csv nữa
     resource_text = f"{resource_id} {service}".lower()
     if any(pattern in resource_text for pattern in BENIGN_RESOURCE_PATTERNS):
         return True
-
     return False
 
 
@@ -144,16 +115,15 @@ def add_robust_features(group: pd.DataFrame) -> pd.DataFrame:
         & (group["daily_change_pct"].abs() < 0.05)
     )
 
-    # idle_like_rds: RDS orphan — cost đều đặn (CV < 0.08), kéo dài >= 14 ngày, $20-$60/ngày
+    # idle_like_rds: RDS orphan — cost ổn định, connections/usage gần như bằng 0 (mô phỏng kịch bản thật)
     rolling_mean_14 = group["cost"].rolling(14, min_periods=10).mean()
     rolling_std_14 = group["cost"].rolling(14, min_periods=10).std()
     cv_14 = (rolling_std_14 / rolling_mean_14.replace(0, np.nan)).fillna(1.0)
     group["idle_like_rds"] = (
-        (rolling_mean_14 >= 20)
-        & (rolling_mean_14 <= 60)
-        & (cv_14 < 0.08)
-        & (group["cost"] >= 20)
-        & (group["usage"] >= 20)
+        (rolling_mean_14 >= 10)
+        & (cv_14 < 0.15)
+        & (group["cost"] >= 10)
+        & (group["usage"] >= 20)  # Database size hay metric dung lượng lớn nhưng connection ~ 0
     )
 
     return group
@@ -191,13 +161,9 @@ resource_features["usage_change_pct"] = resource_features["usage_change_pct"].fi
 resource_features["cost_abs_jump"] = resource_features["cost_abs_jump"].fillna(0)
 resource_features["mom_ratio"] = resource_features["mom_ratio"].fillna(1.0)
 
-resource_features["scenario_benign"] = resource_features.apply(
-    lambda row: is_benign_resource(row["resource_id"], row["service"], row["date"]), axis=1
-)
 resource_features["is_benign"] = resource_features.apply(
     lambda row: is_benign_resource(row["resource_id"], row["service"]), axis=1
 )
-resource_features["is_benign"] = resource_features["is_benign"] | resource_features["scenario_benign"]
 
 feature_cols = [
     "cost", "cost_ratio_to_baseline", "mad_score", "z_score",
@@ -244,14 +210,12 @@ _flat = resource_features["_is_flat_throughout"]
 resource_features.loc[_flat, "peer_cost_sustained"] = False
 resource_features.loc[_flat, "sustained_high_cost"] = False
 
-# A5/A6 FIX: spike từ baseline ~0 → ratio = inf bị clean mất.
-# Dùng absolute_jump_spike: cost nhảy >= $200 trong 1 ngày từ baseline thấp (< $50).
-# baseline_cost phải notna — ngày đầu tiên của dataset có baseline=NaN, không phải spike thật.
+# Spike từ baseline ~0 (định nghĩa tổng quát)
 resource_features["absolute_jump_spike"] = (
-    (resource_features["cost_abs_jump"] >= 200)
+    (resource_features["cost_abs_jump"] >= 100)
     & (resource_features["baseline_cost"].notna())
     & (resource_features["baseline_cost"] < 50)
-    & (resource_features["cost"] >= 200)
+    & (resource_features["cost"] >= 100)
 )
 
 # strong_spike: ratio-based, chỉ valid khi có history (baseline notna)
@@ -266,26 +230,26 @@ resource_features["strong_spike"] = (
 resource_features["strong_spike_moderate"] = (
     (resource_features["cost_ratio_to_baseline"] >= 1.5)
     & (resource_features["z_score"].abs() >= 1.5)
-    & (resource_features["cost"] >= 150)
+    & (resource_features["cost"] >= 100)
     & (resource_features["baseline_cost"].notna())
 )
 
 resource_features["strong_drift"] = (
     (resource_features["cost_ratio_to_baseline"] >= 1.15)
     & (resource_features["daily_change_pct"].abs() >= 0.08)
-    & (resource_features["cost"] >= 60)
+    & (resource_features["cost"] >= 50)
 )
 
-resource_features["strong_idle"] = resource_features["low_usage_high_cost"] & (resource_features["cost"] >= 80)
+resource_features["strong_idle"] = resource_features["low_usage_high_cost"] & (resource_features["cost"] >= 50)
 
 resource_features["strong_untagged"] = (
     resource_features["tag_missing_flag"]
-    & (resource_features["cost"] >= 150)
+    & (resource_features["cost"] >= 100)
     & (resource_features["baseline_cost"].notna())
     & (
         (resource_features["cost_ratio_to_baseline"] >= 1.2)
         | (resource_features["z_score"].abs() >= 1.5)
-        | (resource_features["cost"] >= 300)
+        | (resource_features["cost"] >= 200)
     )
     # Loại flat-92-day resources: z cao chỉ do noise tháng, không phải anomaly thật
     & ~(
@@ -297,51 +261,49 @@ resource_features["strong_untagged"] = (
 resource_features["sustained_high_cost"] = False
 for _rid, grp in resource_features.groupby("resource_id", dropna=False):
     grp = grp.sort_values("date").copy()
-    sustained = ((grp["cost"] >= 60) & (grp["usage"] >= 10)).rolling(5, min_periods=3).sum() >= 3
+    sustained = ((grp["cost"] >= 50) & (grp["usage"] >= 10)).rolling(5, min_periods=3).sum() >= 3
     resource_features.loc[grp.index, "sustained_high_cost"] = sustained.astype(bool)
 
 resource_features["persistent_high_cost"] = False
 for _rid, grp in resource_features.groupby("resource_id", dropna=False):
     grp = grp.sort_values("date").copy()
-    persistent = ((grp["cost"] >= 50) & (grp["usage"] >= 10)).rolling(5, min_periods=3).sum() >= 3
+    persistent = ((grp["cost"] >= 40) & (grp["usage"] >= 10)).rolling(5, min_periods=3).sum() >= 3
     resource_features.loc[grp.index, "persistent_high_cost"] = persistent.astype(bool)
 
 resource_features["stable_high_cost"] = (
-    (resource_features["cost"] >= 80)
-    & (resource_features["usage"] >= 20)
+    (resource_features["cost"] >= 50)
+    & (resource_features["usage"] >= 10)
     & (resource_features["cost_ratio_to_baseline"].between(0.9, 1.2, inclusive="both"))
     & (~resource_features["tag_missing_flag"])
 )
 
-# idle_like_cost: cho EC2/Lambda/NAT với usage units thấp
+# idle_like_cost: cho EC2/Lambda/NAT với usage units thấp (tổng quát hóa)
 resource_features["idle_like_cost"] = False
 for _rid, grp in resource_features.groupby("resource_id", dropna=False):
     grp = grp.sort_values("date").copy()
     rolling_mean = grp["cost"].rolling(7, min_periods=5).mean()
     rolling_std = grp["cost"].rolling(7, min_periods=5).std()
     idle_like = (
-        (rolling_mean >= 20)
-        & (rolling_mean <= 60)
-        & (rolling_std <= 8)
+        (rolling_mean >= 10)
+        & (rolling_std <= 10)
         & (grp["usage"] <= 5)
-        & (grp["cost"] >= 20)
+        & (grp["cost"] >= 10)
     )
     resource_features.loc[grp.index, "idle_like_cost"] = idle_like.astype(bool)
 
-# A7 FIX: gradual_drift_mom — tăng month-over-month >= 1.5x (DynamoDB WCU drift)
+# A7: gradual_drift_mom — tăng month-over-month (tổng quát hóa)
 resource_features["gradual_drift_mom"] = (
-    (resource_features["mom_ratio"] >= 1.50)
-    & (resource_features["cost"] >= 100)
+    (resource_features["mom_ratio"] >= 1.30)
+    & (resource_features["cost"] >= 50)
     & (resource_features["usage"] >= 10)
 )
 
 # ── SCENARIO 1: runaway_cluster ───────────────────────────────────────────────
-# GPU cluster bị quên: nhiều instance cùng loại, mỗi cái $50-$100/ngày, flat 7+ ngày.
-# "Newly appeared" = days_with_cost 5-30 ngày (resource mới, không phải long-running baseline).
+# GPU cluster bị quên (tổng quát hóa)
 resource_features["new_sustained_resource"] = (
-    (resource_features["resource_cv"] < 0.08)
+    (resource_features["resource_cv"] < 0.12)
     & (resource_features["resource_days_with_cost"].between(5, 30))
-    & (resource_features["cost"] >= 50)
+    & (resource_features["cost"] >= 30)
     & (resource_features["baseline_cost"].notna())
 )
 
@@ -357,9 +319,7 @@ resource_features["runaway_cluster"] = (
 )
 
 # ── SCENARIO 2: orphan_storage ────────────────────────────────────────────────
-# EBS volume unattached: cost $1-$25/ngày, ổn định dài hạn (CV thấp).
-# Chỉ áp dụng cho Amazon EC2 storage (EBS) — service name hoặc resource prefix "vol-".
-# Managed services (RDS, ElastiCache, Kinesis...) có cost thấp là bình thường, không phải orphan.
+# EBS volume unattached (tổng quát hóa)
 _ebs_mask = (
     resource_features["service"].str.contains("Elastic Compute Cloud|AmazonEC2", na=False)
     | resource_features["resource_id"].str.startswith("vol-")
@@ -367,7 +327,6 @@ _ebs_mask = (
 resource_features["orphan_storage"] = False
 for _rid, grp in resource_features.groupby("resource_id", dropna=False):
     grp = grp.sort_values("date").copy()
-    # Chỉ xét EBS volumes
     if not (_ebs_mask.loc[grp.index].any()):
         continue
     if not str(_rid).lower().startswith("vol-"):
@@ -377,58 +336,47 @@ for _rid, grp in resource_features.groupby("resource_id", dropna=False):
     rolling_std = grp["cost"].rolling(14, min_periods=10).std()
     cv = (rolling_std / rolling_mean.replace(0, np.nan)).fillna(1.0)
     orphan = (
-        (grp["cost"].between(0.5, 25, inclusive="both"))
+        (grp["cost"] >= 0.2)
         & (rolling_days >= 10)
-        & (cv < 0.15)
+        & (cv < 0.25)
     )
     resource_features.loc[grp.index, "orphan_storage"] = orphan.astype(bool)
 
 # ── SCENARIO 3: untagged_persistent ──────────────────────────────────────────
-# Compute resource (EC2/RDS/Lambda) thiếu tag chạy liên tục >= 14 ngày, cost >= $50/ngày.
-# Giới hạn ở compute: S3/DynamoDB/DataTransfer untagged 92 ngày là billing background.
-# EC2/RDS untagged = không biết ai chịu trách nhiệm = actionable compliance issue.
+# Compute resource (EC2/RDS/Lambda) thiếu tag chạy liên tục dài hạn.
 resource_features["_is_compute"] = resource_features["service"].str.contains(
     "Elastic Compute Cloud|Relational Database|SageMaker|ElastiSearch|EKS|Elastic Container",
     case=False, na=False
-    # Lambda KHÔNG include: Lambda billing flat 92 ngày là background (event-driven, không phải EC2)
 )
 resource_features["untagged_persistent"] = False
 for _rid, grp in resource_features.groupby("resource_id", dropna=False):
     grp = grp.sort_values("date").copy()
-    # Chỉ xét compute resources — bỏ S3/DynamoDB/DataTransfer/CloudWatch
     if not resource_features.loc[grp.index, "_is_compute"].any():
         continue
-    d_with_cost = int((grp["cost"] > 10).sum())
-    avg_cost = float(grp["cost"].mean())
-    # Với compute, chỉ skip nếu cost thấp (< $100/ngày avg) — EC2/RDS đắt hơn phải báo
-    if d_with_cost >= 60 and avg_cost < 100:
-        continue
+    # Bất kỳ compute resource nào thiếu tag chạy liên tục từ 10 ngày trở lên với cost >= 10
     persistent_untagged = (
         (grp["tag_missing"])
-        & (grp["cost"] >= 50)
-    ).rolling(14, min_periods=10).sum() >= 10
+        & (grp["cost"] >= 10)
+    ).rolling(10, min_periods=7).sum() >= 7
     resource_features.loc[grp.index, "untagged_persistent"] = persistent_untagged.astype(bool)
 
-# is_flat_baseline: resource có cost cao ổn định LIÊN TỤC cả kỳ (CV < 0.12, >= 60 ngày cost > $10)
-# Loại trừ resource có tag_missing (A4 untagged fleet) — untagged persistent luôn phải báo
+# is_flat_baseline: resource có cost cao ổn định LIÊN TỤC cả kỳ (CV < 0.15)
 resource_features["is_flat_baseline"] = (
     resource_features["_is_flat_throughout"]
-    & (resource_features["cost"] >= 150)
+    & (resource_features["cost"] >= 50)
     & (resource_features["baseline_cost"].notna())
     & (~resource_features["tag_missing"])
 )
 
 # absolute_cost_signal: chỉ valid khi có history VÀ không phải flat-throughout resource.
-# Dùng CV + days filter riêng để tránh phụ thuộc vào is_flat_baseline (vốn exempt untagged).
 resource_features["absolute_cost_signal"] = (
-    (resource_features["cost"] >= 250)
-    & (resource_features["usage"] >= 200)
+    (resource_features["cost"] >= 100)
+    & (resource_features["usage"] >= 50)
     & (resource_features["baseline_cost"].notna())
     & (~resource_features["is_flat_baseline"])
-    # Thêm: loại resource chạy flat 92 ngày kể cả untagged (chúng là background, không phải anomaly)
     & ~(
-        (resource_features["resource_cv"] < 0.12)
-        & (resource_features["resource_days_with_cost"] >= 75)
+        (resource_features["resource_cv"] < 0.15)
+        & (resource_features["resource_days_with_cost"] >= 60)
     )
 )
 
@@ -559,100 +507,101 @@ for resource_id, group in resource_features.groupby("resource_id", dropna=False)
         # Thứ tự ưu tiên: spike > idle > untagged > gradual_drift > runaway > sustained
 
         # sudden_spike: ratio-based hoặc absolute jump từ baseline ~$0 (A5 NAT, A6 CloudWatch)
+        # sudden_spike: ratio-based hoặc absolute jump từ baseline ~$0
         if (
             peak["absolute_jump_spike"]
-            and peak_cost >= 200
+            and peak_cost >= 50
         ) or (
             (peak["strong_spike"] or peak["strong_spike_moderate"])
             and peak_ratio >= 1.5
             and peak_z >= 1.5
-            and peak_cost >= 50
+            and peak_cost >= 10
         ) or (
             peak["absolute_cost_signal"]
-            and peak_cost >= 250
+            and peak_cost >= 50
             and event_len >= 2
         ):
             anomaly_type = "sudden_spike"
 
-        # idle_resource (RDS pattern — A2): cost ổn định dài hạn, provisioned nhưng không dùng
+        # idle_resource (RDS pattern): cost ổn định dài hạn, provisioned nhưng không dùng
         elif (
             peak["idle_like_rds"]
-            and peak_cost >= 20
-            and event_len >= 10
+            and peak_cost >= 10
+            and event_len >= 7
         ):
             anomaly_type = "idle_resource"
 
         # idle_resource (EC2/Lambda pattern): usage đơn vị thấp
         elif (
             (peak["idle_like_cost"] or peak["low_usage_high_cost"])
-            and peak_cost >= 20
+            and peak_cost >= 10
             and peak["usage"] <= 5
-            and event_len >= 5
+            and event_len >= 3
         ):
             anomaly_type = "idle_resource"
 
         # S2: orphan storage — EBS/volume không dùng nhưng vẫn tính tiền
         elif (
             peak["orphan_storage"]
-            and event_len >= 10
+            and event_len >= 7
         ):
             anomaly_type = "idle_resource"
 
-        # S3: untagged_persistent — resource thiếu tag chạy >= 14 ngày
+        # S3: untagged_persistent — resource thiếu tag chạy dài hạn
         elif (
             peak["untagged_persistent"]
-            and peak_cost >= 50
-            and event_len >= 10
+            and peak_cost >= 10
+            and event_len >= 7
         ):
             anomaly_type = "untagged_spend"
 
         elif (
             peak["tag_missing_flag"]
-            and peak_cost >= 150
+            and peak_cost >= 50
             and event_len >= 3
-            and (peak_ratio >= 1.2 or peak_z >= 1.5 or peak_cost >= 300)
+            and (peak_ratio >= 1.2 or peak_z >= 1.5 or peak_cost >= 100)
         ):
             anomaly_type = "untagged_spend"
 
         # S1: runaway_cluster — GPU cluster mới xuất hiện, nhiều instance cùng lúc
         elif (
             peak["runaway_cluster"]
-            and peak_cost >= 50
-            and event_len >= 5
+            and peak_cost >= 10
+            and event_len >= 3
         ):
             anomaly_type = "runaway_usage"
 
-        # gradual_drift: month-over-month >= 1.5x (A7 DynamoDB)
+        # gradual_drift: month-over-month >= 1.3x
         elif (
             peak["gradual_drift_mom"]
-            and peak_cost >= 100
-            and event_len >= 14
+            and peak_cost >= 50
+            and event_len >= 7
         ):
             anomaly_type = "gradual_drift"
 
         elif (
             peak["stable_high_cost"]
-            and peak_cost >= 80
-            and peak["usage"] >= 20
-            and event_len >= 6
-            and peak["score"] >= 0.35
+            and peak_cost >= 50
+            and peak["usage"] >= 5
+            and event_len >= 5
+            and peak["score"] >= 0.30
         ):
             anomaly_type = "sustained_high_cost"
 
         elif (
             (peak["persistent_high_cost"] or peak["peer_cost_sustained"] or peak["growth_signal"])
-            and peak_cost >= 60
-            and event_len >= 6
-            and peak["usage"] >= 10
-            and peak["score"] >= 0.35
+            and peak_cost >= 25
+            and event_len >= 5
+            and peak["usage"] >= 5
+            and peak["score"] >= 0.30
         ):
             anomaly_type = "runaway_usage"
 
         elif (
             peak["strong_drift"]
-            and event_len >= 4
-            and peak_cost >= 80
-            and peak["score"] >= 0.35
+            and event_len >= 3
+            and peak_cost >= 25
+            and peak["score"] >= 0.30
         ):
             anomaly_type = "gradual_drift"
 
