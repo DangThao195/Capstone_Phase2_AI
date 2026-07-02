@@ -1,0 +1,12 @@
+detected_at,account,service,resource_id,anomaly_type,severity,score,fp_risk,reason,source
+2026-05-13,200000000010,AWS Data Transfer,natgw-misconfig-spike,sudden_spike,high,0.443,low,Robust-statistical deviation from the rolling baseline.,unsupervised-statistical
+2026-03-10,200000000011,Amazon Elastic Compute Cloud,i-0untaggedfleet01,untagged_spend,medium,0.483,medium,High-cost resource is missing ownership or team tags.,unsupervised-statistical
+2026-03-29,200000000012,Amazon Relational Database Service,arn:aws:rds:us-east-1:acct:db:db-staging-orphan-01,idle_resource,medium,0.302,low,Low-usage resource still incurs cost.,unsupervised-statistical
+2026-03-10,200000000013,Amazon Elastic Compute Cloud,vol-0orphans-aggregate,idle_resource,medium,0.33,low,Low-usage resource still incurs cost.,unsupervised-statistical
+2026-04-29,200000000013,AmazonCloudWatch,log-group-debug-runaway,sudden_spike,high,0.397,low,Robust-statistical deviation from the rolling baseline.,unsupervised-statistical
+2026-04-10,200000000014,Amazon DynamoDB,ddb-table-events-prod,sudden_spike,medium,0.667,low,Robust-statistical deviation from the rolling baseline.,unsupervised-statistical
+2026-04-09,200000000015,Amazon Elastic Compute Cloud,i-0fbgpu00000000,runaway_usage,medium,0.389,low,Persistent high-cost usage over several days indicates runaway spend.,unsupervised-statistical
+2026-04-09,200000000015,Amazon Elastic Compute Cloud,i-0fbgpu00000001,runaway_usage,medium,0.33,low,Persistent high-cost usage over several days indicates runaway spend.,unsupervised-statistical
+2026-04-09,200000000015,Amazon Elastic Compute Cloud,i-0fbgpu00000002,runaway_usage,medium,0.368,low,Persistent high-cost usage over several days indicates runaway spend.,unsupervised-statistical
+2026-04-09,200000000015,Amazon Elastic Compute Cloud,i-0fbgpu00000003,runaway_usage,medium,0.332,low,Persistent high-cost usage over several days indicates runaway spend.,unsupervised-statistical
+2026-04-09,200000000015,Amazon Elastic Compute Cloud,i-0fbgpu00000004,runaway_usage,medium,0.379,low,Persistent high-cost usage over several days indicates runaway spend.,unsupervised-statistical

@@ -1,0 +1,9 @@
+{
+  "alerts_detected": 11,
+  "reference_labels": 14,
+  "matched_reference_labels": 11,
+  "precision": 1.0,
+  "recall": 0.786,
+  "f1": 0.88,
+  "evaluation_note": "Reference labels are used only for evaluation and reporting."
+}

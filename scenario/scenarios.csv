@@ -1,0 +1,4 @@
+resource_id,service,linked_account_id,start_date,end_date,expected_label,description
+migration-egress-onetime,AWSDataTransfer,200000000014,2026-03-28,2026-03-31,benign,Scheduled one-time data-lake migration to partner - Finance approved
+i-0flashsale-autoscale,AmazonEC2,200000000011,2026-05-22,2026-05-26,benign,Flash-sale auto-scale event - planned capacity expansion
+i-0loadtest-fleet,AmazonEC2,200000000012,2026-04-15,2026-04-17,benign,Periodic load test - engineering scheduled
