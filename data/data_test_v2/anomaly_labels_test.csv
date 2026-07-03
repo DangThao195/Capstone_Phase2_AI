@@ -1,4 +1,0 @@
-anomaly_id,label,anomaly_type,linked_account_id,linked_account_name,service,resource_id,start_date,end_date,approx_daily_cost,approx_total_cost,description
-T1,anomaly,sudden_spike,200000000013,dev,AmazonCloudWatch,bucket-1054,2026-07-06,2026-07-12,479.4,2876.4,anomaly sudden_spike on AmazonCloudWatch; duration 6d; alert raised 2026-07-07 14:00 (24h delay).
-T2,anomaly,sudden_spike,200000000013,dev,AmazonCloudWatch,bucket-1054,2026-07-01,2026-07-07,604.41,3626.46,anomaly sudden_spike on AmazonCloudWatch; duration 6d; alert raised 2026-07-02 09:00 (24h delay).
-T3,benign,batch_etl,200000000015,ml-research,AmazonCloudWatch,bucket-1250,2026-07-01,2026-07-08,228.79,1601.53,"benign batch_etl on AmazonCloudWatch; duration 7d; validated legitimate operation, no alert."

@@ -1,0 +1,8 @@
+anomaly_id,label,anomaly_type,linked_account_id,linked_account_name,service,resource_id,start_date,end_date,approx_daily_cost,approx_total_cost,description
+T1,anomaly,runaway_usage,300000000023,sandbox-lab,AmazonEC2,i-0fbtrain000000,2026-06-10,2026-06-27,73.44,293.76,GPU training cluster left running 24/7 incl weekends.
+T1,anomaly,runaway_usage,300000000023,sandbox-lab,AmazonEC2,i-0fbtrain000001,2026-06-10,2026-06-27,73.44,293.76,GPU training cluster left running 24/7 incl weekends.
+T1,anomaly,runaway_usage,300000000023,sandbox-lab,AmazonEC2,i-0fbtrain000002,2026-06-10,2026-06-27,73.44,293.76,GPU training cluster left running 24/7 incl weekends.
+T1,anomaly,runaway_usage,300000000023,sandbox-lab,AmazonEC2,i-0fbtrain000003,2026-06-10,2026-06-27,73.44,293.76,GPU training cluster left running 24/7 incl weekends.
+T2,anomaly,gradual_drift,300000000024,billing-svc,AmazonDynamoDB,ddb-billing-events-1021,2026-06-01,2026-06-30,70->360,6000.0,"Provisioned write capacity ratchets up, never scales down."
+T3,anomaly,untagged_spend,300000000021,eu-platform,AmazonEC2,i-0untaggedfleet-1022,2026-06-01,2026-06-30,165.0,4950.0,Untagged m5.4xlarge fleet - unattributable spend.
+B,benign,benign_event,300000000022,apac-web,AWSDataTransfer,dt-campaign-egress-1023,2026-06-18,2026-06-20,700.0,2100.0,"Planned 3-day marketing campaign egress - pre-approved, NOT an anomaly."
